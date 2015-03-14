@@ -123,6 +123,18 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#356aa0', end
 	margin: auto;
 	clear: both;	
 }
+#littleWrap
+{
+	width: 1260px;
+	margin: auto;
+	clear: both;	
+}
+
+#margen
+{
+	margin: 10px;
+}
+
 #logo{
 	float: center;
 	margin: 10px 0px 10px 30%;

@@ -6,6 +6,9 @@ import java.io.PrintWriter;
 
 
 
+import java.util.ArrayList;
+import java.util.Date;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,16 +17,20 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
 
+import fachada.ProdAndes;
 
 
-public class ServletEmpresa extends HttpServlet
+
+public class ServletProducto extends HttpServlet
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	public final static String RUTA_ARCHIVO_SERIALIZADO = "/Empresa.data";
-
+	private boolean seRealizoPedido;
+	private boolean seLogroSolicitudProducto;
+	private ArrayList listaProductos;
 
 	// -----------------------------------------------------------------
 	// Métodos
@@ -34,7 +41,8 @@ public class ServletEmpresa extends HttpServlet
 	 */
 	public void init( ) throws ServletException
 	{
-
+		 seRealizoPedido=false;
+		 seLogroSolicitudProducto=false;
 	}
 
 	public void destroy( )
@@ -77,14 +85,18 @@ public class ServletEmpresa extends HttpServlet
 		// Envía a la respuesta el encabezado del template
 		imprimirEncabezado( response );
 
-		String iteracion2 = request.getParameter( "empresa" );
-
-
-		if(iteracion2!=null)
+		String empresa = request.getParameter( "empresa" );
+		String solicitudProducto = request.getParameter( "solicitudProducto" );
+		String aceptarSolicitudProducto = request.getParameter( "aceptarsolicitudProducto" );
+		String denegarSolicitudProducto = request.getParameter( "denegarsolicitudProducto" );
+		
+		
+		if(empresa!=null)
 		{
 			try
 			{
-				imprimirPaginaIteracion2(response);
+				listaProductos = ProdAndes.darInstancia().darListaDeProductos();
+				imprimirPaginaProducto(response,null);
 				
 			}
 			catch( NumberFormatException e )
@@ -92,7 +104,48 @@ public class ServletEmpresa extends HttpServlet
 				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
 			}
 		}
-
+		if(solicitudProducto!=null)
+		{
+			try
+			{
+				seRealizoPedido=true;
+				Date fechaEntrega= ProdAndes.darInstancia().realizarSolicitudDepedido();
+				imprimirPaginaProducto(response, fechaEntrega);
+				
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+		}
+		else if(aceptarSolicitudProducto!=null && seRealizoPedido)
+		{
+			try
+			{
+				seRealizoPedido=false;
+				seLogroSolicitudProducto= ProdAndes.darInstancia().aceptarSolicitudDepedido();
+				imprimirPaginaProducto(response, null);
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+		}
+		else if(denegarSolicitudProducto!=null && seRealizoPedido)
+		{
+			try
+			{
+				seRealizoPedido=false;
+				seLogroSolicitudProducto= ProdAndes.darInstancia().denegarSolicitudDepedido();
+				imprimirPaginaProducto(response, null);
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+		}
+		
+		imprimirfooter(response);
 	}
 	
 
@@ -101,7 +154,7 @@ public class ServletEmpresa extends HttpServlet
 	 * @param response Respuesta
 	 * @throws IOException Excepción al imprimir en el resultado
 	 */
-	private void imprimirEncabezado( HttpServletResponse response ) throws IOException
+	private void imprimirEncabezado( HttpServletResponse response) throws IOException
 	{
 		// Obtiene el flujo de escritura de la respuesta
 		PrintWriter respuesta = response.getWriter( );
@@ -119,12 +172,14 @@ public class ServletEmpresa extends HttpServlet
 		respuesta.println( "</head>" );
 	}
 	
+	
+	
 	/**
-	 * Imprime el encabezado con el diseño de la página
+	 * Imprime el cuerpo con el diseño de la página
 	 * @param response Respuesta
 	 * @throws IOException Excepción al imprimir en el resultado
 	 */
-	private void imprimirPaginaIteracion2( HttpServletResponse response ) throws IOException
+	private void imprimirPaginaProducto( HttpServletResponse response , Date fecha ) throws IOException
 	{
 		// Obtiene el flujo de escritura de la respuesta
 		PrintWriter respuesta = response.getWriter( );
@@ -164,22 +219,31 @@ public class ServletEmpresa extends HttpServlet
 		respuesta.println( "            <!-- elementos de la parte de arriba del navbar- para pantallas pequeÃ±as -->");
 		respuesta.println( "            <div  class=\"collapse navbar-collapse navbar-ex1-collapse\">");
 		respuesta.println( "                <ul class=\"nav navbar-nav side-nav\">");
+		respuesta.println( "                	<form method=\"GET\" action=\"producto.htm\">");
 		respuesta.println( "                    <li class=\"active\">");
-		respuesta.println( "                        <a href=\"productos\"><i class=\"fa fa-fw fa-dashboard\"></i> <div id=\"letraBlanca\" > Productos</div></a>");
+		respuesta.println( "                        <a href=\"productos.html\"><i class=\"fa fa-fw fa-dashboard\"></i> <div id=\"letraBlanca\" > Productos</div></a>");
 		respuesta.println( "                    </li>");
+		respuesta.println( "                	</form>");
+		respuesta.println( "                	<form method=\"GET\" action=\"procesoDeProduccion.htm\">");
 		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"charts.html\"><i class=\"fa fa-fw fa-bar-chart-o\"></i> <div id=\"letraBlanca\" >Proceso de producciÃ³n</div></a>");
+		respuesta.println( "                        <a href=\"procesoDeProduccion.html\"><i class=\"fa fa-fw fa-bar-chart-o\"></i> <div id=\"letraBlanca\" >Proceso de producci&#243n</div></a>");
 		respuesta.println( "                    </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                    <form method=\"GET\" action=\"materiales.htm\">");
 		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"tables.html\"><i class=\"fa fa-fw fa-table\"></i> <div id=\"letraBlanca\" >materiales</div></a>");
+		respuesta.println( "                        <a href=\"materiales.html\"><i class=\"fa fa-fw fa-table\"></i> <div id=\"letraBlanca\" >materiales</div></a>");
 		respuesta.println( "                    </li>");
+		respuesta.println( "                     </form>");
+		respuesta.println( "                    <form method=\"GET\" action=\"empleados.htm\">");
 		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"forms.html\"><i class=\"fa fa-fw fa-edit\"></i> <div id=\"letraBlanca\" >Empleados</div></a>");
+		respuesta.println( "                        <a href=\"empleados.html\"><i class=\"fa fa-fw fa-edit\"></i> <div id=\"letraBlanca\" >Empleados</div></a>");
 		respuesta.println( "                    </li>");
+		respuesta.println( "                     </form>");
 		respuesta.println( "                </ul>");
 		respuesta.println( "            </div>");
 		respuesta.println( "        </nav>");
 		respuesta.println( "		");
+		respuesta.println( "<form method=\"GET\" action=\"producto.htm\">" );
 		respuesta.println( "        <div id=\"page-wrapper\">");
 		respuesta.println( "");
 		respuesta.println( "            <div class=\"container-fluid\">");
@@ -188,7 +252,7 @@ public class ServletEmpresa extends HttpServlet
 		respuesta.println( "                <div class=\"row\">");
 		respuesta.println( "                    <div class=\"col-lg-12\">");
 		respuesta.println( "                        <h1 class=\"page-header\">");
-		respuesta.println( "                            Productos <small>InformaciÃ³n general</small>");
+		respuesta.println( "                            Productos <small>Informaci&#243n general</small>");
 		respuesta.println( "                        </h1>");
 		respuesta.println( "                        ");
 		respuesta.println( "                    </div>");
@@ -205,16 +269,14 @@ public class ServletEmpresa extends HttpServlet
 		respuesta.println( "	                            	<span>Eliga el producto: </span>");
 		respuesta.println( "	                            	<br>");
 		respuesta.println( "	                            	<br>");
-		respuesta.println( "	                                <Select>");
-		respuesta.println( "	                                    <option>");
-		respuesta.println( "	                                        <i>producto 1</i> ");
-		respuesta.println( "	                                    </option>");
-		respuesta.println( "	                                    <option>");
-		respuesta.println( "	                                        <i>producto 2</i> ");
-		respuesta.println( "	                                    </option>");
-		respuesta.println( "	                                    <option>");
-		respuesta.println( "	                                        <i>producto 3</i> ");
-		respuesta.println( "	                                    </option>");
+		respuesta.println( "	                                <Select name=\"tipo\">");
+						for(int i=0;i<listaProductos.size();i++)
+						{
+							Producto p= (Producto) listaProductos.get(i);
+							respuesta.println( "	                                    <option>");
+							respuesta.println( "	                                        <i>"+p.darNombre()+"</i>");
+							respuesta.println( "	                                    </option>");
+						}
 		respuesta.println( "	                                </Select>");
 		respuesta.println( "								</div>");
 		respuesta.println( "								<div class=\"col-lg-4\">");
@@ -241,13 +303,68 @@ public class ServletEmpresa extends HttpServlet
 		respuesta.println( "            </div>");
 		respuesta.println( "            <!-- /.container-fluid -->");
 		respuesta.println( "");
+		if(seRealizoPedido)
+		{
+			 respuesta.println( "              <div id=\"littleWrap\">");
+			 respuesta.println( "				<div class=\"row\">");
+			 respuesta.println( "                        <div class=\"panel panel-default\" >");
+			 respuesta.println( "                            <div class=\"panel-heading\">");
+			 respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i>Productos solicitados</h3>");
+			 respuesta.println( "                            </div>");
+			 respuesta.println( "                            <br/>");
+			 respuesta.println( "                            <div id=\"margen\"> Los productos solicitados fueron: </div>");
+			 respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");											
+			 respuesta.println( "                            	<div class=\"col-lg-12\">");
+			 if(fecha!=null)
+			 {
+			 respuesta.println( " La fecha de entrega es " + fecha.toString() );
+			 respuesta.println( "								</div>		");
+			 respuesta.println( "                                <div class=\"col-lg-6\">");
+			 respuesta.println( "                                	<INPUT type=\"submit\" value=\"Aceptar\" name=\"aceptarSolicitudProducto\">");
+			 respuesta.println( "                                </div>");
+			 respuesta.println( "                                <div class=\"col-lg-6\">");
+			 respuesta.println( "                                	<INPUT type=\"submit\" value=\"Cancelar\" name=\"cancelarSolicitudProducto\">");
+			 respuesta.println( "                                </div>");
+			 }
+			 else
+			 {
+				 respuesta.println( " El pedido no puede ser satisfecho porque la empresa no cuenta con los insumos necesarios, se colocara en pendiente para luego programar la compra de los insumos faltantes." ); 
+				 respuesta.println( "								</div>		");
+			 }
+			 respuesta.println( "                            </div>");
+			 respuesta.println( "                        </div>");
+			 respuesta.println( "                </div>");
+			 respuesta.println( "            </div>");
+			
+		}
 		respuesta.println( "        </div>");
 		respuesta.println( "        <!-- /#page-wrapper -->");
 		respuesta.println( "");
 		respuesta.println( "    </div>");
 		respuesta.println( "    <!-- /#wrapper -->");
+		if(seLogroSolicitudProducto)
+		{
+			seLogroSolicitudProducto=false;
+			respuesta.println( "<script> alert(\"La solicitud fue exitosa\"); </script>");
+		}
+		respuesta.println( "</form>");
 		respuesta.println( "</body>" );
 	}
+	
+	/**
+	 * Imprime el footer 
+	 * @param respuesta Respuesta al cliente
+	 * @param titulo Título del error
+	 * @param mensaje Mensaje del error
+	 * @throws IOException 
+	 */
+	private void imprimirfooter(HttpServletResponse response) throws IOException
+	{
+		// Obtiene el flujo de escritura de la respuesta
+		PrintWriter respuesta = response.getWriter( );
+		respuesta.println( "</html>" );
+	}
+
 
 	/**
 	 * Imprime un mensaje de error
