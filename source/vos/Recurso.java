@@ -2,9 +2,17 @@ package vos;
 
 public class Recurso 
 {
-	public final static String MATERIA_PRIMA = "Materia Prima";
+	public final static String materiaPrima = "Materia Prima";
 	
-	public final static String COMPONENTE = "Componente";
+	public final static String componente = "Componente";
+	
+	public final static String cIdRecurso = "idRecurso";
+	
+	public final static String cNombre = "nombre";
+	
+	public final static String cCantidadInicial = "cantidadInicial";
+	
+	public final static String cTipoRecurso = "tipoRecurso";
 	
 	private int idRecurso;
 	

@@ -61,31 +61,11 @@ public class ProdAndes
     // Métodos asociados a los casos de uso: Consulta
     // ---------------------------------------------------
 	
-	public ArrayList<Recurso> consultarRecursos() throws Exception{
-		
+	public ArrayList<Recurso> consultarRecursosInventario(int tipoConsulta) throws Exception{
+		return dao.consultarRecursosInventario(tipoConsulta);
 	}
 	
-	public ArrayList<Recurso> consultarRecursosMateriaPrima() throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosComponente() throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosEtapasProduccion(int[] idEtapaProduccion) throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosFechaSolicitud(Date fechaSolicitud) throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosFechaEntrega(Date fechaEntrega) throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosRangoExistencias(int limiteInferior, int limiteSuperior) throws Exception{
-		
+	public ArrayList<Recurso> consultarRecursos(int tipoConsulta) throws Exception{
+		return dao.consultarRecursosInventario(tipoConsulta);
 	}
 }

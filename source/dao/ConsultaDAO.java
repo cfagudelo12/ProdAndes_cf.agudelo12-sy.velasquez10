@@ -15,20 +15,96 @@ import vos.Recurso;
 public class ConsultaDAO {
 
 	//----------------------------------------------------
-	//Constantes
+	// Constantes
 	//----------------------------------------------------
 	
 	/**
-	 * Ruta donde se encuentra el archivo de conexión.
+	 * Ruta donde se encuentra el archivo de conexion.
 	 */
 	private static final String ARCHIVO_CONEXION = "/../conexion.properties";
 	
-	private static final String empresas="Empresas";
-	
-	private static final String recursos="Recursos";
+	private static final int idEmpresaF = 0;
 	
 	//----------------------------------------------------
-	//Atributos
+	// Constantes de tablas
+	//----------------------------------------------------
+	
+	private static final String tEmpresas="Empresas";
+	
+	private static final String tRecursos="Recursos";
+	
+	private static final String tUsuarios="Usuarios";
+	
+	private static final String tProveedores="Proveedores";
+	
+	private static final String tClientes="Clientes";
+
+	private static final String tEmpleados="Empleados";
+
+	private static final String tPedidos="Pedidos";
+
+	private static final String tProductos="Productos";
+
+	private static final String tTrabajan="Trabajan";
+
+	private static final String tSolicitan="Solicitan";
+
+	private static final String tCompran="Compran";
+
+	private static final String tProcesosProduccion="ProcesosProduccion";
+
+	private static final String tEtapasProduccion="EtapasProduccion";
+
+	private static final String tEstacionesProduccion="EstacionesProduccion";
+
+	private static final String tOperan="Operan";
+	
+	private static final String tTienen="Tienen";
+
+	private static final String tClientela="Clientela";
+
+	private static final String tProveen="Proveen";
+	
+	private static final String tRequieren="Requieren";
+	
+	//----------------------------------------------------
+	// Constantes de tipo de consultas sobre recursos
+	//----------------------------------------------------
+	
+	public final static int tcrDefault = 0;
+	
+	public final static int tcrTipoMateriaPrima = 1;
+	
+	public final static int tcrTipoComponente = 2;
+	
+	public final static int tcrVolumen = 3;
+	
+	public final static int tcrEtapaProduccion = 4;
+	
+	public final static int tcrFechaSolicitud = 5;
+	
+	public final static int tcrFechaEntrega = 6;
+	
+	//----------------------------------------------------
+	// Constantes de tipo de consultas sobre recursos en inventario
+	//----------------------------------------------------
+	
+	public final static int tcriDefault = 0;
+	
+	public final static int tcriTipoMateriaPrima = 1;
+	
+	public final static int tcriTipoComponente = 2;
+	
+	public final static int tcriRangoExistencias = 3;
+	
+	public final static int tcriEtapaProduccion = 4;
+	
+	public final static int tcriFechaSolicitud = 5;
+	
+	public final static int tcriFechaEntrega = 6;
+	
+	//----------------------------------------------------
+	// Atributos
 	//----------------------------------------------------
 	
 	/**
@@ -56,9 +132,9 @@ public class ConsultaDAO {
 	 */
 	public ConsultaDAO(){}
 	
-	// -------------------------------------------------
-   // Metodos
-   // -------------------------------------------------
+	//-------------------------------------------------
+	// Metodos
+	//-------------------------------------------------
 
 	/**
 	 * Obtiene los datos necesarios para establecer una conexion
@@ -67,17 +143,13 @@ public class ConsultaDAO {
 	 */
 	public void inicializar(String path)
 	{
-		try
-		{
+		try{
 			File arch= new File(path+ARCHIVO_CONEXION);
 			Properties prop = new Properties();
 			FileInputStream in = new FileInputStream(arch);
-
 	        prop.load( in );
 	        in.close( );
-
-			cadenaConexion = prop.getProperty("url");
-												
+			cadenaConexion = prop.getProperty("url");									
 			usuario = prop.getProperty("usuario");	
 			clave = prop.getProperty("clave");
 			final String driver = prop.getProperty("driver");
@@ -111,97 +183,136 @@ public class ConsultaDAO {
 	 * @throws Exception Si se presentan errores de conexion
 	 */
 	public void closeConnection(Connection connection) throws Exception {        
-		try {
+		try{
 			connection.close();
 			connection = null;
-		} catch (SQLException exception) {
+		}
+		catch (SQLException exception){
 			throw new Exception("ERROR: ConsultaDAO: closeConnection() = cerrando una conexion.");
 		}
 	} 
    
-   // ---------------------------------------------------
+   //---------------------------------------------------
    // Metodos asociados a los casos de uso: Consulta
-   // ---------------------------------------------------
-   
-   public ArrayList<Recurso> consultarRecursos() throws Exception{
-		
+   //---------------------------------------------------
+
+	public ArrayList<Recurso> consultarRecursosInventario(int tipoConsulta) throws Exception{
+		String consulta=null;
+		switch(tipoConsulta){
+			case tcriDefault:
+				consulta="";
+				break;
+			case tcriTipoMateriaPrima:
+				consulta="";
+				break;
+			case tcriTipoComponente:
+				consulta="";
+				break;
+			case tcriRangoExistencias:
+				consulta="";
+				break;
+			case tcriEtapaProduccion:
+				consulta="";
+				break;
+			case tcriFechaSolicitud:
+				consulta="";
+				break;
+			case tcriFechaEntrega:
+				consulta="";
+				break;
+		}
+		PreparedStatement prepStmt = null;
+		ArrayList<Recurso> recursos = new ArrayList<Recurso>();
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			prepStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = prepStmt.executeQuery();
+			while(rs.next()){
+				Recurso recurso = new Recurso();
+				recurso.setIdRecurso(rs.getInt(Recurso.cIdRecurso));
+				recurso.setNombre(rs.getString(Recurso.cNombre));
+				recurso.setCantidadInicial(rs.getInt(Recurso.cCantidadInicial));
+				recurso.setTipoRecurso(rs.getString(Recurso.cTipoRecurso));
+				recursos.add(recurso);
+				recurso = new Recurso();
+			}
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (prepStmt != null) 
+			{
+				try{
+					prepStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return recursos;
 	}
 	
-	public ArrayList<Recurso> consultarRecursosMateriaPrima() throws Exception{
-		
+	public ArrayList<Recurso> consultarRecursos(int tipoConsulta) throws Exception{
+		String consulta=null;
+		switch(tipoConsulta){
+			case tcrDefault:
+				consulta="SELECT * FROM "+tRecursos;
+				break;
+			case tcrTipoMateriaPrima:
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.materiaPrima+"\"";
+				break;
+			case tcrTipoComponente:
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				break;
+			case tcrVolumen:
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				break;
+			case tcrEtapaProduccion:
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				break;
+			case tcrFechaSolicitud:
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				break;
+			case tcrFechaEntrega:
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				break;
+		}
+		PreparedStatement prepStmt = null;
+		ArrayList<Recurso> recursos = new ArrayList<Recurso>();
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			prepStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = prepStmt.executeQuery();
+			while(rs.next()){
+				Recurso recurso = new Recurso();
+				recurso.setIdRecurso(rs.getInt(Recurso.cIdRecurso));
+				recurso.setNombre(rs.getString(Recurso.cNombre));
+				recurso.setCantidadInicial(rs.getInt(Recurso.cCantidadInicial));
+				recurso.setTipoRecurso(rs.getString(Recurso.cTipoRecurso));
+				recursos.add(recurso);
+				recurso = new Recurso();
+			}
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (prepStmt != null) 
+			{
+				try{
+					prepStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return recursos;
 	}
-	
-	public ArrayList<Recurso> consultarRecursosComponente() throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosEtapasProduccion(int[] idEtapaProduccion) throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosFechaSolicitud(Date fechaSolicitud) throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosFechaEntrega(Date fechaEntrega) throws Exception{
-		
-	}
-	
-	public ArrayList<Recurso> consultarRecursosRangoExistencias(int limiteInferior, int limiteSuperior) throws Exception{
-		
-	}
-//   
-//   /**
-//    * Método que se encarga de realizar la consulta en la base de datos
-//    * y retorna un ArrayList de elementos tipo VideosValue.
-//    * @return ArrayList lista que contiene elementos tipo VideosValue.
-//    * La lista contiene los videos ordenados alfabeticamente
-//    * @throws Exception se lanza una excepción si ocurre un error en
-//    * la conexión o en la consulta. 
-//    */
-//   public ArrayList<VideosValue> darVideosDefault() throws Exception
-//   {
-//   	PreparedStatement prepStmt = null;
-//   	
-//   	ArrayList<VideosValue> videos = new ArrayList<VideosValue>();
-//		VideosValue vidValue = new VideosValue();
-//   	
-//		try {
-//			establecerConexion(cadenaConexion, usuario, clave);
-//			prepStmt = conexion.prepareStatement(consultaVideosDefault);
-//			
-//			ResultSet rs = prepStmt.executeQuery();
-//			
-//			while(rs.next()){
-//				String titVid = rs.getString(tituloVideo);
-//				int anyoVid = rs.getInt(anyoVideo);
-//				
-//				vidValue.setTituloOriginal(titVid);
-//				vidValue.setAnyo(anyoVid);	
-//			
-//				videos.add(vidValue);
-//				vidValue = new VideosValue();
-//							
-//			}
-//		
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			System.out.println(consultaVideosDefault);
-//			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement!!!");
-//		}finally 
-//		{
-//			if (prepStmt != null) 
-//			{
-//				try {
-//					prepStmt.close();
-//				} catch (SQLException exception) {
-//					
-//					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexión.");
-//				}
-//			}
-//			closeConnection(conexion);
-//		}		
-//		return videos;
-//   }
-   
 }
