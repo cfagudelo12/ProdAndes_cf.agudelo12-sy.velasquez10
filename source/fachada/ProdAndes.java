@@ -1,9 +1,10 @@
 package fachada;
 
+import java.sql.Date;
 import java.util.ArrayList;
 
+import vos.Recurso;
 import dao.ConsultaDAO;
-import vos.Empresa;
 
 /**
  * Clase ProdAndes, que representa la fachada de comunicación entre
@@ -17,12 +18,9 @@ public class ProdAndes
 	 */
 	private ConsultaDAO dao;
 	
-
-    
     // -----------------------------------------------------------------
     // Singleton
     // -----------------------------------------------------------------
-
 
     /**
      * Instancia única de la clase
@@ -43,7 +41,7 @@ public class ProdAndes
     }
 	
 	/**
-	 * contructor de la clase. Inicializa el atributo dao.
+	 * Contructor de la clase. Inicializa el atributo dao.
 	 */
 	private ProdAndes()
 	{
@@ -51,9 +49,8 @@ public class ProdAndes
 	}
 	
 	/**
-	 * inicializa el dao, dándole la ruta en donde debe encontrar
-	 * el archivo properties.
-	 * @param ruta ruta donde se encuentra el archivo properties
+	 * Inicializa el dao dándole la ruta en donde debe encontrar el archivo properties.
+	 * @param ruta La ruta donde se encuentra el archivo properties
 	 */
 	public void inicializarRuta(String ruta)
 	{
@@ -63,16 +60,32 @@ public class ProdAndes
     // ---------------------------------------------------
     // Métodos asociados a los casos de uso: Consulta
     // ---------------------------------------------------
-//    
-//	/**
-//	 * método que retorna los videos en orden alfabético.
-//	 * invoca al DAO para obtener los resultados.
-//	 * @return ArrayList lista con los videos ordenados alfabeticamente.
-//	 * @throws Exception pasa la excepción generada por el DAO
-//	 */
-//	public ArrayList<Empresa> darVideosDefault() throws Exception
-//	{
-//	    return dao.darVideosDefault();
-//	}
 	
+	public ArrayList<Recurso> consultarRecursos() throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosMateriaPrima() throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosComponente() throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosEtapasProduccion(int[] idEtapaProduccion) throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosFechaSolicitud(Date fechaSolicitud) throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosFechaEntrega(Date fechaEntrega) throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosRangoExistencias(int limiteInferior, int limiteSuperior) throws Exception{
+		
+	}
 }

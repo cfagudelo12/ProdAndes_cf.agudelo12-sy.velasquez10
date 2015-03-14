@@ -7,6 +7,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import vos.Recurso;
+
 /**
 * Clase ConsultaDAO, encargada de hacer las consultas a la base de datos
 */
@@ -15,33 +17,32 @@ public class ConsultaDAO {
 	//----------------------------------------------------
 	//Constantes
 	//----------------------------------------------------
+	
 	/**
-	 * ruta donde se encuentra el archivo de conexión.
+	 * Ruta donde se encuentra el archivo de conexión.
 	 */
 	private static final String ARCHIVO_CONEXION = "/../conexion.properties";
 	
-
-	//----------------------------------------------------
-	//Consultas
-	//----------------------------------------------------
-
+	private static final String empresas="Empresas";
 	
-
+	private static final String recursos="Recursos";
+	
 	//----------------------------------------------------
 	//Atributos
 	//----------------------------------------------------
+	
 	/**
-	 * conexion con la base de datos
+	 * Conexion con la base de datos
 	 */
 	public Connection conexion;
 	
 	/**
-	 * nombre del usuario para conectarse a la base de datos.
+	 * Nombre del usuario para conectarse a la base de datos.
 	 */
 	private String usuario;
 	
 	/**
-	 * clave de conexión a la base de datos.
+	 * Clave de conexion a la base de datos.
 	 */
 	private String clave;
 	
@@ -51,21 +52,18 @@ public class ConsultaDAO {
 	private String cadenaConexion;
 	
 	/**
-	 * constructor de la clase. No inicializa ningun atributo.
+	 * Constructor de la clase. No inicializa ningun atributo.
 	 */
-	public ConsultaDAO() 
-	{		
-		
-	}
+	public ConsultaDAO(){}
 	
 	// -------------------------------------------------
-   // Métodos
+   // Metodos
    // -------------------------------------------------
 
 	/**
-	 * obtiene ls datos necesarios para establecer una conexion
+	 * Obtiene los datos necesarios para establecer una conexion
 	 * Los datos se obtienen a partir de un archivo properties.
-	 * @param path ruta donde se encuentra el archivo properties.
+	 * @param path Ruta donde se encuentra el archivo properties.
 	 */
 	public void inicializar(String path)
 	{
@@ -73,62 +71,85 @@ public class ConsultaDAO {
 		{
 			File arch= new File(path+ARCHIVO_CONEXION);
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream( arch );
+			FileInputStream in = new FileInputStream(arch);
 
 	        prop.load( in );
 	        in.close( );
 
-			cadenaConexion = prop.getProperty("url");	// El url, el usuario y passwd deben estar en un archivo de propiedades.
+			cadenaConexion = prop.getProperty("url");
 												
 			usuario = prop.getProperty("usuario");	
 			clave = prop.getProperty("clave");
 			final String driver = prop.getProperty("driver");
 			Class.forName(driver);
-		
 		}
-		catch(Exception e)
-		{
+		catch(Exception e){
 			e.printStackTrace();
 		}	
 	}
 
 	/**
-	 * Método que se encarga de crear la conexión con el Driver Manager
-	 * a partir de los parametros recibidos.
-	 * @param url direccion url de la base de datos a la cual se desea conectar
-	 * @param usuario nombre del usuario que se va a conectar a la base de datos
-	 * @param clave clave de acceso a la base de datos
-	 * @throws SQLException si ocurre un error generando la conexión con la base de datos.
+	 * Metodo que se encarga de crear la conexion con el Driver Manager a partir de los parametros recibidos.
+	 * @param url Direccion url de la base de datos a la cual se desea conectar
+	 * @param usuario Nombre del usuario que se va a conectar a la base de datos
+	 * @param clave Clave de acceso a la base de datos
+	 * @throws SQLException si ocurre un error generando la conexion con la base de datos.
 	 */
-   private void establecerConexion(String url, String usuario, String clave) throws SQLException
-   {
-   	try
-       {
+	private void establecerConexion(String url, String usuario, String clave) throws SQLException
+	{
+		try{
 			conexion = DriverManager.getConnection(url,usuario,clave);
-       }
-       catch( SQLException exception )
-       {
-           throw new SQLException( "ERROR: ConsultaDAO obteniendo una conexin." );
-       }
-   }
-   
-   /**
-	 *Cierra la conexión activa a la base de datos. Además, con=null.
-    * @param con objeto de conexión a la base de datos
-    * @throws SistemaCinesException Si se presentan errores de conexión
-    */
-   public void closeConnection(Connection connection) throws Exception {        
+		}
+		catch(SQLException exception){
+			throw new SQLException("ERROR: ConsultaDAO obteniendo una conexion.");
+		}
+	}
+
+	/**
+	 * Cierra la conexion activa a la base de datos.
+	 * @param con Conexion a la base de datos
+	 * @throws Exception Si se presentan errores de conexion
+	 */
+	public void closeConnection(Connection connection) throws Exception {        
 		try {
 			connection.close();
 			connection = null;
 		} catch (SQLException exception) {
-			throw new Exception("ERROR: ConsultaDAO: closeConnection() = cerrando una conexión.");
+			throw new Exception("ERROR: ConsultaDAO: closeConnection() = cerrando una conexion.");
 		}
-   } 
+	} 
    
    // ---------------------------------------------------
-   // Métodos asociados a los casos de uso: Consulta
+   // Metodos asociados a los casos de uso: Consulta
    // ---------------------------------------------------
+   
+   public ArrayList<Recurso> consultarRecursos() throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosMateriaPrima() throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosComponente() throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosEtapasProduccion(int[] idEtapaProduccion) throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosFechaSolicitud(Date fechaSolicitud) throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosFechaEntrega(Date fechaEntrega) throws Exception{
+		
+	}
+	
+	public ArrayList<Recurso> consultarRecursosRangoExistencias(int limiteInferior, int limiteSuperior) throws Exception{
+		
+	}
 //   
 //   /**
 //    * Método que se encarga de realizar la consulta en la base de datos

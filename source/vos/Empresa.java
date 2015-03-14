@@ -1,5 +1,6 @@
 package vos;
 
-public class Empresa {
+public class Empresa 
+{
 
 }
