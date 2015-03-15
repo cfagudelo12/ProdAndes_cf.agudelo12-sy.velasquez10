@@ -197,39 +197,15 @@ public class ConsultaDAO {
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
 
-	public ArrayList<RecursoValue> consultarRecursosInventario(int tipoConsulta) throws Exception
+	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
 	{
-		String consulta=null;
-		switch(tipoConsulta)
-		{
-			case tcriDefault:
-				consulta="";
-				break;
-			case tcriTipoMateriaPrima:
-				consulta="";
-				break;
-			case tcriTipoComponente:
-				consulta="";
-				break;
-			case tcriRangoExistencias:
-				consulta="";
-				break;
-			case tcriEtapaProduccion:
-				consulta="";
-				break;
-			case tcriFechaSolicitud:
-				consulta="";
-				break;
-			case tcriFechaEntrega:
-				consulta="";
-				break;
-		}
-		PreparedStatement prepStmt = null;
 		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
+		PreparedStatement selStmt = null;
 		try{
+			String consulta	= generarConsultaExistenciaRecurso(tipoMaterial, rInferior, rSuperior, idEtapaProduccion, fechaSolicitud, fechaEntrega);
 			establecerConexion(cadenaConexion, usuario, clave);
-			prepStmt = conexion.prepareStatement(consulta);
-			ResultSet rs = prepStmt.executeQuery();
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();
 			while(rs.next()){
 				RecursoValue recurso = new RecursoValue();
 				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
@@ -245,19 +221,48 @@ public class ConsultaDAO {
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 		finally{
-			if (prepStmt != null) 
+			if (selStmt != null) 
 			{
 				try{
-					prepStmt.close();
+					selStmt.close();
 				} 
-				catch (SQLException exception)
-				{
+				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
 			closeConnection(conexion);
 		}
 		return recursos;
+	}
+	
+
+	private String generarConsultaExistenciaRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega)
+	{
+		String consulta = "SELECT * FROM Recusos r NATURAL INNER JOIN (SELECT t.idRecurso FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+")";
+		if(tipoMaterial!=null||rInferior!=0||rSuperior!=0||idEtapaProduccion!=0||fechaSolicitud!=null||fechaEntrega!=null){
+			consulta+=" WHERE"; 
+			if(tipoMaterial!=null){
+				consulta+="AND r.tipoMaterial='"+tipoMaterial+"'";
+			}
+			if(rInferior>0 && rInferior<rSuperior){
+				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT t.idRecurso FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+
+						" AND t.idRecurso=r.idRecurso AND t.cantidad BETWEEN "+rInferior+" AND "+rSuperior+"))";
+			}
+			if(idEtapaProduccion>0){
+				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT req.idRecurso FROM Requieren req WHERE req.idRecurso=r.idRecurso "
+						+ "AND req.idEtapaProduccion="+idEtapaProduccion+")";
+			}
+			if(fechaSolicitud!=null){
+				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
+						+ " p.fechaSolicitud="+fechaSolicitud+"))";
+			}
+			if(fechaEntrega!=null){
+				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
+						+ " p.fechaEntrega="+fechaEntrega+"))";
+			}
+			consulta.replace("WHERE AND", "WHERE ");
+		}
+		return consulta;
 	}
 	
 	public ArrayList<MaterialValue> consultarRecurso(int volumen, Date desde, Date hasta, Float costo) throws Exception
@@ -377,68 +382,6 @@ public class ConsultaDAO {
 		}
 	}
 
-	
-	public ArrayList<RecursoValue> consultarRecursos(int tipoConsulta) throws Exception{
-		String consulta=null;
-		switch(tipoConsulta){
-			case tcrDefault:
-				consulta="SELECT * FROM "+tRecursos;
-				break;
-			case tcrTipoMateriaPrima:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\'"+RecursoValue.materiaPrima+"\'";
-				break;
-			case tcrTipoComponente:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\'"+RecursoValue.componente+"\'";
-				break;
-			case tcrVolumen:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
-				break;
-			case tcrEtapaProduccion:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
-				break;
-			case tcrFechaSolicitud:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
-				break;
-			case tcrFechaEntrega:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
-				break;
-		}
-		PreparedStatement prepStmt = null;
-		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
-		try{
-			establecerConexion(cadenaConexion, usuario, clave);
-			prepStmt = conexion.prepareStatement(consulta);
-			ResultSet rs = prepStmt.executeQuery();
-			while(rs.next()){
-				RecursoValue recurso = new RecursoValue();
-				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
-				recurso.setNombre(rs.getString(RecursoValue.cNombre));
-				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
-				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
-				recursos.add(recurso);
-				recurso = new RecursoValue();
-			}
-		}
-		catch (SQLException e){
-			e.printStackTrace();
-			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
-		}
-		finally{
-			if (prepStmt != null) 
-			{
-				try{
-					prepStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			closeConnection(conexion);
-		}
-		return recursos;
-	}
-	
-	
 
 	//---------------------------------------------------
 	// Metodos asociados a los casos de uso: Modificacion

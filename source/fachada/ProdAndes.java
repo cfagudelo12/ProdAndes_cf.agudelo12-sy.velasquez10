@@ -62,13 +62,6 @@ public class ProdAndes
     // Métodos asociados a los casos de uso: Consulta
     // ---------------------------------------------------
 	
-	public ArrayList<RecursoValue> consultarRecursosInventario(int tipoConsulta) throws Exception{
-		return dao.consultarRecursosInventario(tipoConsulta);
-	}
-	
-	public ArrayList<RecursoValue> consultarRecursos(int tipoConsulta) throws Exception{
-		return dao.consultarRecursosInventario(tipoConsulta);
-	}
 	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception
 	{
 		dao.registrarLlegadaRecurso(idRecurso,idPedido,fechaLlegada);
