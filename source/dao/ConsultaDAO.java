@@ -182,8 +182,10 @@ public class ConsultaDAO {
 	 * @param con Conexion a la base de datos
 	 * @throws Exception Si se presentan errores de conexion
 	 */
-	public void closeConnection(Connection connection) throws Exception {        
-		try{
+	public void closeConnection(Connection connection) throws Exception 
+	{        
+		try
+		{
 			connection.close();
 			connection = null;
 		}
@@ -196,9 +198,11 @@ public class ConsultaDAO {
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
 
-	public ArrayList<Recurso> consultarRecursosInventario(int tipoConsulta) throws Exception{
+	public ArrayList<Recurso> consultarRecursosInventario(int tipoConsulta) throws Exception
+	{
 		String consulta=null;
-		switch(tipoConsulta){
+		switch(tipoConsulta)
+		{
 			case tcriDefault:
 				consulta="";
 				break;

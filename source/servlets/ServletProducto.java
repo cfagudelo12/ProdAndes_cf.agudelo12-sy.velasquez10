@@ -43,6 +43,7 @@ public class ServletProducto extends HttpServlet
 	{
 		 seRealizoPedido=false;
 		 seLogroSolicitudProducto=false;
+		 listaProductos= new ArrayList();
 	}
 
 	public void destroy( )
@@ -95,7 +96,7 @@ public class ServletProducto extends HttpServlet
 		{
 			try
 			{
-				listaProductos = ProdAndes.darInstancia().darListaDeProductos();
+//				listaProductos = ProdAndes.darInstancia().darListaDeProductos();
 				imprimirPaginaProducto(response,null);
 				
 			}
@@ -109,8 +110,8 @@ public class ServletProducto extends HttpServlet
 			try
 			{
 				seRealizoPedido=true;
-				Date fechaEntrega= ProdAndes.darInstancia().realizarSolicitudDepedido();
-				imprimirPaginaProducto(response, fechaEntrega);
+//				Date fechaEntrega= ProdAndes.darInstancia().realizarSolicitudDepedido();
+//				imprimirPaginaProducto(response, fechaEntrega);
 				
 			}
 			catch( NumberFormatException e )
@@ -123,7 +124,7 @@ public class ServletProducto extends HttpServlet
 			try
 			{
 				seRealizoPedido=false;
-				seLogroSolicitudProducto= ProdAndes.darInstancia().aceptarSolicitudDepedido();
+//				seLogroSolicitudProducto= ProdAndes.darInstancia().aceptarSolicitudDepedido();
 				imprimirPaginaProducto(response, null);
 			}
 			catch( NumberFormatException e )
@@ -136,7 +137,7 @@ public class ServletProducto extends HttpServlet
 			try
 			{
 				seRealizoPedido=false;
-				seLogroSolicitudProducto= ProdAndes.darInstancia().denegarSolicitudDepedido();
+//				seLogroSolicitudProducto= ProdAndes.darInstancia().denegarSolicitudDepedido();
 				imprimirPaginaProducto(response, null);
 			}
 			catch( NumberFormatException e )
@@ -219,26 +220,18 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "            <!-- elementos de la parte de arriba del navbar- para pantallas pequeñas -->");
 		respuesta.println( "            <div  class=\"collapse navbar-collapse navbar-ex1-collapse\">");
 		respuesta.println( "                <ul class=\"nav navbar-nav side-nav\">");
-		respuesta.println( "                	<form method=\"GET\" action=\"producto.htm\">");
 		respuesta.println( "                    <li class=\"active\">");
 		respuesta.println( "                        <a href=\"productos.html\"><i class=\"fa fa-fw fa-dashboard\"></i> <div id=\"letraBlanca\" > Productos</div></a>");
 		respuesta.println( "                    </li>");
-		respuesta.println( "                	</form>");
-		respuesta.println( "                	<form method=\"GET\" action=\"procesoDeProduccion.htm\">");
 		respuesta.println( "                    <li>");
 		respuesta.println( "                        <a href=\"procesoDeProduccion.html\"><i class=\"fa fa-fw fa-bar-chart-o\"></i> <div id=\"letraBlanca\" >Proceso de producci&#243n</div></a>");
 		respuesta.println( "                    </li>");
-		respuesta.println( "                    </form>");
-		respuesta.println( "                    <form method=\"GET\" action=\"materiales.htm\">");
 		respuesta.println( "                    <li>");
 		respuesta.println( "                        <a href=\"materiales.html\"><i class=\"fa fa-fw fa-table\"></i> <div id=\"letraBlanca\" >materiales</div></a>");
 		respuesta.println( "                    </li>");
-		respuesta.println( "                     </form>");
-		respuesta.println( "                    <form method=\"GET\" action=\"empleados.htm\">");
 		respuesta.println( "                    <li>");
 		respuesta.println( "                        <a href=\"empleados.html\"><i class=\"fa fa-fw fa-edit\"></i> <div id=\"letraBlanca\" >Empleados</div></a>");
 		respuesta.println( "                    </li>");
-		respuesta.println( "                     </form>");
 		respuesta.println( "                </ul>");
 		respuesta.println( "            </div>");
 		respuesta.println( "        </nav>");
@@ -272,10 +265,10 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "	                                <Select name=\"tipo\">");
 						for(int i=0;i<listaProductos.size();i++)
 						{
-							Producto p= (Producto) listaProductos.get(i);
-							respuesta.println( "	                                    <option>");
-							respuesta.println( "	                                        <i>"+p.darNombre()+"</i>");
-							respuesta.println( "	                                    </option>");
+//							Producto p= (Producto) listaProductos.get(i);
+//							respuesta.println( "	                                    <option>");
+//							respuesta.println( "	                                        <i>"+p.darNombre()+"</i>");
+//							respuesta.println( "	                                    </option>");
 						}
 		respuesta.println( "	                                </Select>");
 		respuesta.println( "								</div>");
