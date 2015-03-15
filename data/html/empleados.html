@@ -1,0 +1,136 @@
+<html>
+	<head>
+		<title>ProdAndes Sistemas Transaccionales</title>
+		<meta charset"UTF-8">
+		<meta name="description"></meta>
+		<link rel="stylesheet" type="text/css" href="css/estilo.css"/>
+		<meta name"viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	
+		<!-- Bootstrap Core CSS -->
+		    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+		    <!-- Custom CSS -->
+		    <link href="css/sb-admin.css" rel="stylesheet">
+
+              <!-- Custom Fonts -->
+            <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+             <!-- Morris Charts CSS -->
+            <link href="css/plugins/morris.css" rel="stylesheet">
+	</head>
+	<body>
+    
+	<div id="wrapper">
+        <!-- Navbar -->
+        <nav id="fondoAzul" class="navbar navbar-fixed-top navbar-fixed-top" role="navigation">
+            <!-- Para navegación en celulare	s-->
+            <div  id="fondoAzul" class="navbar-header">
+                <a id="fondoAzul" class="navbar-brand" href="index.html">Administrador</a>
+            </div>
+            <!-- elementos de la parte de arriba del navbar-->
+            <ul id="fondoAzul" class="nav navbar-right top-nav">
+                <li id="fondoAzul"  class="dropdown">
+                    <a id="fondoAzul"  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Carlos y Sergio <b class="caret"></b></a>
+                    <ul id="fondoAzul" class="dropdown-menu">
+                        
+                        <li>
+                            <a href="productos.html"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
+                        </li>
+
+                        <li class="active">
+                            <a href="procesoDeProduccion.html"><i class="fa fa-fw fa-bar-chart-o"></i> <div id="letraBlanca" >Proceso de producci&#243n</div></a>
+                        </li>
+                        <li>
+                            <a href="materiales.html"><i class="fa fa-fw fa-table"></i> <div id="letraBlanca" >materiales</div></a>
+                        </li>
+
+                        <li>
+                            <a href="empleados.html"><i class="fa fa-fw fa-edit"></i> <div id="letraBlanca" >Empleados</div></a>
+                        </li>
+
+                    </ul>
+                </li>
+            </ul>
+            <!-- elementos de la parte de arriba del navbar- para pantallas pequeñas -->
+            <div  class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                    <li>
+                        <a href="productos.html"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
+                    </li>
+                    <li>
+                        <a href="procesoDeProduccion.html"><i class="fa fa-fw fa-bar-chart-o"></i> <div id="letraBlanca" >Proceso de producci&#243n</div></a>
+                    </li>
+                    <li class="active">
+                        <a href="materiales.html"><i class="fa fa-fw fa-table"></i> <div id="letraBlanca" >materiales</div></a>
+                    </li>
+                    <li>
+                        <a href="empleados.html"><i class="fa fa-fw fa-edit"></i> <div id="letraBlanca" >Empleados</div></a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+		
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- titulo de la pagina -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Empleados <small>Informaci&#243n general</small>
+                        </h1>
+                        
+                    </div>
+                </div>
+                 <!--Registrar ejecucion de una etapa de produccion-->
+                 <form method="GET" action="empleados.htm">
+                <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Obtener los datos del operario m&#225s activo</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Id proceso de producci&#243n: </span>
+                                     <INPUT type="number" name="proceso"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>N&#250mero de operaciones: </span>
+                                     <INPUT type="number" name="cantidad"/>
+                                </div> 
+                                 <div class="col-lg-12">
+                                    <INPUT type="submit" value="buscar" name="operarioMasActivo"/>
+                                </div>      
+                            </div>
+                        </div>
+                </div>
+                 <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Operarios m&#225s activos</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Nombre Operario: </span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>N&#250mero de operaciones : </span>
+                                </div>        
+                            </div>
+                        </div>
+                </div>
+                </form>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+          
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    
+    <!-- /#wrapper -->
+	</body>
+</html>
+	
