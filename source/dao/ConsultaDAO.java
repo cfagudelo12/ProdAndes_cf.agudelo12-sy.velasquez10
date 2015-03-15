@@ -7,7 +7,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import vos.RecursoValue;
+import vos.*;
+
 
 /**
 * Clase ConsultaDAO, encargada de hacer las consultas a la base de datos
@@ -251,7 +252,8 @@ public class ConsultaDAO {
 				try{
 					prepStmt.close();
 				} 
-				catch (SQLException exception){
+				catch (SQLException exception)
+				{
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
@@ -260,31 +262,58 @@ public class ConsultaDAO {
 		return recursos;
 	}
 	
-	public ArrayList<RecursoValue> consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
+	public ArrayList<MaterialValue> consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
 	{
-		ArrayList<RecursoValue> recursos= new ArrayList<RecursoValue>();
-		PreparedStatement updStmt = null;
+		ArrayList<MaterialValue> materiales= new ArrayList<MaterialValue>();
 		PreparedStatement selStmt = null;
-		PreparedStatement stmt = null;
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryConsulta = "SELECT * FROM Recurso r, Pedidos p WHERE r.idRecurso=p.idRecurso AND r.volumen="+cantidad+" AND r.costo="+costo+" AND (p.fechaLlegada>"+desde+" OR p.fechaLlegada<"+hasta+")";
+			String queryConsulta = "SELECT * FROM"+tRecursos+" r, "+tSolicitan+" s,"+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+ tPedidos+" p, WHERE r.idRecurso=s.idRecurso AND s.idPedido=p.idPedido AND r.idRecurso=req.idRecurso AND req.idEtapaProduccion=e.idEtapaProduccion AND pro.idEtapaProduccion=e.idEtapaProduccion";
+			
+			if(cantidad>0)
+			{
+				queryConsulta+=" AND r.volumen="+cantidad;
+			}
+			if(costo>0)
+			{
+				queryConsulta+=" AND r.costo="+costo;
+			}
+			if(desde!=null && hasta!=null && desde.before(hasta))
+			{
+				queryConsulta+="AND (p.fechaLlegada>"+desde+" OR p.fechaLlegada<"+hasta+")";
+			}
+			
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
+			
 			while(rs.next())
 			{
+				MaterialValue m= new MaterialValue();
+				
 				RecursoValue recurso = new RecursoValue();
 				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
 				recurso.setNombre(rs.getString(RecursoValue.cNombre));
 				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
 				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
-				recursos.add(recurso);
-				recurso = new RecursoValue();
 				
-				recursos.add(recurso);
+				EtapaProduccionValue etapa = new EtapaProduccionValue();
+				etapa.setNumeroEtapa(rs.getInt(EtapaProduccionValue.cNumeroEtapa));
+				
+				PedidoValue pedido = new PedidoValue();
+				pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
+				
+				ProcesoProduccionValue proceso = new ProcesoProduccionValue();
+				proceso.setIdProducto(ProcesoProduccionValue.cIdProducto);
+				
+				m.setRecurso(recurso);
+				m.agregarEtapasProduccion(""+etapa.getNumeroEtapa());
+				m.agregarPedidos(""+pedido.getIdPedido());
+				m.agregarProductos(""+proceso.getIdProducto());
+				materiales.add(m);
 			}
-			return recursos;
+			
+			return materiales;
 		}
 		catch (SQLException e)
 		{
@@ -293,30 +322,11 @@ public class ConsultaDAO {
 		}
 		finally
 		{
-			if (updStmt != null) 
-			{
-				try
-				{
-					updStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
 			if (selStmt != null) 
 			{
 				try
 				{
 					selStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (stmt != null) 
-			{
-				try{
-					stmt.close();
 				} 
 				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
