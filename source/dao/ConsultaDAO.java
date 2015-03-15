@@ -260,6 +260,72 @@ public class ConsultaDAO {
 		return recursos;
 	}
 	
+	public ArrayList<RecursoValue> consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
+	{
+		ArrayList<RecursoValue> recursos= new ArrayList<RecursoValue>();
+		PreparedStatement updStmt = null;
+		PreparedStatement selStmt = null;
+		PreparedStatement stmt = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryConsulta = "SELECT * FROM Recurso r, Pedidos p WHERE r.idRecurso=p.idRecurso AND r.volumen="+cantidad+" AND r.costo="+costo+" AND (p.fechaLlegada>"+desde+" OR p.fechaLlegada<"+hasta+")";
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			while(rs.next())
+			{
+				RecursoValue recurso = new RecursoValue();
+				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
+				recurso.setNombre(rs.getString(RecursoValue.cNombre));
+				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
+				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
+				recursos.add(recurso);
+				recurso = new RecursoValue();
+				
+				recursos.add(recurso);
+			}
+			return recursos;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (updStmt != null) 
+			{
+				try
+				{
+					updStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (selStmt != null) 
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (stmt != null) 
+			{
+				try{
+					stmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
 	public ArrayList<RecursoValue> consultarRecursos(int tipoConsulta) throws Exception{
 		String consulta=null;
 		switch(tipoConsulta){
@@ -332,71 +398,6 @@ public class ConsultaDAO {
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado='Entregado' WHERE p.idPedido="+idPedido;
-			String queryConsulta = "SELECT * FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
-			String queryTienen = null;
-			updStmt = conexion.prepareStatement(queryPedido);
-			updStmt.executeQuery();
-			selStmt = conexion.prepareStatement(queryConsulta);
-			ResultSet rs = selStmt.executeQuery();
-			if(rs.next())
-			{
-				queryTienen="UPDATE Tienen t SET t.cantidad=t.cantidad+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
-						+ "WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
-				stmt=conexion.prepareStatement(queryTienen);
-				stmt.executeQuery();
-			}	
-			else
-			{
-				queryTienen="INSERT INTO Tienen(idEmpresa,idRecurso,cantidad) VALUES ("+idEmpresaF+","+idRecurso+", "
-						+ "(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+"))";
-				stmt=conexion.prepareStatement(queryTienen);
-				stmt.executeQuery();
-			}
-		}
-		catch (SQLException e){
-			e.printStackTrace();
-			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
-		}
-		finally{
-			if (updStmt != null) 
-			{
-				try{
-					updStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (selStmt != null) 
-			{
-				try{
-					selStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (stmt != null) 
-			{
-				try{
-					stmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			closeConnection(conexion);
-		}
-	}
-	
-	public void consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
-	{
-		PreparedStatement updStmt = null;
-		PreparedStatement selStmt = null;
-		PreparedStatement stmt = null;
-		try
-		{
-			establecerConexion(cadenaConexion, usuario, clave);
 			String queryConsulta = "SELECT * FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
 			String queryTienen = null;
 			updStmt = conexion.prepareStatement(queryPedido);
