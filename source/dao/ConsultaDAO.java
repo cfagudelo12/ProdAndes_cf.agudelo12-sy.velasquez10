@@ -23,7 +23,7 @@ public class ConsultaDAO {
 	 */
 	private static final String ARCHIVO_CONEXION = "/../conexion.properties";
 	
-	private static final int idEmpresaF = 0;
+	private static final int idEmpresaF = 1;
 	
 	//----------------------------------------------------
 	// Constantes de tablas
@@ -323,4 +323,66 @@ public class ConsultaDAO {
 	//---------------------------------------------------
 	// Metodos asociados a los casos de uso: Modificacion
 	//---------------------------------------------------
+	
+	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception{
+		PreparedStatement updStmt = null;
+		PreparedStatement selStmt = null;
+		PreparedStatement stmt = null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado=Entregado WHERE p.idPedido="+idPedido;
+			String queryConsulta = "SELECT * FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
+			String queryTienen = null;
+			updStmt = conexion.prepareStatement(queryPedido);
+			updStmt.executeQuery();
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			if(rs.next()){
+				queryTienen="UPDATE Tienen t SET t.cantidad=t.cantidad+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
+						+ "WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
+				stmt=conexion.prepareStatement(queryTienen);
+				stmt.executeQuery();
+			}
+			else{
+				queryTienen="INSERT INTO Tienen(idEmpresa,idRecurso,cantidad) VALUES ("+idEmpresaF+","+idRecurso+", "
+						+ "(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+"))";
+				stmt=conexion.prepareStatement(queryTienen);
+				stmt.executeQuery();
+			}
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (updStmt != null) 
+			{
+				try{
+					updStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (stmt != null) 
+			{
+				try{
+					stmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
 }
