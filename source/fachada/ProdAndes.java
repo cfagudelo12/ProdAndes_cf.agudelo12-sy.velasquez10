@@ -3,6 +3,7 @@ package fachada;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import vos.MaterialValue;
 import vos.RecursoValue;
 import dao.ConsultaDAO;
 
@@ -72,7 +73,7 @@ public class ProdAndes
 	{
 		dao.registrarLlegadaRecurso(idRecurso,idPedido,fechaLlegada);
 	}
-	public ArrayList<RecursoValue> consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
+	public ArrayList<MaterialValue> consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
 	{
 		return dao.consultarRecurso(cantidad, desde, hasta, costo);
 	}

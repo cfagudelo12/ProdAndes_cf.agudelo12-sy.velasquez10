@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 
 
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,8 @@ import org.jboss.system.server.ServerConfigLocator;
 
 
 
+
+import vos.MaterialValue;
 import vos.RecursoValue;
 import fachada.ProdAndes;
 
@@ -39,7 +42,7 @@ public class ServletRecursos
 	private static final long serialVersionUID = 1L;
 	public final static String RUTA_ARCHIVO_SERIALIZADO = "/Empresa.data";
 	private boolean seRegistro;
-	private ArrayList<RecursoValue> listaRecursos;
+	private ArrayList<MaterialValue> listaMateriales;
 	// -----------------------------------------------------------------
 	// Métodos
 	// -----------------------------------------------------------------
@@ -50,7 +53,7 @@ public class ServletRecursos
 	public void init( ) throws ServletException
 	{
 		seRegistro=false;
-		listaRecursos= new ArrayList<RecursoValue>();
+		listaMateriales= new ArrayList<MaterialValue>();
 	}
 
 	public void destroy( )
@@ -162,7 +165,7 @@ public class ServletRecursos
 					fechaLl = formato.parse(hasta);
 					Date fechaHasta=(Date) fechaLl;
 
-					listaRecursos= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(cantidad), fechaDesde, fechaHasta, Float.parseFloat(costo));
+					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(cantidad), fechaDesde, fechaHasta, Float.parseFloat(costo));
 				} 
 				catch (ParseException e) 
 				{
@@ -425,37 +428,31 @@ public class ServletRecursos
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
 		respuesta.println( "            </form>");
-		for(int i=0;i<listaRecursos.size();i++)
+		for(int i=0;i<listaMateriales.size();i++)
 		{
-			//						Recurso r= (Recurso) listaMateriales.get(i);
-			//						respuesta.println( "             <div class=\"row\">");
-			//						respuesta.println( "                        <div class=\"panel panel-default\" >");
-			//						respuesta.println( "                            <div class=\"panel-heading\">");
-			//						respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del material consultado</h3>");
-			//						respuesta.println( "                            </div>");
-			//						respuesta.println( "                            <br/>");
-			//						respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-			//						respuesta.println( "                                <div class=\"col-lg-4\">");
-			//						respuesta.println( "                                    <span>Tipo: "+ r.darTipo() +"</span>");
-			//						respuesta.println( "                                </div>");
-			//						respuesta.println( "                                <div class=\"col-lg-4\">");
-			//						respuesta.println( "                                    <span>Materiales que lo componen: "+ r.darMaterialesQueComponen() +" </span>");
-			//						respuesta.println( "                                </div>");
-			//						respuesta.println( "                                <div class=\"col-lg-4\">");
-			//						respuesta.println( "                                    <span>Materiales que compone: "+ r.darMaterialesQueCompone() +"</span>");
-			//						respuesta.println( "                                </div>");
-			//						respuesta.println( "                                <div class=\"col-lg-4\">");
-			//						respuesta.println( "                                    <span>Etapas de producci&#243n en las que participa: "+ r.darEtapasDeproduccion() +" </span>");
-			//						respuesta.println( "                                </div>");
-			//						respuesta.println( "                                <div class=\"col-lg-4\">");
-			//						respuesta.println( "                                    <span>Pedidos de clientes en los que esta involucrado: "+ r.darPedidosCliente() +"</span>");
-			//						respuesta.println( "                                </div>");
-			//						respuesta.println( "                                <div class=\"col-lg-4\">");
-			//						respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+ r.darPedidosCompra() +" </span>");
-			//						respuesta.println( "                                </div>");
-			//						respuesta.println( "                            </div>");
-			//						respuesta.println( "                        </div>");
-			//						respuesta.println( "                </div>");
+									MaterialValue r= (MaterialValue) listaMateriales.get(i);
+									respuesta.println( "             <div class=\"row\">");
+									respuesta.println( "                        <div class=\"panel panel-default\" >");
+									respuesta.println( "                            <div class=\"panel-heading\">");
+									respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del material consultado</h3>");
+									respuesta.println( "                            </div>");
+									respuesta.println( "                            <br/>");
+									respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+									respuesta.println( "                                <div class=\"col-lg-4\">");
+									respuesta.println( "                                    <span>Tipo: "+ r.getRecurso().getTipoRecurso() +"</span>");
+									respuesta.println( "                                </div>");
+									respuesta.println( "                                <div class=\"col-lg-4\">");
+									respuesta.println( "                                    <span>Productos que compone: "+ r.getProductosQueCompone() +"</span>");
+									respuesta.println( "                                </div>");
+									respuesta.println( "                                <div class=\"col-lg-4\">");
+									respuesta.println( "                                    <span>Etapas de producci&#243n en las que participa: "+ r.getEtapasProduccion() +" </span>");
+									respuesta.println( "                                </div>");
+									respuesta.println( "                                <div class=\"col-lg-4\">");
+									respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+ r.getPedidos() +" </span>");
+									respuesta.println( "                                </div>");
+									respuesta.println( "                            </div>");
+									respuesta.println( "                        </div>");
+									respuesta.println( "                </div>");
 		}
 		respuesta.println( "                <!-- /.row -->");
 		respuesta.println( "            </div>");
