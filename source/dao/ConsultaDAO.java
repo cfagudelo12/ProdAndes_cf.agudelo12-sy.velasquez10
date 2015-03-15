@@ -262,7 +262,7 @@ public class ConsultaDAO {
 		return recursos;
 	}
 	
-	public ArrayList<MaterialValue> consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
+	public ArrayList<MaterialValue> consultarRecurso(int volumen, Date desde, Date hasta, Float costo) throws Exception
 	{
 		ArrayList<MaterialValue> materiales= new ArrayList<MaterialValue>();
 		PreparedStatement selStmt = null;
@@ -271,9 +271,9 @@ public class ConsultaDAO {
 			establecerConexion(cadenaConexion, usuario, clave);
 			String queryConsulta = "SELECT * FROM"+tRecursos+" r, "+tSolicitan+" s,"+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+ tPedidos+" p, WHERE r.idRecurso=s.idRecurso AND s.idPedido=p.idPedido AND r.idRecurso=req.idRecurso AND req.idEtapaProduccion=e.idEtapaProduccion AND pro.idEtapaProduccion=e.idEtapaProduccion";
 			
-			if(cantidad>0)
+			if(volumen>0)
 			{
-				queryConsulta+=" AND r.volumen="+cantidad;
+				queryConsulta+=" AND r.volumen="+volumen;
 			}
 			if(costo>0)
 			{
@@ -297,19 +297,10 @@ public class ConsultaDAO {
 				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
 				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
 				
-				EtapaProduccionValue etapa = new EtapaProduccionValue();
-				etapa.setNumeroEtapa(rs.getInt(EtapaProduccionValue.cNumeroEtapa));
-				
-				PedidoValue pedido = new PedidoValue();
-				pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
-				
-				ProcesoProduccionValue proceso = new ProcesoProduccionValue();
-				proceso.setIdProducto(ProcesoProduccionValue.cIdProducto);
-				
 				m.setRecurso(recurso);
-				m.agregarEtapasProduccion(""+etapa.getNumeroEtapa());
-				m.agregarPedidos(""+pedido.getIdPedido());
-				m.agregarProductos(""+proceso.getIdProducto());
+				m.agregarEtapasProduccion(""+rs.getInt(EtapaProduccionValue.cNumeroEtapa));
+				m.agregarPedidos(""+rs.getInt(PedidoValue.cIdPedido));
+				m.agregarProductos(""+rs.getInt(ProcesoProduccionValue.cIdProducto));
 				materiales.add(m);
 			}
 			
@@ -335,6 +326,59 @@ public class ConsultaDAO {
 			closeConnection(conexion);
 		}
 	}
+	public ArrayList<MaterialValue> consultarProducto(int cantidad, float costo) throws Exception 
+	{
+		ArrayList<MaterialValue> materiales= new ArrayList<MaterialValue>();
+		PreparedStatement selStmt = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryConsulta = "SELECT * FROM"+tProductos+"p, "+tRecursos+" r, "+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+tCompran+" c WHERE p.idProducto=pro.idProducto AND pro.idProcesoProduccion=e.idProcesoProduccion AND req.idEtapaProduccion=e.idEtapaProducion AND req.idRecurso=r.idRecurso AND c.idProducto=p.idProducto AND pe.idPedido=c.idPedido";
+			
+			if(cantidad>0)
+			{
+				queryConsulta+=" AND p.cantidad="+cantidad;
+			}
+			if(costo>0)
+			{
+				queryConsulta+=" AND p.costo="+costo;
+			}
+			
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			
+			while(rs.next())
+			{
+				MaterialValue m= new MaterialValue();
+		
+				m.agregarRecursoQueLoCompone(rs.getString(RecursoValue.cNombre));
+				m.agregarPedidos(""+rs.getInt(PedidoValue.cIdPedido));
+				materiales.add(m);
+			}
+			
+			return materiales;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+
 	
 	public ArrayList<RecursoValue> consultarRecursos(int tipoConsulta) throws Exception{
 		String consulta=null;
@@ -395,6 +439,8 @@ public class ConsultaDAO {
 		}
 		return recursos;
 	}
+	
+	
 
 	//---------------------------------------------------
 	// Metodos asociados a los casos de uso: Modificacion
@@ -504,4 +550,5 @@ public class ConsultaDAO {
 			closeConnection(conexion);
 		}
 	}
+
 }

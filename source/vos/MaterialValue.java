@@ -1,16 +1,21 @@
 package vos;
 
-import java.util.ArrayList;
 
 public class MaterialValue 
 {	
 	private RecursoValue recurso;
+	
+	private ProductoValue produto;
+	
+	private String materialesQueLoComponen;
 	
 	private String productosQueCompone;
 	
 	private String etapasProduccion;
 	
 	private String pedidos;
+	
+	private String recursoQueLoCompone;
 	
 	public MaterialValue(){}
 
@@ -57,4 +62,35 @@ public class MaterialValue
 		this.pedidos+= pedidos + ", ";
 		
 	}
+
+	public ProductoValue getProduto() {
+		return produto;
+	}
+
+	public void setProduto(ProductoValue produto) {
+		this.produto = produto;
+	}
+
+	public String getMaterialesQueLoComponen() {
+		return materialesQueLoComponen;
+	}
+
+	public void setMaterialesQueLoComponen(String materialesQueLoComponen) {
+		this.materialesQueLoComponen = materialesQueLoComponen;
+	}
+
+	public void agregarRecursoQueLoCompone(String recurso) 
+	{
+		this.recursoQueLoCompone+= recurso + ", ";
+	}
+
+	public String getRecursoQueLoCompone() {
+		return recursoQueLoCompone;
+	}
+
+	public void setRecursoQueLoCompone(String recursoQueLoCompone) {
+		this.recursoQueLoCompone = recursoQueLoCompone;
+	}
+
+
 }
