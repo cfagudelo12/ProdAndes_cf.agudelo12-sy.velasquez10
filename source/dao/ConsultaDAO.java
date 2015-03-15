@@ -336,66 +336,6 @@ public class ConsultaDAO {
 			closeConnection(conexion);
 		}
 	}
-	
-	public ArrayList<RecursoValue> consultarRecursos(int tipoConsulta) throws Exception{
-		String consulta=null;
-		switch(tipoConsulta){
-			case tcrDefault:
-				consulta="SELECT * FROM "+tRecursos;
-				break;
-			case tcrTipoMateriaPrima:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\'"+RecursoValue.materiaPrima+"\'";
-				break;
-			case tcrTipoComponente:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\'"+RecursoValue.componente+"\'";
-				break;
-			case tcrVolumen:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
-				break;
-			case tcrEtapaProduccion:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
-				break;
-			case tcrFechaSolicitud:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
-				break;
-			case tcrFechaEntrega:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
-				break;
-		}
-		PreparedStatement prepStmt = null;
-		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
-		try{
-			establecerConexion(cadenaConexion, usuario, clave);
-			prepStmt = conexion.prepareStatement(consulta);
-			ResultSet rs = prepStmt.executeQuery();
-			while(rs.next()){
-				RecursoValue recurso = new RecursoValue();
-				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
-				recurso.setNombre(rs.getString(RecursoValue.cNombre));
-				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
-				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
-				recursos.add(recurso);
-				recurso = new RecursoValue();
-			}
-		}
-		catch (SQLException e){
-			e.printStackTrace();
-			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
-		}
-		finally{
-			if (prepStmt != null) 
-			{
-				try{
-					prepStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			closeConnection(conexion);
-		}
-		return recursos;
-	}
 
 	//---------------------------------------------------
 	// Metodos asociados a los casos de uso: Modificacion
