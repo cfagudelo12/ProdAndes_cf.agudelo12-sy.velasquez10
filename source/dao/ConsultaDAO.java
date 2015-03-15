@@ -331,7 +331,7 @@ public class ConsultaDAO {
 		PreparedStatement stmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado=Entregado WHERE p.idPedido="+idPedido;
+			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado='Entregado' WHERE p.idPedido="+idPedido;
 			String queryConsulta = "SELECT * FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
 			String queryTienen = null;
 			updStmt = conexion.prepareStatement(queryPedido);
@@ -445,6 +445,46 @@ public class ConsultaDAO {
 			{
 				try{
 					stmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
+	public void registrarEntregaPedido(int idCliente,int idProducto,int idPedido, Date fechaLlegada) throws Exception{
+		PreparedStatement updPedStmt = null;
+		PreparedStatement updProdStmt = null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado='Entregado' WHERE p.idPedido="+idPedido;
+			updPedStmt = conexion.prepareStatement(queryPedido);
+			updPedStmt.executeQuery();
+			String queryProducto = "UPDATE Productos p SET p.cantidadEnBodega=p.cantidadEnBodega-(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
+					+ "p.unidadesVendidas=p.unidadesVendidas+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+") WHERE p.idProducto="+idProducto;
+			updProdStmt = conexion.prepareStatement(queryProducto);
+			updProdStmt.executeQuery();
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (updPedStmt != null) 
+			{
+				try{
+					updPedStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (updProdStmt != null) 
+			{
+				try{
+					updProdStmt.close();
 				} 
 				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
