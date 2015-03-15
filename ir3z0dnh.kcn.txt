@@ -1,0 +1,53 @@
+﻿Merge remote-tracking branch 'origin/master'
+
+Conflicts:
+	classes/.gitignore
+	classes/dao/ConsultaDAO.class
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch and 'origin/master' have diverged,
+# and have 1 and 7 different commits each, respectively.
+#   (use "git pull" to merge the remote branch into yours)
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	deleted:    .gitignore
+#	deleted:    classes/.gitignore
+#	deleted:    classes/dao/ConsultaDAO.class
+#	modified:   classes/fachada/ProdAndes.class
+#	new file:   classes/servlets/ServletEmpleados.class
+#	deleted:    classes/servlets/ServletEmpresa.class
+#	modified:   classes/servlets/ServletLogIn.class
+#	new file:   classes/servlets/ServletMateriales.class
+#	new file:   classes/servlets/ServletProcesoProduccion.class
+#	new file:   classes/servlets/ServletProducto.class
+#	modified:   classes/vos/Empresa.class
+#	new file:   classes/vos/Producto.class
+#	new file:   classes/vos/Recurso.class
+#	modified:   classes/vos/convertorhtml.class
+#	modified:   data/descriptores/WEB-INF/web.xml
+#	new file:   data/html/Logo4.png
+#	modified:   data/html/css/estilo.css
+#	new file:   data/html/empleados.html
+#	modified:   data/html/index.html
+#	new file:   data/html/materiales.html
+#	new file:   data/html/procesoDeProduccion.html
+#	renamed:    data/html/productos -> data/html/productos.html
+#	modified:   dist/ProdAndes.war
+#	modified:   source/dao/ConsultaDAO.java
+#	new file:   source/servlets/ServletEmpleados.java
+#	new file:   source/servlets/ServletMateriales.java
+#	new file:   source/servlets/ServletProcesoProduccion.java
+#	renamed:    source/servlets/ServletEmpresa.java -> source/servlets/ServletProducto.java
+#	modified:   source/vos/convertorhtml.java
+#
+

@@ -12,15 +12,38 @@ Autor: Pablo Barvo - 05-Mayo-2006
 -->
 <web-app>
  <description>Servlet Calculadora Web</description>
- <!-- SERVLETS -->
- <servlet>
-  <servlet-name>Empresa</servlet-name>
-  <servlet-class>servlets.ServletEmpresa</servlet-class>
+ <!-- SERVLETS --><servlet>
+ 	<servlet-name>Materiales</servlet-name>
+ 	<servlet-class>servlets.ServletMateriales</servlet-class>
+</servlet>
+	<servlet>
+  <servlet-name>Producto</servlet-name>
+  <servlet-class>servlets.ServletProducto</servlet-class>
  </servlet>
- <!-- MAPPING --><servlet-mapping>
- 	<servlet-name>Empresa</servlet-name>
- 	<url-pattern>/empresa.htm</url-pattern>
+	<servlet>
+		<servlet-name>Proceso</servlet-name>
+		<servlet-class>servlets.ServletProcesoProduccion</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>Empleados</servlet-name>
+		<servlet-class>servlets.ServletEmpleados</servlet-class>
+	</servlet>
+	<!-- MAPPING --><servlet-mapping>
+ 	<servlet-name>Materiales</servlet-name>
+ 	<url-pattern>/materiales.htm</url-pattern>
 </servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>Producto</servlet-name>
+ 	<url-pattern>/producto.htm</url-pattern>
+</servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>Proceso</servlet-name>
+ 	<url-pattern>/procesoDeProduccion.htm</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>Empleados</servlet-name>
+ 	<url-pattern>/empleados.htm</url-pattern>
+ </servlet-mapping>
  <login-config>
   <auth-method>BASIC</auth-method>
  </login-config>
