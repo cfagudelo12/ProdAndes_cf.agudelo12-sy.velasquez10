@@ -11,9 +11,14 @@
 
 		    <!-- Custom CSS -->
 		    <link href="css/sb-admin.css" rel="stylesheet">
+         
+              <!-- Custom Fonts -->
+            <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+             <!-- Morris Charts CSS -->
+            <link href="css/plugins/morris.css" rel="stylesheet">
 	</head>
 	<body>
-    <form method="GET" action="procesoDeProduccion.htm">
+    
 	<div id="wrapper">
         <!-- Navbar -->
         <nav id="fondoAzul" class="navbar navbar-fixed-top navbar-fixed-top" role="navigation">
@@ -26,26 +31,22 @@
                 <li id="fondoAzul"  class="dropdown">
                     <a id="fondoAzul"  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Carlos y Sergio <b class="caret"></b></a>
                     <ul id="fondoAzul" class="dropdown-menu">
-                        <form method="GET" action="producto.htm">
-                        <li class="active">
+                        
+                        <li>
                             <a href="productos.html"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
                         </li>
-                        </form>
-                        <form method="GET" action="procesoDeProduccion.htm">
+
                         <li class="active">
                             <a href="procesoDeProduccion.html"><i class="fa fa-fw fa-bar-chart-o"></i> <div id="letraBlanca" >Proceso de producci&#243n</div></a>
                         </li>
-                        </form>
-                        <form method="GET" action="materiales.htm">
                         <li>
                             <a href="materiales.html"><i class="fa fa-fw fa-table"></i> <div id="letraBlanca" >materiales</div></a>
                         </li>
-                         </form>
-                        <form method="GET" action="empleados.htm">
+
                         <li>
                             <a href="empleados.html"><i class="fa fa-fw fa-edit"></i> <div id="letraBlanca" >Empleados</div></a>
                         </li>
-                        </form>
+
                     </ul>
                 </li>
             </ul>
@@ -53,7 +54,7 @@
             <div  class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
                     <li>
-                        <a href="productos"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
+                        <a href="productos.html"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
                     </li>
                     <li>
                         <a href="procesoDeProduccion.html"><i class="fa fa-fw fa-bar-chart-o"></i> <div id="letraBlanca" >Proceso de producci&#243n</div></a>
@@ -67,7 +68,7 @@
                 </ul>
             </div>
         </nav>
-		
+		<form method="GET" action="procesoDeProduccion.htm">
         <div id="page-wrapper">
 
             <div class="container-fluid">
@@ -76,49 +77,39 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <h1 class="page-header">
-                            Productos <small>Informaci&#243n general</small>
+                            Proceso de producci&#243n <small>Informaci&#243n general</small>
                         </h1>
                         
                     </div>
                 </div>
-                 <!--Registrar pedido de productos-->
+                 <!--Registrar ejecucion de una etapa de produccion-->
                 <div class="row">
                         <div class="panel panel-default" >
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Solicitar Productos</h3>
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Registrar ejecuci&#243n de una etapa de producci&#243n</h3>
                             </div>
                             <br/>
                             <div class="panel-body" id="wrap">
-                            	<div class="col-lg-4">
-	                            	<span>Eliga el producto: </span>
-	                            	<br/>
-	                            	<br/>
-	                                <Select>
-	                                    <option>
-	                                        <i>producto 1</i> 
-	                                    </option>
-	                                    <option>
-	                                        <i>producto 2</i> 
-	                                    </option>
-	                                    <option>
-	                                        <i>producto 3</i> 
-	                                    </option>
-	                                </Select>
-								</div>
-								<div class="col-lg-4">
-	                            	<span>Indique la cantidad deseada: </span>
-	                            	<br/>
-	                            	<br/>
-	                               	<INPUT type="number" name="cantidad"/>
+                                <div class="col-lg-4">
+                                    <span>Indique el id del proceso: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="proceso"/>
                                 </div>
                                 <div class="col-lg-4">
-	                            	<span>Indique la fecha de entrega deseada: </span>
-	                            	<br/>
-	                            	<br/>
-	                               	<INPUT type="date" name="fecha"/>
+                                    <span>Indique el n&#250mero de la etapa: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="etapa"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el c&#243digo de la estaci&#243n: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="estacion"/>
                                 </div>
                                 <div class="col-lg-12">
-                                	<INPUT type="submit" value="Solicitar" name="solicitarProducto">
+                                	<INPUT type="submit" value="Registrar" name="regsitrarEjecucionEtapa">
                                 </div>
                             </div>
                         </div>
@@ -126,22 +117,7 @@
                 <!-- /.row -->
             </div>
             <!-- /.container-fluid -->
-              <div id="littleWrap">
-				<div class="row">
-                        <div class="panel panel-default" >
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i>Productos solicitados</h3>
-                            </div>
-                            <br/>
-                            <div id="margen"> Los productos solicitados fueron: </div>
-                            <div class="panel-body" id="wrap">
-                            	<div class="col-lg-4">
-	                            	producto 1
-								</div>		
-                            </div>
-                        </div>
-                </div>
-    </div>
+          
         </div>
         <!-- /#page-wrapper -->
     </div>

@@ -11,6 +11,10 @@
 
 		    <!-- Custom CSS -->
 		    <link href="css/sb-admin.css" rel="stylesheet">
+		      <!-- Custom Fonts -->
+    		<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    		 <!-- Morris Charts CSS -->
+    		<link href="css/plugins/morris.css" rel="stylesheet">
 	</head>
 	<body>
 	
@@ -45,26 +49,23 @@
             <!-- elementos de la parte de arriba del navbar- para pantallas pequeñas -->
             <div  class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
-                	<form method="GET" action="producto.htm">
+                	
                     <li class="active">
                         <a href="productos.html"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
                     </li>
-                	</form>
-                	<form method="GET" action="procesoDeProduccion.htm">
+
                     <li>
                         <a href="procesoDeProduccion.html"><i class="fa fa-fw fa-bar-chart-o"></i> <div id="letraBlanca" >Proceso de producci&#243n</div></a>
                     </li>
-                    </form>
-                    <form method="GET" action="materiales.htm">
+
                     <li>
                         <a href="materiales.html"><i class="fa fa-fw fa-table"></i> <div id="letraBlanca" >materiales</div></a>
                     </li>
-                     </form>
-                    <form method="GET" action="empleados.htm">
+
                     <li>
                         <a href="empleados.html"><i class="fa fa-fw fa-edit"></i> <div id="letraBlanca" >Empleados</div></a>
                     </li>
-                     </form>
+
                 </ul>
             </div>
         </nav>
@@ -94,7 +95,7 @@
 	                            	<span>Eliga el producto: </span>
 	                            	<br/>
 	                            	<br/>
-	                                <Select>
+	                                <Select >
 	                                    <option>
 	                                        <i>producto 1</i> 
 	                                    </option>
@@ -119,7 +120,7 @@
 	                               	<INPUT type="date" name="fecha"/>
                                 </div>
                                 <div class="col-lg-12">
-                                	<INPUT type="submit" value="Solicitar" name="solicitarProducto">
+                                	<INPUT type="submit" value="Solicitar" name="solicitarProducto"/>
                                 </div>
                             </div>
                         </div>

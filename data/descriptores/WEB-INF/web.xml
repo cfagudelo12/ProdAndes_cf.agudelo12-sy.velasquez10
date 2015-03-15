@@ -20,14 +20,30 @@ Autor: Pablo Barvo - 05-Mayo-2006
   <servlet-name>Producto</servlet-name>
   <servlet-class>servlets.ServletProducto</servlet-class>
  </servlet>
- <!-- MAPPING --><servlet-mapping>
+	<servlet>
+		<servlet-name>Proceso</servlet-name>
+		<servlet-class>servlets.ServletProcesoProduccion</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>Empleados</servlet-name>
+		<servlet-class>servlets.ServletEmpleados</servlet-class>
+	</servlet>
+	<!-- MAPPING --><servlet-mapping>
  	<servlet-name>Materiales</servlet-name>
- 	<url-pattern>materiales.htm</url-pattern>
+ 	<url-pattern>/materiales.htm</url-pattern>
 </servlet-mapping>
  <servlet-mapping>
  	<servlet-name>Producto</servlet-name>
  	<url-pattern>/producto.htm</url-pattern>
 </servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>Proceso</servlet-name>
+ 	<url-pattern>/procesoDeProduccion.htm</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>Empleados</servlet-name>
+ 	<url-pattern>/empleados.htm</url-pattern>
+ </servlet-mapping>
  <login-config>
   <auth-method>BASIC</auth-method>
  </login-config>
