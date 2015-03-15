@@ -7,7 +7,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import vos.Recurso;
+import vos.RecursoValue;
 
 /**
 * Clase ConsultaDAO, encargada de hacer las consultas a la base de datos
@@ -198,7 +198,7 @@ public class ConsultaDAO {
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
 
-	public ArrayList<Recurso> consultarRecursosInventario(int tipoConsulta) throws Exception
+	public ArrayList<RecursoValue> consultarRecursosInventario(int tipoConsulta) throws Exception
 	{
 		String consulta=null;
 		switch(tipoConsulta)
@@ -226,19 +226,19 @@ public class ConsultaDAO {
 				break;
 		}
 		PreparedStatement prepStmt = null;
-		ArrayList<Recurso> recursos = new ArrayList<Recurso>();
+		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			prepStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = prepStmt.executeQuery();
 			while(rs.next()){
-				Recurso recurso = new Recurso();
-				recurso.setIdRecurso(rs.getInt(Recurso.cIdRecurso));
-				recurso.setNombre(rs.getString(Recurso.cNombre));
-				recurso.setCantidadInicial(rs.getInt(Recurso.cCantidadInicial));
-				recurso.setTipoRecurso(rs.getString(Recurso.cTipoRecurso));
+				RecursoValue recurso = new RecursoValue();
+				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
+				recurso.setNombre(rs.getString(RecursoValue.cNombre));
+				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
+				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
 				recursos.add(recurso);
-				recurso = new Recurso();
+				recurso = new RecursoValue();
 			}
 		}
 		catch (SQLException e){
@@ -260,45 +260,45 @@ public class ConsultaDAO {
 		return recursos;
 	}
 	
-	public ArrayList<Recurso> consultarRecursos(int tipoConsulta) throws Exception{
+	public ArrayList<RecursoValue> consultarRecursos(int tipoConsulta) throws Exception{
 		String consulta=null;
 		switch(tipoConsulta){
 			case tcrDefault:
 				consulta="SELECT * FROM "+tRecursos;
 				break;
 			case tcrTipoMateriaPrima:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\'"+Recurso.materiaPrima+"\'";
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\'"+RecursoValue.materiaPrima+"\'";
 				break;
 			case tcrTipoComponente:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\'"+Recurso.componente+"\'";
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\'"+RecursoValue.componente+"\'";
 				break;
 			case tcrVolumen:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
 				break;
 			case tcrEtapaProduccion:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
 				break;
 			case tcrFechaSolicitud:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
 				break;
 			case tcrFechaEntrega:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+RecursoValue.cTipoRecurso+"=\""+RecursoValue.componente+"\"";
 				break;
 		}
 		PreparedStatement prepStmt = null;
-		ArrayList<Recurso> recursos = new ArrayList<Recurso>();
+		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			prepStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = prepStmt.executeQuery();
 			while(rs.next()){
-				Recurso recurso = new Recurso();
-				recurso.setIdRecurso(rs.getInt(Recurso.cIdRecurso));
-				recurso.setNombre(rs.getString(Recurso.cNombre));
-				recurso.setCantidadInicial(rs.getInt(Recurso.cCantidadInicial));
-				recurso.setTipoRecurso(rs.getString(Recurso.cTipoRecurso));
+				RecursoValue recurso = new RecursoValue();
+				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
+				recurso.setNombre(rs.getString(RecursoValue.cNombre));
+				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
+				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
 				recursos.add(recurso);
-				recurso = new Recurso();
+				recurso = new RecursoValue();
 			}
 		}
 		catch (SQLException e){

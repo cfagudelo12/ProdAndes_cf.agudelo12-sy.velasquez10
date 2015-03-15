@@ -3,7 +3,7 @@ package fachada;
 import java.sql.Date;
 import java.util.ArrayList;
 
-import vos.Recurso;
+import vos.RecursoValue;
 import dao.ConsultaDAO;
 
 /**
@@ -61,11 +61,11 @@ public class ProdAndes
     // Métodos asociados a los casos de uso: Consulta
     // ---------------------------------------------------
 	
-	public ArrayList<Recurso> consultarRecursosInventario(int tipoConsulta) throws Exception{
+	public ArrayList<RecursoValue> consultarRecursosInventario(int tipoConsulta) throws Exception{
 		return dao.consultarRecursosInventario(tipoConsulta);
 	}
 	
-	public ArrayList<Recurso> consultarRecursos(int tipoConsulta) throws Exception{
+	public ArrayList<RecursoValue> consultarRecursos(int tipoConsulta) throws Exception{
 		return dao.consultarRecursosInventario(tipoConsulta);
 	}
 }
