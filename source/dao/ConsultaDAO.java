@@ -324,7 +324,8 @@ public class ConsultaDAO {
 	// Metodos asociados a los casos de uso: Modificacion
 	//---------------------------------------------------
 	
-	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception{
+	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception
+	{
 		PreparedStatement updStmt = null;
 		PreparedStatement selStmt = null;
 		PreparedStatement stmt = null;
@@ -337,13 +338,80 @@ public class ConsultaDAO {
 			updStmt.executeQuery();
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
-			if(rs.next()){
+			if(rs.next())
+			{
 				queryTienen="UPDATE Tienen t SET t.cantidad=t.cantidad+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
 						+ "WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
 				stmt=conexion.prepareStatement(queryTienen);
 				stmt.executeQuery();
+			}	
+			else
+			{
+				queryTienen="INSERT INTO Tienen(idEmpresa,idRecurso,cantidad) VALUES ("+idEmpresaF+","+idRecurso+", "
+						+ "(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+"))";
+				stmt=conexion.prepareStatement(queryTienen);
+				stmt.executeQuery();
 			}
-			else{
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (updStmt != null) 
+			{
+				try{
+					updStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (stmt != null) 
+			{
+				try{
+					stmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
+	public void consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
+	{
+		PreparedStatement updStmt = null;
+		PreparedStatement selStmt = null;
+		PreparedStatement stmt = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryConsulta = "SELECT * FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
+			String queryTienen = null;
+			updStmt = conexion.prepareStatement(queryPedido);
+			updStmt.executeQuery();
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			if(rs.next())
+			{
+				queryTienen="UPDATE Tienen t SET t.cantidad=t.cantidad+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
+						+ "WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
+				stmt=conexion.prepareStatement(queryTienen);
+				stmt.executeQuery();
+			}	
+			else
+			{
 				queryTienen="INSERT INTO Tienen(idEmpresa,idRecurso,cantidad) VALUES ("+idEmpresaF+","+idRecurso+", "
 						+ "(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+"))";
 				stmt=conexion.prepareStatement(queryTienen);

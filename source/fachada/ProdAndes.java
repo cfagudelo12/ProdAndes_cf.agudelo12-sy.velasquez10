@@ -68,4 +68,8 @@ public class ProdAndes
 	public ArrayList<RecursoValue> consultarRecursos(int tipoConsulta) throws Exception{
 		return dao.consultarRecursosInventario(tipoConsulta);
 	}
+	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception
+	{
+		dao.registrarLlegadaRecurso(idRecurso,idPedido,fechaLlegada);
+	}
 }
