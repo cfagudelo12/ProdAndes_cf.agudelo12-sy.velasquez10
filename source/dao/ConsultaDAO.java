@@ -267,10 +267,10 @@ public class ConsultaDAO {
 				consulta="SELECT * FROM "+tRecursos;
 				break;
 			case tcrTipoMateriaPrima:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.materiaPrima+"\"";
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\'"+Recurso.materiaPrima+"\'";
 				break;
 			case tcrTipoComponente:
-				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
+				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\'"+Recurso.componente+"\'";
 				break;
 			case tcrVolumen:
 				consulta="SELECT * FROM "+tRecursos+" WHERE "+Recurso.cTipoRecurso+"=\""+Recurso.componente+"\"";
@@ -319,4 +319,8 @@ public class ConsultaDAO {
 		}
 		return recursos;
 	}
+
+	//---------------------------------------------------
+	// Metodos asociados a los casos de uso: Modificacion
+	//---------------------------------------------------
 }
