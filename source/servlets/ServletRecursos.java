@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 
 
+
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +26,12 @@ import org.jboss.system.server.ServerConfigLocator;
 
 
 
+
+
+import vos.RecursoValue;
 import fachada.ProdAndes;
 
-public class ServletMateriales
+public class ServletRecursos
 {
 	/**
 	 * 
@@ -34,7 +39,7 @@ public class ServletMateriales
 	private static final long serialVersionUID = 1L;
 	public final static String RUTA_ARCHIVO_SERIALIZADO = "/Empresa.data";
 	private boolean seRegistro;
-	private ArrayList listaMateriales;
+	private ArrayList<RecursoValue> listaRecursos;
 	// -----------------------------------------------------------------
 	// Métodos
 	// -----------------------------------------------------------------
@@ -45,7 +50,7 @@ public class ServletMateriales
 	public void init( ) throws ServletException
 	{
 		seRegistro=false;
-		listaMateriales= new ArrayList();
+		listaRecursos= new ArrayList<RecursoValue>();
 	}
 
 	public void destroy( )
@@ -144,10 +149,31 @@ public class ServletMateriales
 		{
 			try
 			{
-				String tipo = request.getParameter( "tipo" );
-				String nombre = request.getParameter( "nombre" );
+				String cantidad = request.getParameter( "cantidad" );
+				String costo = request.getParameter( "costo" );
+				String desde = request.getParameter( "desde" );
+				String hasta = request.getParameter( "hasta" );
+				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
+				java.util.Date fechaLl= null;
+				try 
+				{
+					fechaLl = formato.parse(desde);
+					Date fechaDesde=(Date) fechaLl;
+					fechaLl = formato.parse(hasta);
+					Date fechaHasta=(Date) fechaLl;
 
-				//					listaMateriales= ProdAndes.darInstancia().buscarMaterial(tipo,nombre);
+					listaRecursos= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(cantidad), fechaDesde, fechaHasta, Float.parseFloat(costo));
+				} 
+				catch (ParseException e) 
+				{
+					
+					e.printStackTrace();
+				} 
+				catch (Exception e) 
+				{
+					imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+				}
+
 				imprimirPaginaMateriales(response);
 			}
 			catch( NumberFormatException e )
@@ -399,7 +425,7 @@ public class ServletMateriales
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
 		respuesta.println( "            </form>");
-		for(int i=0;i<listaMateriales.size();i++)
+		for(int i=0;i<listaRecursos.size();i++)
 		{
 			//						Recurso r= (Recurso) listaMateriales.get(i);
 			//						respuesta.println( "             <div class=\"row\">");
