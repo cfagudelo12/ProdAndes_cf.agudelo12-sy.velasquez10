@@ -1,6 +1,5 @@
 package dao;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.*;
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import vos.*;
-
 
 /**
 * Clase ConsultaDAO, encargada de hacer las consultas a la base de datos
