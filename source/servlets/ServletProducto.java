@@ -6,10 +6,10 @@ import java.io.PrintWriter;
 
 
 
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -91,7 +91,7 @@ public class ServletProducto extends HttpServlet
 		imprimirEncabezado( response );
 
 		String producto = request.getParameter( "producto" );
-		String solicitudProducto = request.getParameter( "solicitudProducto" );
+		String solicitarProducto = request.getParameter( "solicitarProducto" );
 		String aceptarSolicitudProducto = request.getParameter( "aceptarsolicitudProducto" );
 		String denegarSolicitudProducto = request.getParameter( "denegarsolicitudProducto" );
 		String buscarProducto = request.getParameter( "buscarProducto" );
@@ -100,8 +100,7 @@ public class ServletProducto extends HttpServlet
 		{
 			try
 			{
-				//				listaProductos = ProdAndes.darInstancia().darListaDeProductos();
-				imprimirPaginaProducto(response,null);
+				imprimirPaginaProducto(response);
 
 			}
 			catch( NumberFormatException e )
@@ -109,18 +108,35 @@ public class ServletProducto extends HttpServlet
 				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
 			}
 		}
-		if(solicitudProducto!=null)
+		if(solicitarProducto!=null)
 		{
 			try
 			{
 				seRealizoPedido=true;
-				//				Date fechaEntrega= ProdAndes.darInstancia().realizarSolicitudDepedido();
-				//				imprimirPaginaProducto(response, fechaEntrega);
+				String idCliente = request.getParameter( "idCliente" );
+				String idProducto = request.getParameter( "idProducto" );
+				String cantidad = request.getParameter( "cantidad" );
+				String fecha = request.getParameter( "fechaEntrega" );
+				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
+				java.util.Date fechaLl= null;
+				fechaLl = formato.parse(fecha);
+				Date fechaEntrega=(Date) fechaLl;
+				
+				ProdAndes.darInstancia().solicitarPedido(idCliente, idProducto, fechaEntrega, Integer.parseInt(cantidad));
+				imprimirPaginaProducto(response);
 
 			}
 			catch( NumberFormatException e )
 			{
 				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			} 
+			catch (ParseException e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			} 
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
 			}
 		}
 		else if(aceptarSolicitudProducto!=null && seRealizoPedido)
@@ -129,7 +145,7 @@ public class ServletProducto extends HttpServlet
 			{
 				seRealizoPedido=false;
 				//				seLogroSolicitudProducto= ProdAndes.darInstancia().aceptarSolicitudDepedido();
-				imprimirPaginaProducto(response, null);
+				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )
 			{
@@ -142,7 +158,7 @@ public class ServletProducto extends HttpServlet
 			{
 				seRealizoPedido=false;
 				//				seLogroSolicitudProducto= ProdAndes.darInstancia().denegarSolicitudDepedido();
-				imprimirPaginaProducto(response, null);
+				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )
 			{
@@ -156,7 +172,7 @@ public class ServletProducto extends HttpServlet
 				String cantidad = request.getParameter( "cantidad" );
 				String costo = request.getParameter( "costo" );
 				listaProductos= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
-				imprimirPaginaProducto(response, null);
+				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )
 			{
@@ -202,7 +218,7 @@ public class ServletProducto extends HttpServlet
 	 * @param response Respuesta
 	 * @throws IOException Excepción al imprimir en el resultado
 	 */
-	private void imprimirPaginaProducto( HttpServletResponse response , Date fecha ) throws IOException
+	private void imprimirPaginaProducto( HttpServletResponse response) throws IOException
 	{
 		// Obtiene el flujo de escritura de la respuesta
 		PrintWriter respuesta = response.getWriter( );
@@ -280,31 +296,35 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                            </div>");
 		respuesta.println( "                            <br>");
 		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-		respuesta.println( "                            	<div class=\"col-lg-4\">");
-		respuesta.println( "	                            	<span>Eliga el producto: </span>");
-		respuesta.println( "	                            	<br>");
-		respuesta.println( "	                            	<br>");
-		respuesta.println( "	                                <Select name=\"tipo\">");
-		for(int i=0;i<listaProductos.size();i++)
-		{
-			//							Producto p= (Producto) listaProductos.get(i);
-			//							respuesta.println( "	                                    <option>");
-			//							respuesta.println( "	                                        <i>"+p.darNombre()+"</i>");
-			//							respuesta.println( "	                                    </option>");
-		}
-		respuesta.println( "	                                </Select>");
-		respuesta.println( "								</div>");
+		respuesta.println( "                             	<div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique su Id: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"idCliente\"/>");
+		respuesta.println( "                                </div>");
 		respuesta.println( "								<div class=\"col-lg-4\">");
-		respuesta.println( "	                            	<span>Indique la cantidad deseada: </span>");
-		respuesta.println( "	                            	<br>");
-		respuesta.println( "	                            	<br>");
-		respuesta.println( "	                               	<INPUT type=\"number\" name=\"cantidad\"/>");
+		respuesta.println( "	                            	<span>Indique el id del prodcuto: </span>");
+		respuesta.println( "	                            	<br/>");
+		respuesta.println( "	                            	<br/>");
+		respuesta.println( "	                               	<INPUT type=\"number\" name=\"idProducto\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el id del pedido: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"idPedido\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique la cantidad: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"cantidad\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
 		respuesta.println( "	                            	<span>Indique la fecha de entrega deseada: </span>");
-		respuesta.println( "	                            	<br>");
-		respuesta.println( "	                            	<br>");
-		respuesta.println( "	                               	<INPUT type=\"date\" name=\"fecha\"/>");
+		respuesta.println( "	                            	<br/>");
+		respuesta.println( "	                            	<br/>");
+		respuesta.println( "	                               	<INPUT type=\"date\" name=\"fechaEntrega\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-12\">");
 		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Solicitar\" name=\"solicitarProducto\">");
@@ -316,8 +336,6 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                <!-- /.row -->");
 		respuesta.println( "");
 		respuesta.println( "            </div>");
-		respuesta.println( "            <!-- /.container-fluid -->");
-		respuesta.println( "");
 		if(seRealizoPedido)
 		{
 			respuesta.println( "              <div id=\"littleWrap\">");
@@ -330,27 +348,10 @@ public class ServletProducto extends HttpServlet
 			respuesta.println( "                            <div id=\"margen\"> Los productos solicitados fueron: </div>");
 			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");											
 			respuesta.println( "                            	<div class=\"col-lg-12\">");
-			if(fecha!=null)
-			{
-				respuesta.println( " La fecha de entrega es " + fecha.toString() );
-				respuesta.println( "								</div>		");
-				respuesta.println( "                                <div class=\"col-lg-6\">");
-				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Aceptar\" name=\"aceptarSolicitudProducto\">");
-				respuesta.println( "                                </div>");
-				respuesta.println( "                                <div class=\"col-lg-6\">");
-				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Cancelar\" name=\"cancelarSolicitudProducto\">");
-				respuesta.println( "                                </div>");
-			}
-			else
-			{
-				respuesta.println( " El pedido no puede ser satisfecho porque la empresa no cuenta con los insumos necesarios, se colocara en pendiente para luego programar la compra de los insumos faltantes." ); 
-				respuesta.println( "								</div>		");
-			}
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");
-			respuesta.println( "                </div>");
-			
-
+			respuesta.println( "                </div>");	
+			respuesta.println( "              </div>");	
 		}
 		
 		if(seLogroSolicitudProducto)
@@ -408,6 +409,7 @@ public class ServletProducto extends HttpServlet
 				respuesta.println( "                        </div>");
 				respuesta.println( "                </div>");
 			}
+		respuesta.println( "            	</div>");
 		respuesta.println( "            </div>");
 		respuesta.println( "        </div>");
 		respuesta.println( "        <!-- /#page-wrapper -->");

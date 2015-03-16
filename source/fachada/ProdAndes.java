@@ -70,9 +70,13 @@ public class ProdAndes
 	{
 		return dao.consultarRecurso(volumen, desde, hasta, costo);
 	}
-
 	public ArrayList<MaterialValue> consultarProducto(int cantidad, float costo) throws Exception 
 	{
 		return dao.consultarProducto(cantidad,costo);
+	}
+
+	public void solicitarPedido(String idCliente, String idProducto, Date fechaEntrega, int cantidad) throws Exception 
+	{
+		dao.solicitarPedido(idCliente,idProducto,fechaEntrega, cantidad);
 	}
 }

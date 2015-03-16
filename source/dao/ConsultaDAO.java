@@ -452,7 +452,8 @@ public class ConsultaDAO {
 		}
 	}
 	
-	public void registrarEntregaPedido(int idCliente,int idProducto,int idPedido, Date fechaLlegada) throws Exception{
+	public void registrarEntregaPedido(int idCliente,int idProducto,int idPedido, Date fechaLlegada) throws Exception
+	{
 		PreparedStatement updPedStmt = null;
 		PreparedStatement updProdStmt = null;
 		try{
@@ -483,6 +484,51 @@ public class ConsultaDAO {
 			{
 				try{
 					updProdStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+
+	public void solicitarPedido(String idCliente, String idProducto, Date fechaEntrega, int cantidad) throws Exception 
+	{
+		PreparedStatement insStmt = null;
+		PreparedStatement selStmt = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryConsulta = "SELECT p.costo FROM"+tProductos+"p WHERE p.idProducto="+idProducto;
+
+			
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			Float costo=rs.getFloat(ProductoValue.cCosto);
+			
+			float monto= (float) costo*cantidad;
+			
+			java.util.Date fecha = new java.util.Date();
+			
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryInsert ="INSERT INTO"+tPedidos+"(cantidad,monto,fechaPedido,fechaEsperada,estado) VALUES ("+1+","+monto+","+fecha+","+fechaEntrega+",pendiente))";
+			insStmt = conexion.prepareStatement(queryInsert);
+			insStmt.executeQuery();
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (insStmt != null) 
+			{
+				try
+				{
+					insStmt.close();
 				} 
 				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");

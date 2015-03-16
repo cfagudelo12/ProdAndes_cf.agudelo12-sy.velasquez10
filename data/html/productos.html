@@ -92,33 +92,29 @@
                             </div>
                             <br/>
                             <div class="panel-body" id="wrap">
-                            	<div class="col-lg-4">
-	                            	<span>Elija el producto: </span>
-	                            	<br/>
-	                            	<br/>
-	                                <Select >
-	                                    <option>
-	                                        <i>producto 1</i> 
-	                                    </option>
-	                                    <option>
-	                                        <i>producto 2</i> 
-	                                    </option>
-	                                    <option>
-	                                        <i>producto 3</i> 
-	                                    </option>
-	                                </Select>
-								</div>
+                                <div class="col-lg-4">
+                                    <span>Indique su Id: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="idCliente"/>
+                                </div>
 								<div class="col-lg-4">
-	                            	<span>Indique la cantidad deseada: </span>
+	                            	<span>Indique el id del prodcuto: </span>
 	                            	<br/>
 	                            	<br/>
-	                               	<INPUT type="number" name="cantidad"/>
+	                               	<INPUT type="number" name="idProducto"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique la cantidad: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="cantidad"/>
                                 </div>
                                 <div class="col-lg-4">
 	                            	<span>Indique la fecha de entrega deseada: </span>
 	                            	<br/>
 	                            	<br/>
-	                               	<INPUT type="date" name="fecha"/>
+	                               	<INPUT type="date" name="fechaEntrega"/>
                                 </div>
                                 <div class="col-lg-12">
                                 	<INPUT type="submit" value="Solicitar" name="solicitarProducto"/>
@@ -128,24 +124,9 @@
                 </div>
                 </form>
                 <!-- /.row -->
-            </div>
-                <div id="littleWrap">
-                <div class="row">
-                        <div class="panel panel-default" >
-                            <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i>Productos solicitados</h3>
-                            </div>
-                            <br/>
-                            <div id="margen"> Los productos solicitados fueron: </div>
-                            <div class="panel-body" id="wrap">
-                                <div class="col-lg-4">
-                                    producto 1
-                                </div>      
-                            </div>
-                        </div>
-                </div>
+           
                   <!-- /.container-fluid -->
-                 </div>
+                 
             <!--Buscar un producto-->
                 <form method="GET" action="producto.htm">
                 <div class="row">
@@ -192,6 +173,7 @@
                         </div>
                 </div>
                 <!-- /.row -->
+                </div>
             </div>
         </div>
         <!-- /#page-wrapper -->
