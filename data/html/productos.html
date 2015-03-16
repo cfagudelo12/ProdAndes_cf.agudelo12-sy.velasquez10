@@ -83,6 +83,52 @@
                         
                     </div>
                 </div>
+                <!--consultar existencias de productos-->
+                 <form method="GET" action="producto.htm">
+                <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Consultar existencias de productos</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                  <div class="col-lg-4">
+                                    <span>Indique el rango de existencias: </span>
+                                    <br/>
+                                    <br/>
+                                    <span>Desde: </span>
+                                    <br/>
+                                    <INPUT type="number" name="desde"/>
+                                    <br/>
+                                    <span>Hasta: </span>
+                                    <br/>
+                                    <INPUT type="number" name="hasta"/>
+                                </div>
+                                 <div class="col-lg-4">
+                                    <span>Indique el id del proceso de producci&#243n: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="etapaProduccion"/>
+                                </div>
+                                 <div class="col-lg-4">
+                                    <span>Indique la fecha de solicitud: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="date" name="fechaSolicitud"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique la fecha de entrega: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="date" name="fechaEntrega"/>
+                                </div>
+                                <div class="col-lg-12">
+                                    <INPUT type="submit" value="Consultar" name="consultarExistencias"/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </form>
                  <!--Registrar pedido de productos-->
                   <form method="GET" action="producto.htm">
                 <div class="row">
@@ -159,7 +205,7 @@
           <div id="littleWrap" class="row">
                         <div class="panel panel-default" >
                             <div class="panel-heading">
-                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> La informaci&#243n del prodcuto consultado</h3>
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> La informaci&#243n del producto consultado</h3>
                             </div>
                             <br/>
                             <div class="panel-body" id="wrap">

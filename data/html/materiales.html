@@ -137,12 +137,6 @@
                                         <option>
                                             <iu>componente</i> 
                                         </option>
-                                        <option>
-                                            <i>etapa de producto</i> 
-                                        </option>
-                                        <option>
-                                            <i>producto</i> 
-                                        </option>
                                     </Select>
                                 </div>
                                 <div class="col-lg-4">
@@ -158,16 +152,22 @@
                                     <INPUT type="number" name="hasta"/>
                                 </div>
                                  <div class="col-lg-4">
-                                    <span>Indique la etapa de producci&#243n: </span>
+                                    <span>Indique el id de la etapa de producci&#243n: </span>
                                     <br/>
                                     <br/>
-                                    <INPUT type="text" name="etapaProduccion"/>
+                                    <INPUT type="number" name="etapaProduccion"/>
                                 </div>
                                  <div class="col-lg-4">
-                                    <span>Indique la fecha de solicitud y/o entrega: </span>
+                                    <span>Indique la fecha de solicitud: </span>
                                     <br/>
                                     <br/>
-                                    <INPUT type="date" name="fechaSoE"/>
+                                    <INPUT type="date" name="fechaSolicitud"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique la fecha de entrega: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="date" name="fechaEntrega"/>
                                 </div>
                                 <div class="col-lg-12">
                                     <INPUT type="submit" value="Consultar" name="consultarExistencias"/>

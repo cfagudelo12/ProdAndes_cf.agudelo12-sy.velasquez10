@@ -138,9 +138,16 @@ public class ServletRecursos
 				String desde = request.getParameter( "desde" );
 				String hasta = request.getParameter( "hasta" );
 				String etapaProduccion = request.getParameter( "etapaProduccion" );
-				String fechaSoE = request.getParameter( "fechaSoE" );
-
-				//					listaMateriales= ProdAndes.darInstancia().consultarExistenciasMaterial(tipo,desde,hasta,etapaProduccion,fechaSoE);
+				String fechaS = request.getParameter( "fechaSolicitud" );
+				String fechaE = request.getParameter( "fechaEntrega" );
+				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
+				java.util.Date fechaLl= null;
+				fechaLl = formato.parse(fechaS);
+				Date fechaSolicitud=(Date) fechaLl;
+				fechaLl = formato.parse(fechaE);
+				Date fechaEntrega=(Date) fechaLl;
+				
+				listaMateriales= ProdAndes.darInstancia().consultarExistenciasMaterial(tipo,desde,hasta,etapaProduccion,fechaEntrega,fechaSolicitud);
 				imprimirPaginaMateriales(response);
 			}
 			catch( NumberFormatException e )
@@ -169,7 +176,7 @@ public class ServletRecursos
 				} 
 				catch (ParseException e) 
 				{
-					
+
 					e.printStackTrace();
 				} 
 				catch (Exception e) 
@@ -202,13 +209,21 @@ public class ServletRecursos
 		// Imprime el encabezado
 		respuesta.println( "<html>" );
 		respuesta.println( "<head>" );
-		respuesta.println( "<title>ProdAndes Sistemas Transaccionales</title>" );
-		respuesta.println( "<meta charset\"UTF-8\">" );
-		respuesta.println( "<meta name=\"description\"></meta>" );
-		respuesta.println( "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/estilo.css\"/>" );
-		respuesta.println( "<meta name\"viewport\" content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">" );
-		respuesta.println( "<link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">" ); 
-		respuesta.println( "<link href=\"css/sb-admin.css\" rel=\"stylesheet\">" );
+		respuesta.println( "		<title>ProdAndes Sistemas Transaccionales</title>");
+		respuesta.println( "		<meta charset\"UTF-8\">");
+		respuesta.println( "		<meta name=\"description\"></meta>");
+		respuesta.println( "		<link rel=\"stylesheet\" type=\"text/css\" href=\"css/estilo.css\"/>");
+		respuesta.println( "		<meta name\"viewport\" content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">");
+		respuesta.println( "	");
+		respuesta.println( "		<!-- Bootstrap Core CSS -->");
+		respuesta.println( "		    <link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">");
+		respuesta.println( "");
+		respuesta.println( "		    <!-- Custom CSS -->");
+		respuesta.println( "		    <link href=\"css/sb-admin.css\" rel=\"stylesheet\">");
+		respuesta.println( "		      <!-- Custom Fonts -->");
+		respuesta.println( "    		<link href=\"font-awesome/css/font-awesome.min.css\" rel=\"stylesheet\" type=\"text/css\">");
+		respuesta.println( "    		 <!-- Morris Charts CSS -->");
+		respuesta.println( "    		<link href=\"css/plugins/morris.css\" rel=\"stylesheet\">");
 		respuesta.println( "</head>" );
 	}
 
@@ -429,29 +444,29 @@ public class ServletRecursos
 		respuesta.println( "            </form>");
 		for(int i=0;i<listaMateriales.size();i++)
 		{
-									MaterialValue r= (MaterialValue) listaMateriales.get(i);
-									respuesta.println( "             <div class=\"row\">");
-									respuesta.println( "                        <div class=\"panel panel-default\" >");
-									respuesta.println( "                            <div class=\"panel-heading\">");
-									respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del material consultado</h3>");
-									respuesta.println( "                            </div>");
-									respuesta.println( "                            <br/>");
-									respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-									respuesta.println( "                                <div class=\"col-lg-4\">");
-									respuesta.println( "                                    <span>Tipo: "+ r.getRecurso().getTipoRecurso() +"</span>");
-									respuesta.println( "                                </div>");
-									respuesta.println( "                                <div class=\"col-lg-4\">");
-									respuesta.println( "                                    <span>Productos que compone: "+ r.getProductosQueCompone() +"</span>");
-									respuesta.println( "                                </div>");
-									respuesta.println( "                                <div class=\"col-lg-4\">");
-									respuesta.println( "                                    <span>Etapas de producci&#243n en las que participa: "+ r.getEtapasProduccion() +" </span>");
-									respuesta.println( "                                </div>");
-									respuesta.println( "                                <div class=\"col-lg-4\">");
-									respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+ r.getPedidos() +" </span>");
-									respuesta.println( "                                </div>");
-									respuesta.println( "                            </div>");
-									respuesta.println( "                        </div>");
-									respuesta.println( "                </div>");
+			MaterialValue r= (MaterialValue) listaMateriales.get(i);
+			respuesta.println( "             <div class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del material consultado</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Tipo: "+ r.getRecurso().getTipoRecurso() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Productos que compone: "+ r.getProductosQueCompone() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Etapas de producci&#243n en las que participa: "+ r.getEtapasProduccion() +" </span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+ r.getPedidos() +" </span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
 		}
 		respuesta.println( "                <!-- /.row -->");
 		respuesta.println( "            </div>");

@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
+
+import fachada.ProdAndes;
 
 public class ServletProcesoProduccion
 {
@@ -82,12 +85,17 @@ public class ServletProcesoProduccion
 		{
 			try
 			{
-				String proceso = request.getParameter( "proceso" );
-				String etapa = request.getParameter( "etapa" );
-				String estacion = request.getParameter( "estacion" );
-//				seRegistro = ProdAndes.darInstancia().registrarEjecucionEtapaProduccion(proceso,etapa,estacion);
-				imprimirPaginaMateriales(response);
+				String idEtapa = request.getParameter( "idEtapa" );
+				String idOperario = request.getParameter( "idOperario" );
+				String fecha = request.getParameter( "fecha" );
+				String duracion = request.getParameter( "duracion" );
+				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
+				java.util.Date fechaLl= null;
+				fechaLl = formato.parse(fecha);
+				Date fechaEntrega=(Date) fechaLl;
 				
+				ProdAndes.darInstancia().registrarEjecucionEtapaProduccion(Integer.parseInt(idEtapa),Integer.parseInt(idOperario),fechaEntrega, Integer.parseInt(duracion));
+				imprimirPaginaProcesoProduccion(response);
 			}
 			catch( NumberFormatException e )
 			{
@@ -113,13 +121,21 @@ public class ServletProcesoProduccion
 		// Imprime el encabezado
 		respuesta.println( "<html>" );
 		respuesta.println( "<head>" );
-		respuesta.println( "<title>ProdAndes Sistemas Transaccionales</title>" );
-		respuesta.println( "<meta charset\"UTF-8\">" );
-		respuesta.println( "<meta name=\"description\"></meta>" );
-		respuesta.println( "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/estilo.css\"/>" );
-		respuesta.println( "<meta name\"viewport\" content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">" );
-		respuesta.println( "<link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">" ); 
-		respuesta.println( "<link href=\"css/sb-admin.css\" rel=\"stylesheet\">" );
+		respuesta.println( "		<title>ProdAndes Sistemas Transaccionales</title>");
+		respuesta.println( "		<meta charset\"UTF-8\">");
+		respuesta.println( "		<meta name=\"description\"></meta>");
+		respuesta.println( "		<link rel=\"stylesheet\" type=\"text/css\" href=\"css/estilo.css\"/>");
+		respuesta.println( "		<meta name\"viewport\" content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">");
+		respuesta.println( "	");
+		respuesta.println( "		<!-- Bootstrap Core CSS -->");
+		respuesta.println( "		    <link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">");
+		respuesta.println( "");
+		respuesta.println( "		    <!-- Custom CSS -->");
+		respuesta.println( "		    <link href=\"css/sb-admin.css\" rel=\"stylesheet\">");
+		respuesta.println( "		      <!-- Custom Fonts -->");
+		respuesta.println( "    		<link href=\"font-awesome/css/font-awesome.min.css\" rel=\"stylesheet\" type=\"text/css\">");
+		respuesta.println( "    		 <!-- Morris Charts CSS -->");
+		respuesta.println( "    		<link href=\"css/plugins/morris.css\" rel=\"stylesheet\">");
 		respuesta.println( "</head>" );
 	}
 	
@@ -129,18 +145,14 @@ public class ServletProcesoProduccion
 	 * @param response Respuesta
 	 * @throws IOException Excepción al imprimir en el resultado
 	 */
-	private void imprimirPaginaMateriales( HttpServletResponse response) throws IOException
+	private void imprimirPaginaProcesoProduccion( HttpServletResponse response) throws IOException
 	{
 		// Obtiene el flujo de escritura de la respuesta
 		PrintWriter respuesta = response.getWriter( );
 
 		// Imprime el cuerpo
-		respuesta.println( "<body>");
-		if(seRegistro)
-		{
-			seRegistro=false;
-			respuesta.println( "<srcipt>alert(\"Se registro la ejecución de una etapa de producción de forma exitosa\")</srcipt>");
-		}
+		respuesta.println( "	<body>");
+		respuesta.println( "    ");
 		respuesta.println( "	<div id=\"wrapper\">");
 		respuesta.println( "        <!-- Navbar -->");
 		respuesta.println( "        <nav id=\"fondoAzul\" class=\"navbar navbar-fixed-top navbar-fixed-top\" role=\"navigation\">");
@@ -213,22 +225,28 @@ public class ServletProcesoProduccion
 		respuesta.println( "                            <br/>");
 		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique el id del proceso: </span>");
+		respuesta.println( "                                    <span>Indique el id de la etapa: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"number\" name=\"proceso\"/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"idEtapa\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique el n&#250mero de la etapa: </span>");
+		respuesta.println( "                                    <span>Indique el id del operario: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"number\" name=\"etapa\"/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"idOperario\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique el c&#243digo de la estaci&#243n: </span>");
+		respuesta.println( "                                    <span>Indique la fecha de ejecuci&#243n: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"number\" name=\"estacion\"/>");
+		respuesta.println( "                                    <INPUT type=\"date\" name=\"fecha\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique la duraci&#243n: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"duracion\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-12\">");
 		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Registrar\" name=\"regsitrarEjecucionEtapa\">");
@@ -245,7 +263,7 @@ public class ServletProcesoProduccion
 		respuesta.println( "    </div>");
 		respuesta.println( "    </form>");
 		respuesta.println( "    <!-- /#wrapper -->");
-		respuesta.println( "	</body>");			
+		respuesta.println( "	</body>");		
 	}
 	
 
