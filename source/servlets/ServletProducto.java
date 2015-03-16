@@ -123,7 +123,7 @@ public class ServletProducto extends HttpServlet
 				fechaLl = formato.parse(fechaE);
 				Date fechaEntrega=(Date) fechaLl;
 				
-				listaProductos= ProdAndes.darInstancia().consultarExistenciasProducto(desde,hasta,etapaProduccion,fechaEntrega,fechaSolicitud);
+				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )

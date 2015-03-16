@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 import vos.MaterialValue;
+import vos.ProductoValue;
 import vos.RecursoValue;
 import dao.ConsultaDAO;
 
@@ -61,6 +62,21 @@ public class ProdAndes
     // ---------------------------------------------------
     // Métodos asociados a los casos de uso: Consulta
     // ---------------------------------------------------
+	
+	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
+	{
+		return dao.consultarExistenciasRecurso(tipoMaterial, rInferior, rSuperior, idEtapaProduccion, fechaSolicitud, fechaEntrega);
+	}
+	
+	public ArrayList<ProductoValue> consultarExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
+	{
+		return dao.consultarExistenciasProductos(rInferior, rSuperior, idProcesoProduccion, fechaSolicitud, fechaEntrega);
+	}
+		
+	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, Date fechaEjecucion, int duracion) throws Exception
+	{
+		dao.registrarEjecucionEtapaProduccion(idEtapaProduccion, idOperario, fechaEjecucion, duracion);
+	}
 	
 	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception
 	{

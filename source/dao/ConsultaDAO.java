@@ -69,42 +69,6 @@ public class ConsultaDAO {
 	private static final String tRequieren="Requieren";
 	
 	//----------------------------------------------------
-	// Constantes de tipo de consultas sobre recursos
-	//----------------------------------------------------
-	
-	public final static int tcrDefault = 0;
-	
-	public final static int tcrTipoMateriaPrima = 1;
-	
-	public final static int tcrTipoComponente = 2;
-	
-	public final static int tcrVolumen = 3;
-	
-	public final static int tcrEtapaProduccion = 4;
-	
-	public final static int tcrFechaSolicitud = 5;
-	
-	public final static int tcrFechaEntrega = 6;
-	
-	//----------------------------------------------------
-	// Constantes de tipo de consultas sobre recursos en inventario
-	//----------------------------------------------------
-	
-	public final static int tcriDefault = 0;
-	
-	public final static int tcriTipoMateriaPrima = 1;
-	
-	public final static int tcriTipoComponente = 2;
-	
-	public final static int tcriRangoExistencias = 3;
-	
-	public final static int tcriEtapaProduccion = 4;
-	
-	public final static int tcriFechaSolicitud = 5;
-	
-	public final static int tcriFechaEntrega = 6;
-	
-	//----------------------------------------------------
 	// Atributos
 	//----------------------------------------------------
 	
@@ -610,4 +574,89 @@ public class ConsultaDAO {
 		}
 	}
 
+	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, Date fechaEjecucion, int duracion) throws Exception{
+		PreparedStatement insStmt=null;
+		PreparedStatement selStmt=null;
+		PreparedStatement selEStmt=null;
+		PreparedStatement updStmt=null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryInsert="INSERT INTO Operan(idOperario,idEtapaProduccion,fechaEjecucion, duracion) VALUES("+idEtapaProduccion+","+idOperario+","+fechaEjecucion+","+duracion+")";
+			String querySelectE="SELECT * FROM EtapasProduccion e WHERE e.idEtapaProduccion="+idEtapaProduccion+" AND e.idAnteriorEtapa IS NULL";
+			String querySelect="SELECT * FROM EtapasProduccion e WHERE e.idEtapaProduccion=(SELECT idAnteriorEtapa FROM EtapasProduccion et WHERE et.idEtapaProduccion="+idEtapaProduccion+") AND e.estado='Terminado'";
+			String queryUpdate="UPDATE Tienen t SET t.cantidad=t.cantidad-(SELECT req.cantidad FROM Requieren req WHERE req.idEtapaProduccion="+idEtapaProduccion+")";
+			selEStmt = conexion.prepareStatement(querySelectE);
+			ResultSet rs = selEStmt.executeQuery();
+			if(rs.next()){
+				insStmt=conexion.prepareStatement(queryInsert);
+				insStmt.executeQuery();
+				updStmt=conexion.prepareStatement(queryUpdate);
+				updStmt.executeQuery();
+			}
+			else{
+				selStmt=conexion.prepareStatement(querySelect);
+				ResultSet rs2=selStmt.executeQuery();
+				if(rs2.next()){
+					throw new Exception("Aun no se han terminado las etapas anteriores a esta");
+				}
+				else
+				{
+					insStmt=conexion.prepareStatement(queryInsert);
+					insStmt.executeQuery();
+					updStmt=conexion.prepareStatement(queryUpdate);
+					updStmt.executeQuery();
+				}
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (insStmt != null) 
+			{
+				try
+				{
+					insStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (selStmt != null) 
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (selStmt != null) 
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (updStmt != null) 
+			{
+				try
+				{
+					updStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
 }
