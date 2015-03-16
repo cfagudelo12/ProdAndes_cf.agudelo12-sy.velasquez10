@@ -235,7 +235,6 @@ public class ConsultaDAO {
 		return recursos;
 	}
 	
-
 	private String generarConsultaExistenciaRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega)
 	{
 		String consulta = "SELECT * FROM Recusos r NATURAL INNER JOIN (SELECT t.idRecurso FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+")";
@@ -250,7 +249,7 @@ public class ConsultaDAO {
 			}
 			if(idEtapaProduccion>0){
 				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT req.idRecurso FROM Requieren req WHERE req.idRecurso=r.idRecurso "
-						+ "AND req.idEtapaProduccion="+idEtapaProduccion+")";
+						+ " AND req.idEtapaProduccion="+idEtapaProduccion+")";
 			}
 			if(fechaSolicitud!=null){
 				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
@@ -261,6 +260,68 @@ public class ConsultaDAO {
 						+ " p.fechaEntrega="+fechaEntrega+"))";
 			}
 			consulta.replace("WHERE AND", "WHERE ");
+		}
+		return consulta;
+	}
+	
+	public ArrayList<ProductoValue> consultarExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
+	{
+		ArrayList<ProductoValue> productos = new ArrayList<ProductoValue>();
+		PreparedStatement selStmt = null;
+		try{
+			String consulta	= generarConsultaExistenciasProductos(rInferior, rSuperior, idProcesoProduccion, fechaSolicitud, fechaEntrega);
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();
+			while(rs.next()){
+				ProductoValue producto = new ProductoValue();
+				producto.setIdProducto(rs.getInt(ProductoValue.cIdProducto));
+				producto.setNombre(rs.getString(ProductoValue.cNombre));
+				producto.setCosto(rs.getFloat(ProductoValue.cCosto));
+				producto.setUnidadesProducidas(rs.getInt(ProductoValue.cUnidadesVendidas));
+				producto.setUnidadesEnProduccion(rs.getInt(ProductoValue.cUnidadesEnProduccion));
+				producto.setUnidadesVendidas(rs.getInt(ProductoValue.cUnidadesVendidas));
+				producto.setCantidadEnBodega(rs.getInt(ProductoValue.cCantidadEnBodega));
+				producto.setIdEmpresa(rs.getInt(ProductoValue.cIdEmpresa));
+				producto.setIdProcesoProduccion(rs.getInt(ProductoValue.cIdProcesoProduccion));
+				productos.add(producto);
+				producto = new ProductoValue();
+			}
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return productos;
+	}
+	
+	private String generarConsultaExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega){
+		String consulta = "SELECT * FROM Productos p WHERE p.idEmpresa="+idEmpresaF+" AND p.cantidadEnBodega>0";
+		if(rInferior>0 && rInferior<rSuperior){
+			consulta+=" AND p.cantidad BETWEEN "+rInferior+" AND "+rSuperior;
+		}
+		if(idProcesoProduccion>0){
+			consulta+=" AND p.procesoProduccion="+idProcesoProduccion;
+		}
+		if(fechaSolicitud!=null){
+			consulta+=" AND IN(SELECT * FROM Productos NATURAL INNER JOIN (SELECT c.idProducto FROM Compran c NATURAL INNER JOIN Pedidos p WHERE"
+					+ " p.fechaSolicitud="+fechaSolicitud+"))";
+		}
+		if(fechaEntrega!=null){
+			consulta+=" AND IN(SELECT * FROM Productos NATURAL INNER JOIN (SELECT c.idProducto FROM Compran c NATURAL INNER JOIN Pedidos p WHERE"
+					+ " p.fechaEntrega="+fechaEntrega+"))";
 		}
 		return consulta;
 	}
