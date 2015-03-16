@@ -69,7 +69,7 @@
                 </ul>
             </div>
         </nav>
-		 <form method="GET" action="producto.htm">
+		
         <div id="page-wrapper">
 
             <div class="container-fluid">
@@ -84,6 +84,7 @@
                     </div>
                 </div>
                  <!--Registrar pedido de productos-->
+                  <form method="GET" action="producto.htm">
                 <div class="row">
                         <div class="panel panel-default" >
                             <div class="panel-heading">
@@ -125,11 +126,11 @@
                             </div>
                         </div>
                 </div>
+                </form>
                 <!-- /.row -->
             </div>
-            <!-- /.container-fluid -->
-              <div id="littleWrap">
-				<div class="row">
+                <div id="littleWrap">
+                <div class="row">
                         <div class="panel panel-default" >
                             <div class="panel-heading">
                                 <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i>Productos solicitados</h3>
@@ -137,18 +138,66 @@
                             <br/>
                             <div id="margen"> Los productos solicitados fueron: </div>
                             <div class="panel-body" id="wrap">
-                            	<div class="col-lg-4">
-	                            	producto 1
-								</div>		
+                                <div class="col-lg-4">
+                                    producto 1
+                                </div>      
                             </div>
                         </div>
                 </div>
-    </div>
+                  <!-- /.container-fluid -->
+                 </div>
+            <!--Buscar un producto-->
+                <form method="GET" action="producto.htm">
+                <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Consultar un Producto</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Indique la cantidad en bodega: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="cantidadBodega"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el costo: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="costo"/>
+                                </div>
+                                <div class="col-lg-12">
+                                    <INPUT type="submit" value="Buscar" name="buscarProducto"/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <!-- /.row -->
+            </form>
+          <div id="littleWrap" class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> La informaci&#243n del prodcuto consultado</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Materiales que lo componen: </span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Pedidos de compra en los que esta involucrado: </span>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <!-- /.row -->
+            </div>
         </div>
         <!-- /#page-wrapper -->
     </div>
     <!-- /#wrapper -->
-	</form>
+	
 	</body>
 </html>
 	

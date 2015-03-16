@@ -66,8 +66,13 @@ public class ProdAndes
 	{
 		dao.registrarLlegadaRecurso(idRecurso,idPedido,fechaLlegada);
 	}
-	public ArrayList<MaterialValue> consultarRecurso(int cantidad, Date desde, Date hasta, Float costo) throws Exception
+	public ArrayList<MaterialValue> consultarRecurso(int volumen, Date desde, Date hasta, Float costo) throws Exception
 	{
-		return dao.consultarRecurso(cantidad, desde, hasta, costo);
+		return dao.consultarRecurso(volumen, desde, hasta, costo);
+	}
+
+	public ArrayList<MaterialValue> consultarProducto(int cantidad, float costo) throws Exception 
+	{
+		return dao.consultarProducto(cantidad,costo);
 	}
 }

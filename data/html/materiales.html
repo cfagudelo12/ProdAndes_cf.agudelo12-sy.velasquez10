@@ -186,30 +186,29 @@
                             </div>
                             <br/>
                             <div class="panel-body" id="wrap">
-                            	<div class="col-lg-4">
-	                            	<span>Elija el tipo: </span>
-	                            	<br/>
-	                            	<br/>
-	                                <Select name="tipo">
-	                                    <option>
-	                                        <i>materia prima</i>
-	                                    </option>
-	                                    <option>
-	                                        <iu>componente</i> 
-	                                    </option>
-	                                    <option>
-	                                        <i>etapa de producto</i> 
-	                                    </option>
-                                        <option>
-                                            <i>producto</i> 
-                                        </option>
-	                                </Select>
-								</div>
 								<div class="col-lg-4">
-	                            	<span>Indique el nombre: </span>
+	                            	<span>Indique el volumen: </span>
 	                            	<br/>
 	                            	<br/>
-	                               	<INPUT type="text" name="nombre"/>
+	                               	<INPUT type="number" name="volumen"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el costo: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="costo"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el rango de fechas: </span>
+                                    <br/>
+                                    <br/>
+                                     <span>Desde: </span>
+                                    <br/>
+                                    <INPUT type="date" name="desde"/>
+                                    <br/>
+                                    <span>Hasta: </span>
+                                    <br/>
+                                    <INPUT type="date" name="hasta"/>
                                 </div>
                                 <div class="col-lg-12">
                                 	<INPUT type="submit" value="Buscar" name="buscarMaterial"/>
@@ -219,7 +218,7 @@
                 </div>
                 <!-- /.row -->
             </form>
-             <div class="row">
+             <div id="littleWrap" class="row">
                         <div class="panel panel-default" >
                             <div class="panel-heading">
                                 <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> La informaci&#243n del material consultado</h3>

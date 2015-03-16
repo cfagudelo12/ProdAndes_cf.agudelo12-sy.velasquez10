@@ -152,7 +152,7 @@ public class ServletRecursos
 		{
 			try
 			{
-				String cantidad = request.getParameter( "cantidad" );
+				String volumen = request.getParameter( "volumen" );
 				String costo = request.getParameter( "costo" );
 				String desde = request.getParameter( "desde" );
 				String hasta = request.getParameter( "hasta" );
@@ -165,7 +165,7 @@ public class ServletRecursos
 					fechaLl = formato.parse(hasta);
 					Date fechaHasta=(Date) fechaLl;
 
-					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(cantidad), fechaDesde, fechaHasta, Float.parseFloat(costo));
+					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(volumen), fechaDesde, fechaHasta, Float.parseFloat(costo));
 				} 
 				catch (ParseException e) 
 				{
@@ -395,30 +395,29 @@ public class ServletRecursos
 		respuesta.println( "                            </div>");
 		respuesta.println( "                            <br/>");
 		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-		respuesta.println( "                            	<div class=\"col-lg-4\">");
-		respuesta.println( "	                            	<span>Eliga el tipo: </span>");
-		respuesta.println( "	                            	<br/>");
-		respuesta.println( "	                            	<br/>");
-		respuesta.println( "	                                <Select name=\"tipo\">");
-		respuesta.println( "	                                    <option>");
-		respuesta.println( "	                                        <i>materia prima</i>");
-		respuesta.println( "	                                    </option>");
-		respuesta.println( "	                                    <option>");
-		respuesta.println( "	                                        <iu>componente</i> ");
-		respuesta.println( "	                                    </option>");
-		respuesta.println( "	                                    <option>");
-		respuesta.println( "	                                        <i>etapa de producto</i> ");
-		respuesta.println( "	                                    </option>");
-		respuesta.println( "                                        <option>");
-		respuesta.println( "                                            <i>producto</i> ");
-		respuesta.println( "                                        </option>");
-		respuesta.println( "	                                </Select>");
-		respuesta.println( "								</div>");
 		respuesta.println( "								<div class=\"col-lg-4\">");
-		respuesta.println( "	                            	<span>Indique el nombre: </span>");
+		respuesta.println( "	                            	<span>Indique el volumen: </span>");
 		respuesta.println( "	                            	<br/>");
 		respuesta.println( "	                            	<br/>");
-		respuesta.println( "	                               	<INPUT type=\"text\" name=\"nombre\"/>");
+		respuesta.println( "	                               	<INPUT type=\"number\" name=\"volumen\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el costo: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"costo\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el rango de fechas: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                     <span>Desde: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"date\" name=\"desde\"/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <span>Hasta: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"date\" name=\"hasta\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-12\">");
 		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Buscar\" name=\"buscarMaterial\"/>");

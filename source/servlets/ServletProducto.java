@@ -6,6 +6,8 @@ import java.io.PrintWriter;
 
 
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
 
+import vos.MaterialValue;
+import vos.ProductoValue;
 import fachada.ProdAndes;
 
 
@@ -30,7 +34,7 @@ public class ServletProducto extends HttpServlet
 	public final static String RUTA_ARCHIVO_SERIALIZADO = "/Empresa.data";
 	private boolean seRealizoPedido;
 	private boolean seLogroSolicitudProducto;
-	private ArrayList listaProductos;
+	private ArrayList<MaterialValue> listaProductos;
 
 	// -----------------------------------------------------------------
 	// Métodos
@@ -41,15 +45,15 @@ public class ServletProducto extends HttpServlet
 	 */
 	public void init( ) throws ServletException
 	{
-		 seRealizoPedido=false;
-		 seLogroSolicitudProducto=false;
-		 listaProductos= new ArrayList();
+		seRealizoPedido=false;
+		seLogroSolicitudProducto=false;
+		listaProductos= new ArrayList<MaterialValue>();
 	}
 
 	public void destroy( )
 	{
 		System.out.println("Destruyendo instancia");
-		
+
 	}
 
 
@@ -86,19 +90,19 @@ public class ServletProducto extends HttpServlet
 		// Envía a la respuesta el encabezado del template
 		imprimirEncabezado( response );
 
-		String empresa = request.getParameter( "empresa" );
+		String producto = request.getParameter( "producto" );
 		String solicitudProducto = request.getParameter( "solicitudProducto" );
 		String aceptarSolicitudProducto = request.getParameter( "aceptarsolicitudProducto" );
 		String denegarSolicitudProducto = request.getParameter( "denegarsolicitudProducto" );
-		
-		
-		if(empresa!=null)
+		String buscarProducto = request.getParameter( "buscarProducto" );
+
+		if(producto!=null)
 		{
 			try
 			{
-//				listaProductos = ProdAndes.darInstancia().darListaDeProductos();
+				//				listaProductos = ProdAndes.darInstancia().darListaDeProductos();
 				imprimirPaginaProducto(response,null);
-				
+
 			}
 			catch( NumberFormatException e )
 			{
@@ -110,9 +114,9 @@ public class ServletProducto extends HttpServlet
 			try
 			{
 				seRealizoPedido=true;
-//				Date fechaEntrega= ProdAndes.darInstancia().realizarSolicitudDepedido();
-//				imprimirPaginaProducto(response, fechaEntrega);
-				
+				//				Date fechaEntrega= ProdAndes.darInstancia().realizarSolicitudDepedido();
+				//				imprimirPaginaProducto(response, fechaEntrega);
+
 			}
 			catch( NumberFormatException e )
 			{
@@ -124,7 +128,7 @@ public class ServletProducto extends HttpServlet
 			try
 			{
 				seRealizoPedido=false;
-//				seLogroSolicitudProducto= ProdAndes.darInstancia().aceptarSolicitudDepedido();
+				//				seLogroSolicitudProducto= ProdAndes.darInstancia().aceptarSolicitudDepedido();
 				imprimirPaginaProducto(response, null);
 			}
 			catch( NumberFormatException e )
@@ -137,7 +141,7 @@ public class ServletProducto extends HttpServlet
 			try
 			{
 				seRealizoPedido=false;
-//				seLogroSolicitudProducto= ProdAndes.darInstancia().denegarSolicitudDepedido();
+				//				seLogroSolicitudProducto= ProdAndes.darInstancia().denegarSolicitudDepedido();
 				imprimirPaginaProducto(response, null);
 			}
 			catch( NumberFormatException e )
@@ -145,10 +149,28 @@ public class ServletProducto extends HttpServlet
 				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
 			}
 		}
-		
+		else if(buscarProducto!=null)
+		{
+			try
+			{
+				String cantidad = request.getParameter( "cantidad" );
+				String costo = request.getParameter( "costo" );
+				listaProductos= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
+				imprimirPaginaProducto(response, null);
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			} 
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			}
+		}
+
 		imprimirfooter(response);
 	}
-	
+
 
 	/**
 	 * Imprime el encabezado con el diseño de la página
@@ -172,9 +194,9 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "<link href=\"css/sb-admin.css\" rel=\"stylesheet\">" );
 		respuesta.println( "</head>" );
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Imprime el cuerpo con el diseño de la página
 	 * @param response Respuesta
@@ -263,13 +285,13 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "	                            	<br>");
 		respuesta.println( "	                            	<br>");
 		respuesta.println( "	                                <Select name=\"tipo\">");
-						for(int i=0;i<listaProductos.size();i++)
-						{
-//							Producto p= (Producto) listaProductos.get(i);
-//							respuesta.println( "	                                    <option>");
-//							respuesta.println( "	                                        <i>"+p.darNombre()+"</i>");
-//							respuesta.println( "	                                    </option>");
-						}
+		for(int i=0;i<listaProductos.size();i++)
+		{
+			//							Producto p= (Producto) listaProductos.get(i);
+			//							respuesta.println( "	                                    <option>");
+			//							respuesta.println( "	                                        <i>"+p.darNombre()+"</i>");
+			//							respuesta.println( "	                                    </option>");
+		}
 		respuesta.println( "	                                </Select>");
 		respuesta.println( "								</div>");
 		respuesta.println( "								<div class=\"col-lg-4\">");
@@ -298,52 +320,103 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "");
 		if(seRealizoPedido)
 		{
-			 respuesta.println( "              <div id=\"littleWrap\">");
-			 respuesta.println( "				<div class=\"row\">");
-			 respuesta.println( "                        <div class=\"panel panel-default\" >");
-			 respuesta.println( "                            <div class=\"panel-heading\">");
-			 respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i>Productos solicitados</h3>");
-			 respuesta.println( "                            </div>");
-			 respuesta.println( "                            <br/>");
-			 respuesta.println( "                            <div id=\"margen\"> Los productos solicitados fueron: </div>");
-			 respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");											
-			 respuesta.println( "                            	<div class=\"col-lg-12\">");
-			 if(fecha!=null)
-			 {
-			 respuesta.println( " La fecha de entrega es " + fecha.toString() );
-			 respuesta.println( "								</div>		");
-			 respuesta.println( "                                <div class=\"col-lg-6\">");
-			 respuesta.println( "                                	<INPUT type=\"submit\" value=\"Aceptar\" name=\"aceptarSolicitudProducto\">");
-			 respuesta.println( "                                </div>");
-			 respuesta.println( "                                <div class=\"col-lg-6\">");
-			 respuesta.println( "                                	<INPUT type=\"submit\" value=\"Cancelar\" name=\"cancelarSolicitudProducto\">");
-			 respuesta.println( "                                </div>");
-			 }
-			 else
-			 {
-				 respuesta.println( " El pedido no puede ser satisfecho porque la empresa no cuenta con los insumos necesarios, se colocara en pendiente para luego programar la compra de los insumos faltantes." ); 
-				 respuesta.println( "								</div>		");
-			 }
-			 respuesta.println( "                            </div>");
-			 respuesta.println( "                        </div>");
-			 respuesta.println( "                </div>");
-			 respuesta.println( "            </div>");
+			respuesta.println( "              <div id=\"littleWrap\">");
+			respuesta.println( "				<div class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i>Productos solicitados</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div id=\"margen\"> Los productos solicitados fueron: </div>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");											
+			respuesta.println( "                            	<div class=\"col-lg-12\">");
+			if(fecha!=null)
+			{
+				respuesta.println( " La fecha de entrega es " + fecha.toString() );
+				respuesta.println( "								</div>		");
+				respuesta.println( "                                <div class=\"col-lg-6\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Aceptar\" name=\"aceptarSolicitudProducto\">");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                                <div class=\"col-lg-6\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Cancelar\" name=\"cancelarSolicitudProducto\">");
+				respuesta.println( "                                </div>");
+			}
+			else
+			{
+				respuesta.println( " El pedido no puede ser satisfecho porque la empresa no cuenta con los insumos necesarios, se colocara en pendiente para luego programar la compra de los insumos faltantes." ); 
+				respuesta.println( "								</div>		");
+			}
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
 			
+
 		}
-		respuesta.println( "        </div>");
-		respuesta.println( "        <!-- /#page-wrapper -->");
-		respuesta.println( "");
-		respuesta.println( "    </div>");
-		respuesta.println( "    <!-- /#wrapper -->");
+		
 		if(seLogroSolicitudProducto)
 		{
 			seLogroSolicitudProducto=false;
 			respuesta.println( "<script> alert(\"La solicitud fue exitosa\"); </script>");
 		}
 		respuesta.println( "</form>");
+		respuesta.println( "            <!--Buscar un producto-->");
+		respuesta.println( "                <form method=\"GET\" action=\"producto.htm\">");
+		respuesta.println( "                <div class=\"row\">");
+		respuesta.println( "                        <div class=\"panel panel-default\" >");
+		respuesta.println( "                            <div class=\"panel-heading\">");
+		respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Consultar un Producto</h3>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                            <br/>");
+		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique la cantidad en bodega: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"cantidadBodega\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el costo: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"costo\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-12\">");
+		respuesta.println( "                                    <INPUT type=\"submit\" value=\"Buscar\" name=\"buscarProducto\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                        </div>");
+		respuesta.println( "                </div>");
+		respuesta.println( "                <!-- /.row -->");
+		respuesta.println( "            </form>");
+			for(int i=0;i<listaProductos.size();i++)
+			{
+				MaterialValue m=listaProductos.get(i);
+				respuesta.println( "          <div id=\"littleWrap\" class=\"row\">");
+				respuesta.println( "                        <div class=\"panel panel-default\" >");
+				respuesta.println( "                            <div class=\"panel-heading\">");
+				respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del prodcuto consultado</h3>");
+				respuesta.println( "                            </div>");
+				respuesta.println( "                            <br/>");
+				respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+				respuesta.println( "                                <div class=\"col-lg-4\">");
+				respuesta.println( "                                    <span>Materiales que lo componen: "+m.getMaterialesQueLoComponen() +"</span>");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                                <div class=\"col-lg-4\">");
+				respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+m.getMaterialesQueLoComponen()+"</span>");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                            </div>");
+				respuesta.println( "                        </div>");
+				respuesta.println( "                </div>");
+			}
+		respuesta.println( "            </div>");
+		respuesta.println( "        </div>");
+		respuesta.println( "        <!-- /#page-wrapper -->");
+		respuesta.println( "");
+		respuesta.println( "    </div>");
+		respuesta.println( "    <!-- /#wrapper -->");
 		respuesta.println( "</body>" );
 	}
-	
+
 	/**
 	 * Imprime el footer 
 	 * @param respuesta Respuesta al cliente
