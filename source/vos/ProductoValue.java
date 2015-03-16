@@ -37,6 +37,11 @@ public class ProductoValue
 	private int idEmpresa;
 	
 	private int idProcesoProduccion;
+	
+	public String toString()
+	{
+		return cNombre+" "+nombre+" "+cCosto+" "+costo+" "+cUnidadesProducidas+" "+unidadesProducidas+" "+cUnidadesEnProduccion+" "+unidadesEnProduccion+" "+cCantidadEnBodega+" "+cantidadEnBodega;
+	}
 
 	public ProductoValue(){}
 	

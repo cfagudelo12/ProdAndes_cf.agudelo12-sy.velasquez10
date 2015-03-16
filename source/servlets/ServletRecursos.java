@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 
 
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
+
 
 
 
@@ -43,6 +45,7 @@ public class ServletRecursos
 	public final static String RUTA_ARCHIVO_SERIALIZADO = "/Empresa.data";
 	private boolean seRegistro;
 	private ArrayList<MaterialValue> listaMateriales;
+	private ArrayList<RecursoValue> listaRecursos;
 	// -----------------------------------------------------------------
 	// Métodos
 	// -----------------------------------------------------------------
@@ -54,6 +57,7 @@ public class ServletRecursos
 	{
 		seRegistro=false;
 		listaMateriales= new ArrayList<MaterialValue>();
+		listaRecursos=new ArrayList<RecursoValue>();
 	}
 
 	public void destroy( )
@@ -147,12 +151,20 @@ public class ServletRecursos
 				fechaLl = formato.parse(fechaE);
 				Date fechaEntrega=(Date) fechaLl;
 				
-				listaMateriales= ProdAndes.darInstancia().consultarExistenciasMaterial(tipo,desde,hasta,etapaProduccion,fechaEntrega,fechaSolicitud);
+				listaRecursos= ProdAndes.darInstancia().consultarExistenciasRecurso(tipo,Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				imprimirPaginaMateriales(response);
 			}
 			catch( NumberFormatException e )
 			{
 				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+			catch (ParseException e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			} 
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
 			}
 		}
 		if(buscarMaterial!=null)
@@ -463,6 +475,31 @@ public class ServletRecursos
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
 			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+ r.getPedidos() +" </span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
+		}
+		for(int i=0;i<listaRecursos.size();i++)
+		{
+			RecursoValue r= (RecursoValue) listaRecursos.get(i);
+			respuesta.println( "             <div class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del material consultado</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Tipo: "+ r.getTipoRecurso() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Nombre: "+ r.getNombre() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Cantidad Inicial: "+ r.getCantidadInicial() +"</span>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");

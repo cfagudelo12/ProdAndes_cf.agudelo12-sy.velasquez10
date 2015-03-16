@@ -34,7 +34,8 @@ public class ServletProducto extends HttpServlet
 	public final static String RUTA_ARCHIVO_SERIALIZADO = "/Empresa.data";
 
 	private boolean seLogroSolicitudProducto;
-	private ArrayList<MaterialValue> listaProductos;
+	private ArrayList<MaterialValue> listaMateriales;
+	private ArrayList<ProductoValue> listaProductos;
 
 	// -----------------------------------------------------------------
 	// Métodos
@@ -47,7 +48,8 @@ public class ServletProducto extends HttpServlet
 	{
 
 		seLogroSolicitudProducto=false;
-		listaProductos= new ArrayList<MaterialValue>();
+		listaProductos= new ArrayList<ProductoValue>();
+		listaMateriales= new ArrayList<MaterialValue>();
 	}
 
 	public void destroy( )
@@ -122,13 +124,21 @@ public class ServletProducto extends HttpServlet
 				Date fechaSolicitud=(Date) fechaLl;
 				fechaLl = formato.parse(fechaE);
 				Date fechaEntrega=(Date) fechaLl;
-				
+
 				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )
 			{
 				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			} 
+			catch (ParseException e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			} 
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
 			}
 		}
 		if(solicitarProducto!=null)
@@ -143,7 +153,7 @@ public class ServletProducto extends HttpServlet
 				java.util.Date fechaLl= null;
 				fechaLl = formato.parse(fecha);
 				Date fechaEntrega=(Date) fechaLl;
-				
+
 				ProdAndes.darInstancia().solicitarPedido(idCliente, idProducto, fechaEntrega, Integer.parseInt(cantidad));
 				imprimirPaginaProducto(response);
 
@@ -167,7 +177,7 @@ public class ServletProducto extends HttpServlet
 			{
 				String cantidad = request.getParameter( "cantidad" );
 				String costo = request.getParameter( "costo" );
-				listaProductos= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
+				listaMateriales= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
 				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )
@@ -386,7 +396,7 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                <!-- /.row -->");
 		respuesta.println( "");
 		respuesta.println( "            </div>");
-	
+
 		if(seLogroSolicitudProducto)
 		{
 			seLogroSolicitudProducto=false;
@@ -422,26 +432,43 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
 		respuesta.println( "            </form>");
-			for(int i=0;i<listaProductos.size();i++)
-			{
-				MaterialValue m=listaProductos.get(i);
-				respuesta.println( "          <div id=\"littleWrap\" class=\"row\">");
-				respuesta.println( "                        <div class=\"panel panel-default\" >");
-				respuesta.println( "                            <div class=\"panel-heading\">");
-				respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del producto consultado</h3>");
-				respuesta.println( "                            </div>");
-				respuesta.println( "                            <br/>");
-				respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-				respuesta.println( "                                <div class=\"col-lg-4\">");
-				respuesta.println( "                                    <span>Materiales que lo componen: "+m.getMaterialesQueLoComponen() +"</span>");
-				respuesta.println( "                                </div>");
-				respuesta.println( "                                <div class=\"col-lg-4\">");
-				respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+m.getMaterialesQueLoComponen()+"</span>");
-				respuesta.println( "                                </div>");
-				respuesta.println( "                            </div>");
-				respuesta.println( "                        </div>");
-				respuesta.println( "                </div>");
-			}
+		for(int i=0;i<listaMateriales.size();i++)
+		{
+			MaterialValue m=listaMateriales.get(i);
+			respuesta.println( "          <div id=\"littleWrap\" class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del producto consultado</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Materiales que lo componen: "+m.getMaterialesQueLoComponen() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+m.getMaterialesQueLoComponen()+"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
+		}
+		for(int i=0;i<listaProductos.size();i++)
+		{
+			ProductoValue p=listaProductos.get(i);
+			respuesta.println( "          <div id=\"littleWrap\" class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del producto consultado</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Informacion del producto: "+p.toString() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
+		}
 		respuesta.println( "            	</div>");
 		respuesta.println( "            </div>");
 		respuesta.println( "        </div>");
