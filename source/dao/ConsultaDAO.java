@@ -28,6 +28,8 @@ public class ConsultaDAO {
 	// Constantes de tablas
 	//----------------------------------------------------
 	
+	private static final String tNecesitan="Necesitan";
+	
 	private static final String tEmpresas="Empresas";
 	
 	private static final String tRecursos="Recursos";
@@ -563,20 +565,29 @@ public class ConsultaDAO {
 			establecerConexion(cadenaConexion, usuario, clave);
 			String queryConsulta = "SELECT p.costo FROM"+tProductos+"p WHERE p.idProducto="+idProducto;
 
-			
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			Float costo=rs.getFloat(ProductoValue.cCosto);
 			
 			float monto= (float) costo*cantidad;
-			
+
 			java.util.Date fecha = new java.util.Date();
 			
-			establecerConexion(cadenaConexion, usuario, clave);
-			String queryInsert ="INSERT INTO"+tPedidos+"(cantidad,monto,fechaPedido,fechaEsperada,estado) VALUES ("+1+","+monto+","+fecha+","+fechaEntrega+",pendiente))";
-			insStmt = conexion.prepareStatement(queryInsert);
-			insStmt.executeQuery();
-
+			String queryConsulta2 = "SELECT count(*) AS cuenta FROM "+tTienen+" t, (SELECT cantidad, idRecurso FROM"+tNecesitan+" WHERE idProducto="+idProducto+") n WHERE t.Recurso=n.idRecurso AND n.cantidad<=t.cantidad GROUP BY t.idRecurso";
+			selStmt = conexion.prepareStatement(queryConsulta2);
+			ResultSet rs2 = selStmt.executeQuery();
+			
+			if(rs2.getInt("cuenta")>0)
+			{
+				establecerConexion(cadenaConexion, usuario, clave);
+				String queryInsert ="INSERT INTO"+tPedidos+"(cantidad,monto,fechaPedido,fechaEsperada,estado) VALUES ("+1+","+monto+","+fecha+","+fechaEntrega+",pendiente))";
+				insStmt = conexion.prepareStatement(queryInsert);
+				insStmt.executeQuery();
+			}
+			else
+			{
+				throw new Exception("No se pudo realizar el pedido del producto, porque no se cuenta con los recursos necesarios. EL pedido se archivara para luego de tener los recursos informar sobre la posibilidad de realizar la solicitud");
+			}
 		}
 		catch (SQLException e)
 		{
