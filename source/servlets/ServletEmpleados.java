@@ -111,13 +111,21 @@ public class ServletEmpleados {
 		// Imprime el encabezado
 		respuesta.println( "<html>" );
 		respuesta.println( "<head>" );
-		respuesta.println( "<title>ProdAndes Sistemas Transaccionales</title>" );
-		respuesta.println( "<meta charset\"UTF-8\">" );
-		respuesta.println( "<meta name=\"description\"></meta>" );
-		respuesta.println( "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/estilo.css\"/>" );
-		respuesta.println( "<meta name\"viewport\" content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">" );
-		respuesta.println( "<link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">" ); 
-		respuesta.println( "<link href=\"css/sb-admin.css\" rel=\"stylesheet\">" );
+		respuesta.println( "		<title>ProdAndes Sistemas Transaccionales</title>");
+		respuesta.println( "		<meta charset\"UTF-8\">");
+		respuesta.println( "		<meta name=\"description\"></meta>");
+		respuesta.println( "		<link rel=\"stylesheet\" type=\"text/css\" href=\"css/estilo.css\"/>");
+		respuesta.println( "		<meta name\"viewport\" content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">");
+		respuesta.println( "	");
+		respuesta.println( "		<!-- Bootstrap Core CSS -->");
+		respuesta.println( "		    <link href=\"css/bootstrap.min.css\" rel=\"stylesheet\">");
+		respuesta.println( "");
+		respuesta.println( "		    <!-- Custom CSS -->");
+		respuesta.println( "		    <link href=\"css/sb-admin.css\" rel=\"stylesheet\">");
+		respuesta.println( "		      <!-- Custom Fonts -->");
+		respuesta.println( "    		<link href=\"font-awesome/css/font-awesome.min.css\" rel=\"stylesheet\" type=\"text/css\">");
+		respuesta.println( "    		 <!-- Morris Charts CSS -->");
+		respuesta.println( "    		<link href=\"css/plugins/morris.css\" rel=\"stylesheet\">");
 		respuesta.println( "</head>" );
 	}
 	

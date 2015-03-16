@@ -73,6 +73,11 @@ public class ProdAndes
 		return dao.consultarExistenciasProductos(rInferior, rSuperior, idProcesoProduccion, fechaSolicitud, fechaEntrega);
 	}
 		
+	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, Date fechaEjecucion, int duracion) throws Exception
+	{
+		dao.registrarEjecucionEtapaProduccion(idEtapaProduccion, idOperario, fechaEjecucion, duracion);
+	}
+	
 	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception
 	{
 		dao.registrarLlegadaRecurso(idRecurso,idPedido,fechaLlegada);
@@ -85,7 +90,6 @@ public class ProdAndes
 	{
 		return dao.consultarProducto(cantidad,costo);
 	}
-
 	public void solicitarPedido(String idCliente, String idProducto, Date fechaEntrega, int cantidad) throws Exception 
 	{
 		dao.solicitarPedido(idCliente,idProducto,fechaEntrega, cantidad);
