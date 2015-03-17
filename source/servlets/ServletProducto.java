@@ -282,14 +282,14 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Proceso de producci&#243n\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
 		respuesta.println( "                        </li>");
 		respuesta.println( "                    </form>");
-		respuesta.println( "                    <form method=\"GET\" action=\"materiales.htm\">");
+		respuesta.println( "                    <form method=\"GET\" action=\"recursos.htm\">");
 		respuesta.println( "                        <li>");
-		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Materiales\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Materiales\" id=\"letraBlanca\" name=\"recursos\" > </a>");
 		respuesta.println( "                        </li>");
 		respuesta.println( "                    </form>");
 		respuesta.println( "                    <form method=\"GET\" action=\"empleados.htm\">");
 		respuesta.println( "                        <li>");
-		respuesta.println( "                             <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Empleados\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                             <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Empleados\" id=\"letraBlanca\" name=\"empleados\" > </a>");
 		respuesta.println( "                        </li>");
 		respuesta.println( "                    </form>");
 		respuesta.println( "                </ul>");
