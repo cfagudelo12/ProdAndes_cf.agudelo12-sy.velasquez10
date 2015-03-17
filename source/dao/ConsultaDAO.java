@@ -154,9 +154,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ConsultaDAO()
 	{
 		try {
-			consultarExistenciasRecurso("Materia prima", 47, 49, 51, null, null);
-			
-			
+			consultarExistenciasRecurso("Materia prima", 47, 49, 51, null, null);	
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -262,8 +260,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				RecursoValue recurso = new RecursoValue();
 				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
 				recurso.setNombre(rs.getString(RecursoValue.cNombre));
-				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
 				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
+				recurso.setUnidadMedida(rs.getString(RecursoValue.cUnidadMedida));
+				recurso.setIdProveedor(rs.getInt(RecursoValue.cIdProveedor));
+				recurso.setCantidadMDistribucion(rs.getInt(RecursoValue.cCantidadMDistribucion));
+				recurso.setTiempoEntrega(rs.getInt(RecursoValue.cTiempoEntrega));
 				recursos.add(recurso);
 				recurso = new RecursoValue();
 			}
@@ -299,12 +300,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	private String generarConsultaExistenciaRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega)
 	{
-		String consulta = "SELECT * FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+")";
-		if(tipoMaterial!=null||rInferior!=0||rSuperior!=0||idEtapaProduccion!=0||fechaSolicitud!=null||fechaEntrega!=null){
-			consulta+=" WHERE"; 
-			if(tipoMaterial!=null){
-				consulta+=" tipoRecurso='"+tipoMaterial+"'";
-			}
+		String consulta = "SELECT * FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+") WHERE tipoRecurso='"+tipoMaterial+"'";
+		if(rInferior!=0||rSuperior!=0||idEtapaProduccion!=0||fechaSolicitud!=null||fechaEntrega!=null){
 			if(rInferior>0 && rInferior<rSuperior){
 				consulta+=" AND idRecurso IN (SELECT idRecurso FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+
 						" AND cantidadEnBodega BETWEEN "+rInferior+" AND "+rSuperior+"))";
@@ -313,14 +310,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				consulta+=" AND idRecurso IN (SELECT idRecurso FROM RECURSOS NATURAL INNER JOIN (SELECT idRecurso FROM Requieren WHERE idEtapaProduccion="+idEtapaProduccion+"))";
 			}
 			if(fechaSolicitud!=null){
-				consulta+=" AND  IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
-						+ " p.fechaSolicitud="+fechaSolicitud+"))";
+				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaEntrega+"', 'DD/MM/YY'))";
 			}
 			if(fechaEntrega!=null){
-				consulta+=" AND  IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
-						+ " p.fechaEntrega="+fechaEntrega+"))";
+				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaEntrega+"', 'DD/MM/YY'))";
 			}
-			consulta.replace(" WHERE AND ", " WHERE ");
 		}
 		return consulta;
 	}
@@ -360,7 +354,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				producto.setIdEmpresa(rs.getInt(ProductoValue.cIdEmpresa));
 				producto.setIdProcesoProduccion(rs.getInt(ProductoValue.cIdProcesoProduccion));
 				productos.add(producto);
-				
 			}
 		}
 		catch (SQLException e){
@@ -452,8 +445,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				RecursoValue recurso = new RecursoValue();
 				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
 				recurso.setNombre(rs.getString(RecursoValue.cNombre));
-				recurso.setCantidadInicial(rs.getInt(RecursoValue.cCantidadInicial));
 				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
+				recurso.setUnidadMedida(rs.getString(RecursoValue.cUnidadMedida));
+				recurso.setIdProveedor(rs.getInt(RecursoValue.cIdProveedor));
+				recurso.setCantidadMDistribucion(rs.getInt(RecursoValue.cCantidadMDistribucion));
+				recurso.setTiempoEntrega(rs.getInt(RecursoValue.cTiempoEntrega));
 				
 				m.setRecurso(recurso);
 				m.agregarEtapasProduccion(""+rs.getInt(EtapaProduccionValue.cNumeroEtapa));
