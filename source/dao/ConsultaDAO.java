@@ -28,44 +28,99 @@ public class ConsultaDAO {
 	// Constantes de tablas
 	//----------------------------------------------------
 	
-	private static final String tNecesitan="Necesitan";
-	
+	/**
+	 * Constante que representa el nombre de la tabla Empresas
+	 */
 	private static final String tEmpresas="Empresas";
 	
+	/**
+	 * Constante que representa el nombre de la tabla Recursos
+	 */
 	private static final String tRecursos="Recursos";
 	
+	/**
+	 * Constante que representa el nombre de la tabla Usuarios
+	 */
 	private static final String tUsuarios="Usuarios";
 	
+	/**
+	 * Constante que representa el nombre de la tabla Proveedores
+	 */	
 	private static final String tProveedores="Proveedores";
 	
+	/**
+	 * Constante que representa el nombre de la tabla Clientes
+	 */
 	private static final String tClientes="Clientes";
 
+	/**
+	 * Constante que representa el nombre de la tabla Empleados
+	 */
 	private static final String tEmpleados="Empleados";
 
+	/**
+	 * Constante que representa el nombre de la tabla Pedidos
+	 */
 	private static final String tPedidos="Pedidos";
 
+	/**
+	 * Constante que representa el nombre de la tabla Productos
+	 */
 	private static final String tProductos="Productos";
 
+	/**
+	 * Constante que representa el nombre de la tabla Trabajan
+	 */
 	private static final String tTrabajan="Trabajan";
 
+	/**
+	 * Constante que representa el nombre de la tabla Solicitan
+	 */
 	private static final String tSolicitan="Solicitan";
 
+	/**
+	 * Constante que representa el nombre de la tablaCompran
+	 */
 	private static final String tCompran="Compran";
 
+	/**
+	 * Constante que representa el nombre de la tabla ProcesosProduccion
+	 */
 	private static final String tProcesosProduccion="ProcesosProduccion";
 
+	/**
+	 * Constante que representa el nombre de la tabla EtapasProduccion
+	 */
 	private static final String tEtapasProduccion="EtapasProduccion";
 
+	/**
+	 * Constante que representa el nombre de la tabla EstacionesProduccion
+	 */
 	private static final String tEstacionesProduccion="EstacionesProduccion";
 
+	/**
+	 * Constante que representa el nombre de la tabla Operan
+	 */
 	private static final String tOperan="Operan";
 	
+	/**
+	 * Constante que representa el nombre de la tabla Tienen
+	 */
 	private static final String tTienen="Tienen";
 
+	/**
+	 * Constante que representa el nombre de la tablaClientela
+	 */
 	private static final String tClientela="Clientela";
 
+	/**
+	 * Constante que representa el nombre de la tabla Proveen
+	 */
 	private static final String tProveen="Proveen";
 	
+	/**
+	 * Constante que representa el nombre de la tabla Requieren
+	 */
 	private static final String tRequieren="Requieren";
 	
 	//----------------------------------------------------
@@ -163,6 +218,17 @@ public class ConsultaDAO {
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
 
+	/**
+	 * Metodo encargado de consultar en la base de datos la existencia de un recurso, segun el tipo de material, un rango de cantidad, una fecha de solicitud y fecha de entrega
+	 * @param tipoMaterial El tipo de material. Materia prima o Componente
+	 * @param rInferior El limite inferior del rango
+	 * @param rSuperior El limite superior del rango
+	 * @param idEtapaProduccion El id de la etapa de produccion
+	 * @param fechaSolicitud La fecha de solicitud.
+	 * @param fechaEntrega La fecha de entrega.
+	 * @return Una lista con los recursos que cumplen con los parametros.
+	 * @throws Exception Si hay algun problema en la conexion o si no y si no hay existencias disponibles.
+	 */
 	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
 	{
 		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
@@ -201,6 +267,16 @@ public class ConsultaDAO {
 		return recursos;
 	}
 	
+	/**
+	 * Metodo encargado en generar el query de la consulta de existencias
+	 * @param tipoMaterial El tipo de material. Materia prima o Componente
+	 * @param rInferior El limite inferior del rango
+	 * @param rSuperior El limite superior del rango
+	 * @param idEtapaProduccion El id de la etapa de produccion
+	 * @param fechaSolicitud La fecha de solicitud.
+	 * @param fechaEntrega La fecha de entrega.
+	 * @return El query respectivo a la solicitud.
+	 */
 	private String generarConsultaExistenciaRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega)
 	{
 		String consulta = "SELECT * FROM Recusos r NATURAL INNER JOIN (SELECT t.idRecurso FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+")";
@@ -230,6 +306,18 @@ public class ConsultaDAO {
 		return consulta;
 	}
 	
+	/**
+	 * 
+	 * Metodo encargado de consultar en la base de datos la existencia de un prodcuto, un rango de cantidad, una fecha de solicitud y fecha de entrega
+	 * @param tipoMaterial El tipo de material. Materia prima o Componente
+	 * @param rInferior El limite inferior del rango
+	 * @param rSuperior El limite superior del rango
+	 * @param idEtapaProduccion El id de la etapa de produccion
+	 * @param fechaSolicitud La fecha de solicitud.
+	 * @param fechaEntrega La fecha de entrega.
+	 * @return Una lista con los recursos que cumplen con los parametros.
+	 * @throws Exception Si hay algun problema en la conexion o si no y si no hay existencias disponibles.
+	 */
 	public ArrayList<ProductoValue> consultarExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
 	{
 		ArrayList<ProductoValue> productos = new ArrayList<ProductoValue>();
@@ -273,6 +361,16 @@ public class ConsultaDAO {
 		return productos;
 	}
 	
+	/**
+	 * Metodo encargado en generar el query de la consulta de existencias
+	 * @param tipoMaterial El tipo de material. Materia prima o Componente
+	 * @param rInferior El limite inferior del rango
+	 * @param rSuperior El limite superior del rango
+	 * @param idEtapaProduccion El id de la etapa de produccion
+	 * @param fechaSolicitud La fecha de solicitud.
+	 * @param fechaEntrega La fecha de entrega.
+	 * @return El query respectivo a la solicitud.
+	 */
 	private String generarConsultaExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega){
 		String consulta = "SELECT * FROM Productos p WHERE p.idEmpresa="+idEmpresaF+" AND p.cantidadEnBodega>0";
 		if(rInferior>0 && rInferior<rSuperior){
@@ -292,6 +390,15 @@ public class ConsultaDAO {
 		return consulta;
 	}
 	
+	/**
+	 * Metodo encardo de buscar un objeto segun los parametros
+	 * @param volumen EL volumen que se quiere buscar
+	 * @param desde Desde cuando se quiere buscar
+	 * @param hasta Hasta cuando se quiere buscar
+	 * @param costo El costo de un material.
+	 * @return Una lista con materiales.
+	 * @throws Exception Si hay un error en alguna parte del proceso
+	 */
 	public ArrayList<MaterialValue> consultarRecurso(int volumen, Date desde, Date hasta, Float costo) throws Exception
 	{
 		ArrayList<MaterialValue> materiales= new ArrayList<MaterialValue>();
@@ -356,6 +463,14 @@ public class ConsultaDAO {
 			closeConnection(conexion);
 		}
 	}
+	
+	/**
+	 * Metodo encardo de buscar un proucto segun los parametros
+	 * @param volumen EL volumen que se quiere buscar
+	 * @param costo El costo de un material.
+	 * @return Una lista con materiales.
+	 * @throws Exception Si hay un error en alguna parte del proceso
+	 */
 	public ArrayList<MaterialValue> consultarProducto(int cantidad, float costo) throws Exception 
 	{
 		ArrayList<MaterialValue> materiales= new ArrayList<MaterialValue>();
@@ -414,6 +529,13 @@ public class ConsultaDAO {
 	// Metodos asociados a los casos de uso: Modificacion
 	//---------------------------------------------------
 	
+	/**
+	 * Metodo encargado de registrar la llegada de un recurso a par tir de lo que hemos entregado.
+	 * @param idRecurso El id del recurso deseado
+	 * @param idPedido El id del pedido al que pertenece el recurso
+	 * @param fechaLlegada La fecha de llegada del producto.
+	 * @throws Exception Si hay un error en alguna parte del proceso
+	 */
 	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception
 	{
 		PreparedStatement updStmt = null;
@@ -479,6 +601,14 @@ public class ConsultaDAO {
 		}
 	}
 	
+	/**
+	 * Metodo encargado de registrar en la base de datos la entrega de un pedido
+	 * @param idCliente EL cliente que realiza la entrega
+	 * @param idProducto El id del producto que esta en el pedido
+	 * @param idPedido El id del pedido 
+	 * @param fechaLlegada La fechas de 
+	 * @throws Exception
+	 */
 	public void registrarEntregaPedido(int idCliente,int idProducto,int idPedido, Date fechaLlegada) throws Exception
 	{
 		PreparedStatement updPedStmt = null;
@@ -520,6 +650,14 @@ public class ConsultaDAO {
 		}
 	}
 
+	/**
+	 * Metodo encargado de solicitar un pedido
+	 * @param idCliente El id del cliente que realizo el pedido.
+	 * @param idProducto El id del producto.
+	 * @param fechaEntrega La fecha de entrega.
+	 * @param cantidad La cantidad de elementos compro.
+	 * @throws Exception
+	 */
 	public void solicitarPedido(String idCliente, String idProducto, Date fechaEntrega, int cantidad) throws Exception 
 	{
 		PreparedStatement insStmt = null;
@@ -537,7 +675,7 @@ public class ConsultaDAO {
 
 			java.util.Date fecha = new java.util.Date();
 			
-			String queryConsulta2 = "SELECT count(*) AS cuenta FROM "+tTienen+" t, (SELECT cantidad, idRecurso FROM"+tNecesitan+" WHERE idProducto="+idProducto+") n WHERE t.Recurso=n.idRecurso AND n.cantidad<=t.cantidad GROUP BY t.idRecurso";
+			String queryConsulta2 = "SELECT count(*) AS cuenta FROM "+tTienen+" t, (SELECT cantidad, idRecurso FROM"+tRequieren+" WHERE idProducto="+idProducto+") n WHERE t.Recurso=n.idRecurso AND n.cantidad<=t.cantidad GROUP BY t.idRecurso";
 			selStmt = conexion.prepareStatement(queryConsulta2);
 			ResultSet rs2 = selStmt.executeQuery();
 			
@@ -574,6 +712,14 @@ public class ConsultaDAO {
 		}
 	}
 
+	/**
+	 * Metodo encargado de registrar la ejecucion en la base de datos.
+	 * @param idEtapaProduccion la etapa de produccion.
+	 * @param idOperario El ide del operario
+	 * @param fechaEjecucion La fecha de ejecucion
+	 * @param duracion es la duracion de la etapa
+	 * @throws Exception Si hay un error en alguna parte del proceso
+	 */
 	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, Date fechaEjecucion, int duracion) throws Exception{
 		PreparedStatement insStmt=null;
 		PreparedStatement selStmt=null;

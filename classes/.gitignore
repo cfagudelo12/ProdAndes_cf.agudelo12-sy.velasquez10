@@ -1,10 +1,4 @@
-<<<<<<< HEAD
-/servlets/
-/fachada/
-/vos/
-=======
 /dao/
 /fachada/
-/servlets/
 /vos/
->>>>>>> origin/master
+/servlets/

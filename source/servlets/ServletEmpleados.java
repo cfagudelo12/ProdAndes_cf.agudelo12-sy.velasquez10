@@ -13,7 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
 
-public class ServletEmpleados {
+/**
+ * 
+ *
+ */
+public class ServletEmpleados 
+{
 
 	/**
 	 * 
