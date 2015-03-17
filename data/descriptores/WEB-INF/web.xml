@@ -13,8 +13,8 @@ Autor: Pablo Barvo - 05-Mayo-2006
 <web-app>
  <description>Servlet Calculadora Web</description>
  <!-- SERVLETS --><servlet>
- 	<servlet-name>Materiales</servlet-name>
- 	<servlet-class>servlets.ServletMateriales</servlet-class>
+ 	<servlet-name>Recursos</servlet-name>
+ 	<servlet-class>servlets.ServletRecurso</servlet-class>
 </servlet>
 	<servlet>
   <servlet-name>Producto</servlet-name>
@@ -29,8 +29,8 @@ Autor: Pablo Barvo - 05-Mayo-2006
 		<servlet-class>servlets.ServletEmpleados</servlet-class>
 	</servlet>
 	<!-- MAPPING --><servlet-mapping>
- 	<servlet-name>Materiales</servlet-name>
- 	<url-pattern>/materiales.htm</url-pattern>
+ 	<servlet-name>Recursos</servlet-name>
+ 	<url-pattern>/recursos.htm</url-pattern>
 </servlet-mapping>
  <servlet-mapping>
  	<servlet-name>Producto</servlet-name>
@@ -38,7 +38,7 @@ Autor: Pablo Barvo - 05-Mayo-2006
 </servlet-mapping>
  <servlet-mapping>
  	<servlet-name>Proceso</servlet-name>
- 	<url-pattern>/procesoDeProduccion.htm</url-pattern>
+ 	<url-pattern>/procesoProduccion.htm</url-pattern>
  </servlet-mapping>
  <servlet-mapping>
  	<servlet-name>Empleados</servlet-name>

@@ -80,8 +80,21 @@ public class ServletEmpleados
 		// Envía a la respuesta el encabezado del template
 		imprimirEncabezado( response );
 
+		String empleados = request.getParameter( "empleados" );
 		String operarioMasActivo = request.getParameter( "operarioMasActivo" );
 		
+		if(empleados!=null)
+		{
+			try
+			{
+				imprimirPaginaEmpleados(response);
+				
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+		}
 		if(operarioMasActivo!=null)
 		{
 			try
@@ -89,7 +102,7 @@ public class ServletEmpleados
 				String proceso = request.getParameter( "proceso" );
 				String cantidad = request.getParameter( "cantidad" );
 //				listaOperariosMasActivos = ProdAndes.darInstancia().buscarOperarioMasActivo(proceso,cantidad);
-				imprimirPaginaMateriales(response);
+				imprimirPaginaEmpleados(response);
 				
 			}
 			catch( NumberFormatException e )
@@ -140,7 +153,7 @@ public class ServletEmpleados
 	 * @param response Respuesta
 	 * @throws IOException Excepción al imprimir en el resultado
 	 */
-	private void imprimirPaginaMateriales( HttpServletResponse response) throws IOException
+	private void imprimirPaginaEmpleados( HttpServletResponse response) throws IOException
 	{
 		// Obtiene el flujo de escritura de la respuesta
 		PrintWriter respuesta = response.getWriter( );
@@ -155,44 +168,27 @@ public class ServletEmpleados
 		respuesta.println( "            <div  id=\"fondoAzul\" class=\"navbar-header\">");
 		respuesta.println( "                <a id=\"fondoAzul\" class=\"navbar-brand\" href=\"index.html\">Administrador</a>");
 		respuesta.println( "            </div>");
-		respuesta.println( "            <!-- elementos de la parte de arriba del navbar-->");
-		respuesta.println( "            <ul id=\"fondoAzul\" class=\"nav navbar-right top-nav\">");
-		respuesta.println( "                <li id=\"fondoAzul\"  class=\"dropdown\">");
-		respuesta.println( "                    <a id=\"fondoAzul\"  href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"fa fa-user\"></i> Carlos y Sergio <b class=\"caret\"></b></a>");
-		respuesta.println( "                    <ul id=\"fondoAzul\" class=\"dropdown-menu\">");
-		respuesta.println( "                        ");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"productos.html\"><i class=\"fa fa-fw fa-dashboard\"></i> <div id=\"letraBlanca\" > Productos</div></a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "");
-		respuesta.println( "                        <li class=\"active\">");
-		respuesta.println( "                            <a href=\"procesoDeProduccion.html\"><i class=\"fa fa-fw fa-bar-chart-o\"></i> <div id=\"letraBlanca\" >Proceso de producci&#243n</div></a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"materiales.html\"><i class=\"fa fa-fw fa-table\"></i> <div id=\"letraBlanca\" >materiales</div></a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"empleados.html\"><i class=\"fa fa-fw fa-edit\"></i> <div id=\"letraBlanca\" >Empleados</div></a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "");
-		respuesta.println( "                    </ul>");
-		respuesta.println( "                </li>");
-		respuesta.println( "            </ul>");
 		respuesta.println( "            <!-- elementos de la parte de arriba del navbar- para pantallas pequeÃ±as -->");
 		respuesta.println( "            <div  class=\"collapse navbar-collapse navbar-ex1-collapse\">");
 		respuesta.println( "                <ul class=\"nav navbar-nav side-nav\">");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"productos.html\"><i class=\"fa fa-fw fa-dashboard\"></i> <div id=\"letraBlanca\" > Productos</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"procesoDeProduccion.html\"><i class=\"fa fa-fw fa-bar-chart-o\"></i> <div id=\"letraBlanca\" >Proceso de producci&#243n</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li class=\"active\">");
-		respuesta.println( "                        <a href=\"materiales.html\"><i class=\"fa fa-fw fa-table\"></i> <div id=\"letraBlanca\" >materiales</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"empleados.html\"><i class=\"fa fa-fw fa-edit\"></i> <div id=\"letraBlanca\" >Empleados</div></a>");
+		respuesta.println( "                	<form method=\"GET\" action=\"producto.htm\">");
+		respuesta.println( "                        <li>");
+		respuesta.println( "                            <a><i class=\"fa fa-fw fa-dashboard\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Productos\" id=\"letraBlanca\" name=\"producto\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                     <form method=\"GET\" action=\"procesoDeProduccion.htm\">");
+		respuesta.println( "                        <li>");
+		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Proceso de producci&#243n\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                    <form method=\"GET\" action=\"recursos.htm\">");
+		respuesta.println( "                        <li>");
+		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Materiales\" id=\"letraBlanca\" name=\"recursos\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                    <form method=\"GET\" action=\"empleados.htm\">");
+		respuesta.println( "                        <li class=\"active\">");
+		respuesta.println( "                             <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Empleados\" id=\"letraBlanca\" name=\"empleados\" > </a>");
 		respuesta.println( "                    </li>");
 		respuesta.println( "                </ul>");
 		respuesta.println( "            </div>");
