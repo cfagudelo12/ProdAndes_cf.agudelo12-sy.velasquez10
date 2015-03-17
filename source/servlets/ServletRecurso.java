@@ -503,7 +503,7 @@ public class ServletRecurso extends HttpServlet
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Cantidad Inicial: "+ r.getCantidadInicial() +"</span>");
+			respuesta.println( "                                    <span>Cantidad Inicial: "+ r.getUnidadMedida() +"</span>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");
