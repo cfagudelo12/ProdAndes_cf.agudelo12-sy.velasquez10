@@ -111,6 +111,42 @@ background: linear-gradient(to bottom, rgba(53,106,160,1) 0%,rgba(53,106,160,1) 
 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#356aa0', endColorstr='#356aa0',GradientType=0 ); /* IE6-9 */
 
 }
+
+#BotonNegro
+{
+	color: #fff;
+	background: #000; /* Old browsers */
+	background-color:#000000;
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	border:1px solid #000000;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:arial;
+	font-size:13px;
+	font-weight:bold;
+	padding:11px 23px;
+	text-decoration:none;
+	text-shadow:0px -1px 0px #000000;
+
+
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #000000), color-stop(1, #000000));
+	background:-moz-linear-gradient(top, #000000 5%, #000000 100%);
+	background:-webkit-linear-gradient(top, #000000 5%, #000000 100%);
+	background:-o-linear-gradient(top, #000000 5%, #000000 100%);
+	background:-ms-linear-gradient(top, #000000 5%, #000000 100%);
+	background:linear-gradient(to bottom, #000000 5%, #000000 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#000000', endColorstr='#000000',GradientType=0);
+	background-color:#000000;
+
+}
+#fondoNegro
+{
+background: #000; /* Old browsers */
+	background-color:#000000;
+}
 #letraBlanca
 {
 	color: #fff;

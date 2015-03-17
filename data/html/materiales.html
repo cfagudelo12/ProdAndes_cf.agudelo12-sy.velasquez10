@@ -30,7 +30,6 @@
                 <li id="fondoAzul"  class="dropdown">
                     <a id="fondoAzul"  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Carlos y Sergio <b class="caret"></b></a>
                     <ul id="fondoAzul" class="dropdown-menu">
-  
                         <li>
                             <a href="productos.html"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
                         </li>
@@ -52,18 +51,26 @@
             <!-- elementos de la parte de arriba del navbar- para pantallas pequeñas -->
             <div  class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
-                    <li>
-                        <a href="productos.html"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
-                    </li>
-                    <li class="active">
-                        <a href="procesoDeProduccion.html"><i class="fa fa-fw fa-bar-chart-o"></i> <div id="letraBlanca" >Proceso de producci&#243n</div></a>
-                    </li>
-                    <li>
-                        <a href="materiales.html"><i class="fa fa-fw fa-table"></i> <div id="letraBlanca" >materiales</div></a>
-                    </li>
-                    <li>
-                        <a href="empleados.html"><i class="fa fa-fw fa-edit"></i> <div id="letraBlanca" >Empleados</div></a>
-                    </li>
+                    <form method="GET" action="producto.htm">
+                        <li>
+                            <a><i class="fa fa-fw fa-dashboard"></i> <Input id="BotonNegro" type="submit" value="Productos" id="letraBlanca" name="producto" > </a>
+                        </li>
+                    </form>
+                     <form method="GET" action="procesoDeProduccion.htm">
+                        <li>
+                              <a><i class="fa fa-fw fa-bar-chart-o"></i> <Input id="BotonNegro" type="submit" value="Proceso de producci&#243n" id="letraBlanca" name="procesoProduccion" > </a>
+                        </li>
+                    </form>
+                    <form method="GET" action="materiales.htm">
+                        <li  class="active">
+                              <a><i class="fa fa-fw fa-bar-chart-o"></i> <Input id="BotonNegro" type="submit" value="Materiales" id="letraBlanca" name="procesoProduccion" > </a>
+                        </li>
+                    </form>
+                    <form method="GET" action="empleados.htm">
+                        <li>
+                             <a><i class="fa fa-fw fa-bar-chart-o"></i> <Input id="BotonNegro" type="submit" value="Empleados" id="letraBlanca" name="procesoProduccion" > </a>
+                        </li>
+                    </form>
                 </ul>
             </div>
         </nav>
@@ -132,10 +139,10 @@
                                     <br/>
                                     <Select name="tipo">
                                         <option>
-                                            <i>materia prima</i>
+                                            <i>Materia prima</i>
                                         </option>
                                         <option>
-                                            <iu>componente</i> 
+                                            <iu>Componente</i> 
                                         </option>
                                     </Select>
                                 </div>

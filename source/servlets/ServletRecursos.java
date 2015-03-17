@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 
 
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
+
 
 
 
@@ -99,11 +101,23 @@ public class ServletRecursos
 	{
 		// Envía a la respuesta el encabezado del template
 		imprimirEncabezado( response );
-
+		String recurso = request.getParameter( "recurso" );
 		String registrarMaterial = request.getParameter( "registrarMaterial" );
 		String consultarExistencias = request.getParameter( "consultarExistencias" );
 		String buscarMaterial = request.getParameter( "buscarMaterial" );
 
+		if(recurso!=null)
+		{
+			try
+			{
+				imprimirPaginaMateriales(response);
+
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+		}
 		if(registrarMaterial!=null)
 		{
 			try
@@ -272,12 +286,15 @@ public class ServletRecursos
 		respuesta.println( "                        <li>");
 		respuesta.println( "                            <a href=\"productos.html\"><i class=\"fa fa-fw fa-dashboard\"></i> <div id=\"letraBlanca\" > Productos</div></a>");
 		respuesta.println( "                        </li>");
+		respuesta.println( "");
 		respuesta.println( "                        <li>");
 		respuesta.println( "                            <a href=\"procesoDeProduccion.html\"><i class=\"fa fa-fw fa-bar-chart-o\"></i> <div id=\"letraBlanca\" >Proceso de producci&#243n</div></a>");
 		respuesta.println( "                        </li>");
+		respuesta.println( "");
 		respuesta.println( "                        <li class=\"active\">");
 		respuesta.println( "                            <a href=\"materiales.html\"><i class=\"fa fa-fw fa-table\"></i> <div id=\"letraBlanca\" >materiales</div></a>");
 		respuesta.println( "                        </li>");
+		respuesta.println( "");
 		respuesta.println( "                        <li>");
 		respuesta.println( "                            <a href=\"empleados.html\"><i class=\"fa fa-fw fa-edit\"></i> <div id=\"letraBlanca\" >Empleados</div></a>");
 		respuesta.println( "                        </li>");
@@ -287,18 +304,26 @@ public class ServletRecursos
 		respuesta.println( "            <!-- elementos de la parte de arriba del navbar- para pantallas pequeÃ±as -->");
 		respuesta.println( "            <div  class=\"collapse navbar-collapse navbar-ex1-collapse\">");
 		respuesta.println( "                <ul class=\"nav navbar-nav side-nav\">");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"productos\"><i class=\"fa fa-fw fa-dashboard\"></i> <div id=\"letraBlanca\" > Productos</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li class=\"active\">");
-		respuesta.println( "                        <a href=\"procesoDeProduccion.html\"><i class=\"fa fa-fw fa-bar-chart-o\"></i> <div id=\"letraBlanca\" >Proceso de producci&#243n</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"materiales.html\"><i class=\"fa fa-fw fa-table\"></i> <div id=\"letraBlanca\" >materiales</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"empleados.html\"><i class=\"fa fa-fw fa-edit\"></i> <div id=\"letraBlanca\" >Empleados</div></a>");
-		respuesta.println( "                    </li>");
+		respuesta.println( "                    <form method=\"GET\" action=\"producto.htm\">");
+		respuesta.println( "                        <li>");
+		respuesta.println( "                            <a><i class=\"fa fa-fw fa-dashboard\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Productos\" id=\"letraBlanca\" name=\"producto\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                     <form method=\"GET\" action=\"procesoDeProduccion.htm\">");
+		respuesta.println( "                        <li>");
+		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Proceso de producci&#243n\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                    <form method=\"GET\" action=\"materiales.htm\">");
+		respuesta.println( "                        <li  class=\"active\">");
+		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Materiales\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                    <form method=\"GET\" action=\"empleados.htm\">");
+		respuesta.println( "                        <li>");
+		respuesta.println( "                             <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Empleados\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
 		respuesta.println( "                </ul>");
 		respuesta.println( "            </div>");
 		respuesta.println( "        </nav>");
@@ -326,7 +351,6 @@ public class ServletRecursos
 		respuesta.println( "                            </div>");
 		respuesta.println( "                            <br/>");
 		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-		respuesta.println( "                                <div class=\"col-lg-4\">");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
 		respuesta.println( "                                    <span>Indique la fecha de llegada: </span>");
 		respuesta.println( "                                    <br/>");
@@ -363,21 +387,15 @@ public class ServletRecursos
 		respuesta.println( "                            <br/>");
 		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Eliga el tipo: </span>");
+		respuesta.println( "                                    <span>Elija el tipo: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <Select name=\"tipo\">");
 		respuesta.println( "                                        <option>");
-		respuesta.println( "                                            <i>materia prima</i>");
+		respuesta.println( "                                            <i>Materia prima</i>");
 		respuesta.println( "                                        </option>");
 		respuesta.println( "                                        <option>");
-		respuesta.println( "                                            <iu>componente</i> ");
-		respuesta.println( "                                        </option>");
-		respuesta.println( "                                        <option>");
-		respuesta.println( "                                            <i>etapa de producto</i> ");
-		respuesta.println( "                                        </option>");
-		respuesta.println( "                                        <option>");
-		respuesta.println( "                                            <i>producto</i> ");
+		respuesta.println( "                                            <iu>Componente</i> ");
 		respuesta.println( "                                        </option>");
 		respuesta.println( "                                    </Select>");
 		respuesta.println( "                                </div>");
@@ -394,16 +412,22 @@ public class ServletRecursos
 		respuesta.println( "                                    <INPUT type=\"number\" name=\"hasta\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                 <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique la etapa de producci&#243n: </span>");
+		respuesta.println( "                                    <span>Indique el id de la etapa de producci&#243n: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"text\" name=\"etapaProduccion\"/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"etapaProduccion\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                 <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique la fecha de solicitud y/o entrega: </span>");
+		respuesta.println( "                                    <span>Indique la fecha de solicitud: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"date\" name=\"fechaSoE\"/>");
+		respuesta.println( "                                    <INPUT type=\"date\" name=\"fechaSolicitud\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique la fecha de entrega: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"date\" name=\"fechaEntrega\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-12\">");
 		respuesta.println( "                                    <INPUT type=\"submit\" value=\"Consultar\" name=\"consultarExistencias\"/>");

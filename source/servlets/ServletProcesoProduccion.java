@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 
 
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -85,8 +86,23 @@ public class ServletProcesoProduccion
 		// Envía a la respuesta el encabezado del template
 		imprimirEncabezado( response );
 
+		String procesoProduccion = request.getParameter( "procesoProduccion" );
 		String regsitrarEjecucionEtapa = request.getParameter( "regsitrarEjecucionEtapa" );
 		
+		
+
+		if(procesoProduccion!=null)
+		{
+			try
+			{
+				imprimirPaginaProcesoProduccion(response);
+
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+		}
 		if(regsitrarEjecucionEtapa!=null)
 		{
 			try
@@ -201,18 +217,26 @@ public class ServletProcesoProduccion
 		respuesta.println( "            <!-- elementos de la parte de arriba del navbar- para pantallas pequeÃ±as -->");
 		respuesta.println( "            <div  class=\"collapse navbar-collapse navbar-ex1-collapse\">");
 		respuesta.println( "                <ul class=\"nav navbar-nav side-nav\">");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"productos.html\"><i class=\"fa fa-fw fa-dashboard\"></i> <div id=\"letraBlanca\" > Productos</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"procesoDeProduccion.html\"><i class=\"fa fa-fw fa-bar-chart-o\"></i> <div id=\"letraBlanca\" >Proceso de producci&#243n</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li class=\"active\">");
-		respuesta.println( "                        <a href=\"materiales.html\"><i class=\"fa fa-fw fa-table\"></i> <div id=\"letraBlanca\" >materiales</div></a>");
-		respuesta.println( "                    </li>");
-		respuesta.println( "                    <li>");
-		respuesta.println( "                        <a href=\"empleados.html\"><i class=\"fa fa-fw fa-edit\"></i> <div id=\"letraBlanca\" >Empleados</div></a>");
-		respuesta.println( "                    </li>");
+		respuesta.println( "                    <form method=\"GET\" action=\"producto.htm\">");
+		respuesta.println( "                        <li>");
+		respuesta.println( "                            <a><i class=\"fa fa-fw fa-dashboard\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Productos\" id=\"letraBlanca\" name=\"producto\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                     <form method=\"GET\" action=\"procesoDeProduccion.htm\">");
+		respuesta.println( "                        <li class=\"active\">");
+		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Proceso de producci&#243n\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                    <form method=\"GET\" action=\"materiales.htm\">");
+		respuesta.println( "                        <li >");
+		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Materiales\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
+		respuesta.println( "                    <form method=\"GET\" action=\"empleados.htm\">");
+		respuesta.println( "                        <li>");
+		respuesta.println( "                             <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Empleados\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
+		respuesta.println( "                        </li>");
+		respuesta.println( "                    </form>");
 		respuesta.println( "                </ul>");
 		respuesta.println( "            </div>");
 		respuesta.println( "        </nav>");

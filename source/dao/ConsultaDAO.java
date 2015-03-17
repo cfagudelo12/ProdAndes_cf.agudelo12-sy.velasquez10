@@ -11,7 +11,8 @@ import vos.*;
 /**
 * Clase ConsultaDAO, encargada de hacer las consultas a la base de datos
 */
-public class ConsultaDAO {
+public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
+{
 
 	//----------------------------------------------------
 	// Constantes
@@ -135,22 +136,35 @@ public class ConsultaDAO {
 	/**
 	 * Nombre del usuario para conectarse a la base de datos.
 	 */
-	private String usuario;
+	public final static String usuario="ISIS2304481510";
 	
 	/**
 	 * Clave de conexion a la base de datos.
 	 */
-	private String clave;
+	public final static String clave="fberrapius";
 	
 	/**
 	 * URL al cual se debe conectar para acceder a la base de datos.
 	 */
-	private String cadenaConexion;
+	public final static String cadenaConexion= "jdbc:oracle:thin:@prod.oracle.virtual.uniandes.edu.co:1531:prod";
 	
 	/**
 	 * Constructor de la clase. No inicializa ningun atributo.
 	 */
-	public ConsultaDAO(){}
+	public ConsultaDAO()
+	{
+		try {
+			consultarExistenciasRecurso("Materia prima", 47, 49, 51, null, null);
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	//-------------------------------------------------
 	// Metodos
@@ -163,21 +177,7 @@ public class ConsultaDAO {
 	 */
 	public void inicializar(String path)
 	{
-		try{
-			File arch= new File(path+ARCHIVO_CONEXION);
-			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(arch);
-	        prop.load( in );
-	        in.close( );
-			cadenaConexion = prop.getProperty("url");									
-			usuario = prop.getProperty("usuario");	
-			clave = prop.getProperty("clave");
-			final String driver = prop.getProperty("driver");
-			Class.forName(driver);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}	
+		
 	}
 
 	/**
@@ -187,15 +187,35 @@ public class ConsultaDAO {
 	 * @param clave Clave de acceso a la base de datos
 	 * @throws SQLException si ocurre un error generando la conexion con la base de datos.
 	 */
-	private void establecerConexion(String url, String usuario, String clave) throws SQLException
+	private void establecerConexion(String u,String p,String a) throws SQLException
 	{
-		try{
-			conexion = DriverManager.getConnection(url,usuario,clave);
+		try
+		{
+			conexion = DriverManager.getConnection("jdbc:oracle:thin:@prod.oracle.virtual.uniandes.edu.co:1531:prod","ISIS2304481510","fberrapius");
 		}
 		catch(SQLException exception){
 			throw new SQLException("ERROR: ConsultaDAO obteniendo una conexion.");
 		}
 	}
+	
+	  /**
+     * Este método ejecuta la aplicación, creando una nueva interfaz
+     * @param args
+
+     */
+    public static void main( String[] args ) 
+    {
+
+        try 
+        {
+			ConsultaDAO dao= new ConsultaDAO();
+		} 
+        catch (Exception e) {
+		
+			e.printStackTrace();
+		}
+       
+    }
 
 	/**
 	 * Cierra la conexion activa a la base de datos.
@@ -279,29 +299,28 @@ public class ConsultaDAO {
 	 */
 	private String generarConsultaExistenciaRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega)
 	{
-		String consulta = "SELECT * FROM Recusos r NATURAL INNER JOIN (SELECT t.idRecurso FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+")";
+		String consulta = "SELECT * FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+")";
 		if(tipoMaterial!=null||rInferior!=0||rSuperior!=0||idEtapaProduccion!=0||fechaSolicitud!=null||fechaEntrega!=null){
 			consulta+=" WHERE"; 
 			if(tipoMaterial!=null){
-				consulta+="AND r.tipoMaterial='"+tipoMaterial+"'";
+				consulta+=" tipoRecurso='"+tipoMaterial+"'";
 			}
 			if(rInferior>0 && rInferior<rSuperior){
-				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT t.idRecurso FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+
-						" AND t.idRecurso=r.idRecurso AND t.cantidad BETWEEN "+rInferior+" AND "+rSuperior+"))";
+				consulta+=" AND idRecurso IN (SELECT idRecurso FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+
+						" AND cantidadEnBodega BETWEEN "+rInferior+" AND "+rSuperior+"))";
 			}
 			if(idEtapaProduccion>0){
-				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT req.idRecurso FROM Requieren req WHERE req.idRecurso=r.idRecurso "
-						+ " AND req.idEtapaProduccion="+idEtapaProduccion+")";
+				consulta+=" AND idRecurso IN (SELECT idRecurso FROM RECURSOS NATURAL INNER JOIN (SELECT idRecurso FROM Requieren WHERE idEtapaProduccion="+idEtapaProduccion+"))";
 			}
 			if(fechaSolicitud!=null){
-				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
+				consulta+=" AND  IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
 						+ " p.fechaSolicitud="+fechaSolicitud+"))";
 			}
 			if(fechaEntrega!=null){
-				consulta+=" AND IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
+				consulta+=" AND  IN (SELECT * FROM RECURSOS NATURAL INNER JOIN (SELECT s.idRecurso FROM Solicitan s NATURAL INNER JOIN Pedidos p WHERE"
 						+ " p.fechaEntrega="+fechaEntrega+"))";
 			}
-			consulta.replace("WHERE AND", "WHERE ");
+			consulta.replace(" WHERE AND ", " WHERE ");
 		}
 		return consulta;
 	}
@@ -322,12 +341,14 @@ public class ConsultaDAO {
 	{
 		ArrayList<ProductoValue> productos = new ArrayList<ProductoValue>();
 		PreparedStatement selStmt = null;
-		try{
+		try
+		{
 			String consulta	= generarConsultaExistenciasProductos(rInferior, rSuperior, idProcesoProduccion, fechaSolicitud, fechaEntrega);
 			establecerConexion(cadenaConexion, usuario, clave);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();
-			while(rs.next()){
+			while(rs.next())
+			{
 				ProductoValue producto = new ProductoValue();
 				producto.setIdProducto(rs.getInt(ProductoValue.cIdProducto));
 				producto.setNombre(rs.getString(ProductoValue.cNombre));
@@ -339,7 +360,7 @@ public class ConsultaDAO {
 				producto.setIdEmpresa(rs.getInt(ProductoValue.cIdEmpresa));
 				producto.setIdProcesoProduccion(rs.getInt(ProductoValue.cIdProcesoProduccion));
 				productos.add(producto);
-				producto = new ProductoValue();
+				
 			}
 		}
 		catch (SQLException e){
@@ -374,10 +395,10 @@ public class ConsultaDAO {
 	private String generarConsultaExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega){
 		String consulta = "SELECT * FROM Productos p WHERE p.idEmpresa="+idEmpresaF+" AND p.cantidadEnBodega>0";
 		if(rInferior>0 && rInferior<rSuperior){
-			consulta+=" AND p.cantidad BETWEEN "+rInferior+" AND "+rSuperior;
+			consulta+=" AND p.cantidadEnBodega BETWEEN "+rInferior+" AND "+rSuperior;
 		}
 		if(idProcesoProduccion>0){
-			consulta+=" AND p.procesoProduccion="+idProcesoProduccion;
+			consulta+=" AND p.idProcesoProduccion="+idProcesoProduccion;
 		}
 		if(fechaSolicitud!=null){
 			consulta+=" AND IN(SELECT * FROM Productos NATURAL INNER JOIN (SELECT c.idProducto FROM Compran c NATURAL INNER JOIN Pedidos p WHERE"
@@ -478,11 +499,11 @@ public class ConsultaDAO {
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryConsulta = "SELECT * FROM"+tProductos+"p, "+tRecursos+" r, "+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+tCompran+" c WHERE p.idProducto=pro.idProducto AND pro.idProcesoProduccion=e.idProcesoProduccion AND req.idEtapaProduccion=e.idEtapaProducion AND req.idRecurso=r.idRecurso AND c.idProducto=p.idProducto AND pe.idPedido=c.idPedido";
+			String queryConsulta = "SELECT * FROM "+tProductos+" p, "+tRecursos+" r, "+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+tPedidos+" pe, "+tCompran+" c WHERE p.idProducto=pro.idProducto AND pro.idProcesoProduccion=e.idProcesoProduccion AND req.idEtapaProduccion=e.idEtapaProduccion AND req.idRecurso=r.idRecurso AND c.idProducto=p.idProducto AND pe.idPedido=c.idPedido";
 			
 			if(cantidad>0)
 			{
-				queryConsulta+=" AND p.cantidad="+cantidad;
+				queryConsulta+=" AND p.cantidadenbodega="+cantidad;
 			}
 			if(costo>0)
 			{

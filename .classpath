@@ -4,5 +4,6 @@
 	<classpathentry kind="lib" path="lib/javax.servlet.jar"/>
 	<classpathentry kind="src" path="source"/>
 	<classpathentry kind="lib" path="lib/jboss-system.jar"/>
+	<classpathentry kind="lib" path="lib/ojdbc14.jar"/>
 	<classpathentry kind="output" path="classes"/>
 </classpath>
