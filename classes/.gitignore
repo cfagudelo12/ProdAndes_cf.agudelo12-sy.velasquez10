@@ -1,4 +1,4 @@
-/servlets/
-/fachada/
-/vos/
 /dao/
+/fachada/
+/servlets/
+/vos/

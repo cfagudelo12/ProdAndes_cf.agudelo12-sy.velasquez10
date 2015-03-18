@@ -671,6 +671,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @param cantidad La cantidad de elementos compro.
 	 * @throws Exception
 	 */
+
 	public void solicitarPedido(int idCliente, int idProducto, String fechaEntrega, int cantidad) throws Exception 
 	{
 		PreparedStatement insStmt = null;

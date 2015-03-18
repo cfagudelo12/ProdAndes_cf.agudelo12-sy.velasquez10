@@ -112,7 +112,7 @@ public class ServletProcesoProduccion extends HttpServlet
 				String fecha = request.getParameter( "fecha" );
 				String duracion = request.getParameter( "duracion" );
 				
-				ProdAndes.darInstancia().registrarEjecucionEtapaProduccion(Integer.parseInt(idEtapa),Integer.parseInt(idOperario),fechaEntrega, Integer.parseInt(duracion));
+				ProdAndes.darInstancia().registrarEjecucionEtapaProduccion(Integer.parseInt(idEtapa),Integer.parseInt(idOperario),fecha, Integer.parseInt(duracion));
 				imprimirPaginaProcesoProduccion(response);
 			}
 			catch( NumberFormatException e )

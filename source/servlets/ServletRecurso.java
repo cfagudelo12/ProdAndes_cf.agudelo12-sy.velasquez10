@@ -119,7 +119,7 @@ public class ServletRecurso extends HttpServlet
 		{
 			try
 			{
-				String fecha = request.getParameter( "fechaLlegada" );
+				String fechaLlegada = request.getParameter( "fechaLlegada" );
 				String idPedido= request.getParameter( "idPedido" );
 				String idRecurso = request.getParameter( "idRecurso" );
 	
@@ -148,8 +148,8 @@ public class ServletRecurso extends HttpServlet
 				String desde = request.getParameter( "desde" );
 				String hasta = request.getParameter( "hasta" );
 				String etapaProduccion = request.getParameter( "etapaProduccion" );
-				String fechaS = request.getParameter( "fechaSolicitud" );
-				String fechaE = request.getParameter( "fechaEntrega" );
+				String fechaSolicitud = request.getParameter( "fechaSolicitud" );
+				String fechaEntrega = request.getParameter( "fechaEntrega" );
 
 				listaRecursos= ProdAndes.darInstancia().consultarExistenciasRecurso(tipo,Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				imprimirPaginaMateriales(response);
@@ -173,8 +173,8 @@ public class ServletRecurso extends HttpServlet
 			{
 				String volumen = request.getParameter( "volumen" );
 				String costo = request.getParameter( "costo" );
-				String desde = request.getParameter( "desde" );
-				String hasta = request.getParameter( "hasta" );
+				String fechaDesde = request.getParameter( "desde" );
+				String fechaHasta = request.getParameter( "hasta" );
 				
 				listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(volumen), fechaDesde, fechaHasta, Float.parseFloat(costo));
 
