@@ -748,9 +748,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryInsert="INSERT INTO Operan(idOperario,idEtapaProduccion,fechaEjecucion, duracion) VALUES("+idEtapaProduccion+","+idOperario+","+fechaEjecucion+","+duracion+")";
-			String querySelectE="SELECT * FROM EtapasProduccion e WHERE e.idEtapaProduccion="+idEtapaProduccion+" AND e.idAnteriorEtapa IS NULL";
-			String querySelect="SELECT * FROM EtapasProduccion e WHERE e.idEtapaProduccion=(SELECT idAnteriorEtapa FROM EtapasProduccion et WHERE et.idEtapaProduccion="+idEtapaProduccion+") AND e.estado='Terminado'";
+			String queryInsert="INSERT INTO Operan(idOperario,idEtapaProduccion,fechaEjecucion,duracion) VALUES("+idEtapaProduccion+","+idOperario+",TO_DATE('"+fechaEjecucion+"','YYYY-MM-DD'),"+duracion+")";
+			String querySelectE="SELECT * FROM EtapasProduccionPedido e WHERE e.idEtapaProduccion="+idEtapaProduccion+" AND e.idAnteriorEtapa IS NULL";
+			String querySelect="SELECT * FROM EtapasProduccionPedido e WHERE e.idEtapaProduccion=(SELECT idAnteriorEtapa FROM EtapasProduccionPedido et WHERE et.idEtapaProduccion="+idEtapaProduccion+") AND e.estado='Terminado'";
 			String queryUpdate="UPDATE Tienen t SET t.cantidad=t.cantidad-(SELECT req.cantidad FROM Requieren req WHERE req.idEtapaProduccion="+idEtapaProduccion+")";
 			selEStmt = conexion.prepareStatement(querySelectE);
 			ResultSet rs = selEStmt.executeQuery();
