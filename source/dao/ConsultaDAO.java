@@ -206,8 +206,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
         {
 			ConsultaDAO dao= new ConsultaDAO();
 		} 
-        catch (Exception e) {
-		
+        catch (Exception e) 
+        {
 			e.printStackTrace();
 		}
     }
