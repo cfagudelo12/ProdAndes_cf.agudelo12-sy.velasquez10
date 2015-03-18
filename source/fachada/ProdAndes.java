@@ -63,26 +63,32 @@ public class ProdAndes
     // Métodos asociados a los casos de uso: Consulta
     // ---------------------------------------------------
 	
-	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
+	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, String fechaSolicitud, String fechaEntrega) throws Exception
 	{
 		return dao.consultarExistenciasRecurso(tipoMaterial, rInferior, rSuperior, idEtapaProduccion, fechaSolicitud, fechaEntrega);
 	}
 	
-	public ArrayList<ProductoValue> consultarExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
+	public ArrayList<ProductoValue> consultarExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, String fechaSolicitud, String fechaEntrega) throws Exception
 	{
 		return dao.consultarExistenciasProductos(rInferior, rSuperior, idProcesoProduccion, fechaSolicitud, fechaEntrega);
 	}
 		
-	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, Date fechaEjecucion, int duracion) throws Exception
+	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, String fechaEjecucion, int duracion) throws Exception
 	{
 		dao.registrarEjecucionEtapaProduccion(idEtapaProduccion, idOperario, fechaEjecucion, duracion);
 	}
 	
-	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception
+	public void registrarLlegadaRecurso(int idRecurso, int idPedido, String fechaLlegada) throws Exception
 	{
 		dao.registrarLlegadaRecurso(idRecurso,idPedido,fechaLlegada);
 	}
-	public ArrayList<MaterialValue> consultarRecurso(int volumen, Date desde, Date hasta, Float costo) throws Exception
+	
+	public void registrarEntregaProducto(int idProducto, int idPedido, String fechaLlegada) throws Exception
+	{
+		dao.registrarEntregaPedido(idProducto, idPedido, fechaLlegada);
+	}
+	
+	public ArrayList<MaterialValue> consultarRecurso(int volumen, String desde, String hasta, Float costo) throws Exception
 	{
 		return dao.consultarRecurso(volumen, desde, hasta, costo);
 	}
