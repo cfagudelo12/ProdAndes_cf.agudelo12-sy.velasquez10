@@ -17,7 +17,7 @@ import org.jboss.system.server.ServerConfigLocator;
  * 
  *
  */
-public class ServletEmpleados 
+public class ServletEmpleados extends HttpServlet
 {
 
 	/**
@@ -176,7 +176,7 @@ public class ServletEmpleados
 		respuesta.println( "                            <a><i class=\"fa fa-fw fa-dashboard\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Productos\" id=\"letraBlanca\" name=\"producto\" > </a>");
 		respuesta.println( "                        </li>");
 		respuesta.println( "                    </form>");
-		respuesta.println( "                     <form method=\"GET\" action=\"procesoDeProduccion.htm\">");
+		respuesta.println( "                     <form method=\"GET\" action=\"procesoProduccion.htm\">");
 		respuesta.println( "                        <li>");
 		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Proceso de producci&#243n\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
 		respuesta.println( "                        </li>");

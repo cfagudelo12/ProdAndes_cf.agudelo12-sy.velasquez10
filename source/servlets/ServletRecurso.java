@@ -17,6 +17,7 @@ import java.util.ArrayList;
 
 
 
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
+
 
 
 import vos.MaterialValue;
@@ -103,6 +105,8 @@ public class ServletRecurso extends HttpServlet
 		{
 			try
 			{
+				listaMateriales = new ArrayList<MaterialValue>();
+				listaRecursos = new ArrayList<RecursoValue>();
 				imprimirPaginaMateriales(response);
 
 			}
@@ -118,18 +122,9 @@ public class ServletRecurso extends HttpServlet
 				String fecha = request.getParameter( "fechaLlegada" );
 				String idPedido= request.getParameter( "idPedido" );
 				String idRecurso = request.getParameter( "idRecurso" );
-				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
-				java.util.Date fechaLl= null;
-				fechaLl = formato.parse(fecha);
-				Date fechaLlegada=(Date) fechaLl;
-				try 
-				{
-					ProdAndes.darInstancia().registrarLlegadaRecurso(Integer.parseInt(idRecurso), Integer.parseInt(idPedido),fechaLlegada);
-				} 
-				catch (Exception e) 
-				{
-					imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
-				}
+	
+				ProdAndes.darInstancia().registrarLlegadaRecurso(Integer.parseInt(idRecurso), Integer.parseInt(idPedido),fechaLlegada);
+
 				imprimirPaginaMateriales(response);				
 			}
 			catch( NumberFormatException e )
@@ -139,6 +134,10 @@ public class ServletRecurso extends HttpServlet
 			catch (ParseException e1) 
 			{
 				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error de formato");
+			} 
+			catch (Exception e) 
+			{
+				e.printStackTrace();
 			}
 		}
 		if(consultarExistencias!=null)
@@ -151,22 +150,6 @@ public class ServletRecurso extends HttpServlet
 				String etapaProduccion = request.getParameter( "etapaProduccion" );
 				String fechaS = request.getParameter( "fechaSolicitud" );
 				String fechaE = request.getParameter( "fechaEntrega" );
-
-				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yy");
-				java.util.Date fechaLl= null;
-				
-				if(fechaS!="")
-				{
-					fechaLl = formato.parse(fechaS);
-					
-				}
-				if(fechaE!="")
-				{
-					fechaLl = formato.parse(fechaE);
-					
-				}
-				Date fechaSolicitud=(Date) fechaLl;
-				Date fechaEntrega=(Date) fechaLl;
 
 				listaRecursos= ProdAndes.darInstancia().consultarExistenciasRecurso(tipo,Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				imprimirPaginaMateriales(response);
@@ -192,32 +175,18 @@ public class ServletRecurso extends HttpServlet
 				String costo = request.getParameter( "costo" );
 				String desde = request.getParameter( "desde" );
 				String hasta = request.getParameter( "hasta" );
-				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
-				java.util.Date fechaLl= null;
-				try 
-				{
-					fechaLl = formato.parse(desde);
-					Date fechaDesde=(Date) fechaLl;
-					fechaLl = formato.parse(hasta);
-					Date fechaHasta=(Date) fechaLl;
-
-					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(volumen), fechaDesde, fechaHasta, Float.parseFloat(costo));
-				} 
-				catch (ParseException e) 
-				{
-
-					e.printStackTrace();
-				} 
-				catch (Exception e) 
-				{
-					imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
-				}
+				
+				listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(volumen), fechaDesde, fechaHasta, Float.parseFloat(costo));
 
 				imprimirPaginaMateriales(response);
 			}
 			catch( NumberFormatException e )
 			{
 				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
 			}
 		}
 
@@ -289,7 +258,7 @@ public class ServletRecurso extends HttpServlet
 		respuesta.println( "                            <a><i class=\"fa fa-fw fa-dashboard\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Productos\" id=\"letraBlanca\" name=\"producto\" > </a>");
 		respuesta.println( "                        </li>");
 		respuesta.println( "                    </form>");
-		respuesta.println( "                     <form method=\"GET\" action=\"procesoDeProduccion.htm\">");
+		respuesta.println( "                     <form method=\"GET\" action=\"procesoProduccion.htm\">");
 		respuesta.println( "                        <li>");
 		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Proceso de producci&#243n\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
 		respuesta.println( "                        </li>");
@@ -417,6 +386,31 @@ public class ServletRecurso extends HttpServlet
 		respuesta.println( "                </div>");
 		respuesta.println( "                </form>");
 		respuesta.println( "");
+		for(int i=0;i<listaRecursos.size();i++)
+		{
+			RecursoValue r= (RecursoValue) listaRecursos.get(i);
+			respuesta.println( "             <div class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del material consultado</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Tipo: "+ r.getTipoRecurso() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Nombre: "+ r.getNombre() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Cantidad Inicial: "+ r.getUnidadMedida() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
+		}
 		respuesta.println( "                 <!--Buscar un material-->");
 		respuesta.println( "                 <form method=\"GET\" action=\"recursos.htm\">");
 		respuesta.println( "                <div class=\"row\">");
@@ -439,7 +433,7 @@ public class ServletRecurso extends HttpServlet
 		respuesta.println( "                                    <INPUT type=\"number\" name=\"costo\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique el rango de fechas: </span>");
+		respuesta.println( "                                    <span>Indique el rango de fechas de llegada: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                     <span>Desde: </span>");
@@ -479,31 +473,6 @@ public class ServletRecurso extends HttpServlet
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
 			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+ r.getPedidos() +" </span>");
-			respuesta.println( "                                </div>");
-			respuesta.println( "                            </div>");
-			respuesta.println( "                        </div>");
-			respuesta.println( "                </div>");
-		}
-		for(int i=0;i<listaRecursos.size();i++)
-		{
-			RecursoValue r= (RecursoValue) listaRecursos.get(i);
-			respuesta.println( "             <div class=\"row\">");
-			respuesta.println( "                        <div class=\"panel panel-default\" >");
-			respuesta.println( "                            <div class=\"panel-heading\">");
-			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del material consultado</h3>");
-			respuesta.println( "                            </div>");
-			respuesta.println( "                            <br/>");
-			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Tipo: "+ r.getTipoRecurso() +"</span>");
-			respuesta.println( "                                </div>");
-			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Nombre: "+ r.getNombre() +"</span>");
-			respuesta.println( "                                </div>");
-			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Cantidad Inicial: "+ r.getUnidadMedida() +"</span>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");
