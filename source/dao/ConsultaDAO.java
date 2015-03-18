@@ -153,7 +153,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ConsultaDAO()
 	{
 		try {
-			registrarEntregaPedido(82, 4, "2016-03-16");
+			solicitarPedido(1, 1, "2016-04-01", 3);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -671,37 +671,39 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @param cantidad La cantidad de elementos compro.
 	 * @throws Exception
 	 */
-	public void solicitarPedido(String idCliente, String idProducto, Date fechaEntrega, int cantidad) throws Exception 
+	public void solicitarPedido(int idCliente, int idProducto, String fechaEntrega, int cantidad) throws Exception 
 	{
 		PreparedStatement insStmt = null;
 		PreparedStatement selStmt = null;
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryConsulta = "SELECT p.costo FROM"+tProductos+"p WHERE p.idProducto="+idProducto;
-
+			String queryConsulta = "SELECT p.costo FROM "+tProductos+" p WHERE p.idProducto="+idProducto;
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
-			Float costo=rs.getFloat(ProductoValue.cCosto);
-			
-			float monto= (float) costo*cantidad;
+			if(rs.next()){
+				Float costo=rs.getFloat(ProductoValue.cCosto);
+				float monto= (float) costo*cantidad;
+				String queryConsulta2 = "SELECT * FROM "+tTienen+" t,(SELECT r.idRecurso,r.cantidad FROM "+tRequieren+" r,etapasProduccion e,procesosProduccion pr WHERE "
+						+ "pr.idProducto="+idProducto+" AND e.idProcesoProduccion=pr.idProcesoProduccion AND e.idEtapaProduccion=r.idEtapaProduccion) n "
+								+ "WHERE t.idRecurso=n.idRecurso AND n.cantidad*"+cantidad+"<=t.cantidadEnBodega";
+				selStmt = conexion.prepareStatement(queryConsulta2);
+				ResultSet rs2 = selStmt.executeQuery();
 
-			java.util.Date fecha = new java.util.Date();
-			
-			String queryConsulta2 = "SELECT count(*) AS cuenta FROM "+tTienen+" t, (SELECT cantidad, idRecurso FROM"+tRequieren+" WHERE idProducto="+idProducto+") n WHERE t.Recurso=n.idRecurso AND n.cantidad<=t.cantidad GROUP BY t.idRecurso";
-			selStmt = conexion.prepareStatement(queryConsulta2);
-			ResultSet rs2 = selStmt.executeQuery();
-			
-			if(rs2.getInt("cuenta")>0)
-			{
-				establecerConexion(cadenaConexion, usuario, clave);
-				String queryInsert ="INSERT INTO"+tPedidos+"(cantidad,monto,fechaPedido,fechaEsperada,estado) VALUES ("+1+","+monto+","+fecha+","+fechaEntrega+",pendiente))";
-				insStmt = conexion.prepareStatement(queryInsert);
-				insStmt.executeQuery();
+				if(rs2.next())
+				{
+					establecerConexion(cadenaConexion, usuario, clave);
+					String queryInsert ="INSERT INTO "+tPedidos+" (cantidad,monto,fechaPedido,fechaEsperada) VALUES ("+cantidad+","+monto+",TO_DATE('"+darFechaActualFormato()+"','YYYY-MM-DD'), TO_DATE('"+fechaEntrega+"','YYYY-MM-DD')))";
+					insStmt = conexion.prepareStatement(queryInsert);
+					insStmt.executeQuery();
+				}
+				else
+				{
+					throw new Exception("No se pudo realizar el pedido del producto, porque no se cuenta con los recursos necesarios. EL pedido se archivara para luego de tener los recursos informar sobre la posibilidad de realizar la solicitud");
+				}
 			}
-			else
-			{
-				throw new Exception("No se pudo realizar el pedido del producto, porque no se cuenta con los recursos necesarios. EL pedido se archivara para luego de tener los recursos informar sobre la posibilidad de realizar la solicitud");
+			else{
+				throw new Exception("No existe el producto");
 			}
 		}
 		catch (SQLException e)
@@ -725,6 +727,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 
+	private String darFechaActualFormato(){
+		Date hoy = new Date();
+		return (hoy.getYear()+1900)+"-"+(hoy.getMonth()+1)+"-"+hoy.getDate();
+	}
+	
 	/**
 	 * Metodo encargado de registrar la ejecucion en la base de datos.
 	 * @param idEtapaProduccion la etapa de produccion.
