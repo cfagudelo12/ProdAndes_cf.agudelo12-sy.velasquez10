@@ -96,6 +96,7 @@ public class ServletProducto extends HttpServlet
 		String solicitarProducto = request.getParameter( "solicitarProducto" );
 		String buscarProducto = request.getParameter( "buscarProducto" );
 		String consultarExistencias = request.getParameter( "consultarExistencias" );
+		String registrarEntregaProducto = request.getParameter( "registrarEntregaProducto");
 
 		if(producto!=null)
 		{
@@ -120,9 +121,15 @@ public class ServletProducto extends HttpServlet
 				String fechaE = request.getParameter( "fechaEntrega" );
 				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
 				java.util.Date fechaLl= null;
-				fechaLl = formato.parse(fechaS);
+				if(fechaS!="")
+				{
+					fechaLl = formato.parse(fechaS);
+				}
 				Date fechaSolicitud=(Date) fechaLl;
-				fechaLl = formato.parse(fechaE);
+				if(fechaE!="")
+				{
+					fechaLl = formato.parse(fechaE);
+				}
 				Date fechaEntrega=(Date) fechaLl;
 
 				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
@@ -141,7 +148,7 @@ public class ServletProducto extends HttpServlet
 				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
 			}
 		}
-		if(solicitarProducto!=null)
+		else if(solicitarProducto!=null)
 		{
 			try
 			{
@@ -149,10 +156,6 @@ public class ServletProducto extends HttpServlet
 				String idProducto = request.getParameter( "idProducto" );
 				String cantidad = request.getParameter( "cantidad" );
 				String fecha = request.getParameter( "fechaEntrega" );
-				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
-				java.util.Date fechaLl= null;
-				fechaLl = formato.parse(fecha);
-				Date fechaEntrega=(Date) fechaLl;
 
 				ProdAndes.darInstancia().solicitarPedido(idCliente, idProducto, fechaEntrega, Integer.parseInt(cantidad));
 				imprimirPaginaProducto(response);
@@ -178,6 +181,26 @@ public class ServletProducto extends HttpServlet
 				String cantidad = request.getParameter( "cantidad" );
 				String costo = request.getParameter( "costo" );
 				listaMateriales= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
+				imprimirPaginaProducto(response);
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			} 
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			}
+		}
+		else if(registrarEntregaProducto!=null)
+		{
+			try
+			{
+				String idProducto = request.getParameter( "idProducto" );
+				String idPedido = request.getParameter( "idPedido" );
+				String fecha= request.getParameter( "fecha" );
+				
+				listaMateriales= ProdAndes.darInstancia().registrarEntregaPedido(Integer.parseInt(idProducto),Integer.parseInt(idPedido),fecha);
 				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )
@@ -248,27 +271,6 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "            <div  id=\"fondoAzul\" class=\"navbar-header\">");
 		respuesta.println( "                <a id=\"fondoAzul\" class=\"navbar-brand\" href=\"index.html\">Administrador</a>");
 		respuesta.println( "            </div>");
-		respuesta.println( "            <!-- elementos de la parte de arriba del navbar-->");
-		respuesta.println( "            <ul id=\"fondoAzul\" class=\"nav navbar-right top-nav\">");
-		respuesta.println( "                <li id=\"fondoAzul\"  class=\"dropdown\">");
-		respuesta.println( "                    <a id=\"fondoAzul\"  href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"fa fa-user\"></i> Carlos y Sergio <b class=\"caret\"></b></a>");
-		respuesta.println( "                    <ul id=\"fondoAzul\" class=\"dropdown-menu\">");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-user\"></i> Profile</a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-envelope\"></i> Inbox</a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-gear\"></i> Settings</a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                        <li class=\"divider\"></li>");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-power-off\"></i> Log Out</a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                    </ul>");
-		respuesta.println( "                </li>");
-		respuesta.println( "            </ul>");
 		respuesta.println( "            <!-- elementos de la parte de arriba del navbar- para pantallas pequeñas -->");
 		respuesta.println( "            <div  class=\"collapse navbar-collapse navbar-ex1-collapse\">");
 		respuesta.println( "                <ul class=\"nav navbar-nav side-nav\">");
@@ -277,7 +279,7 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                            <a><i class=\"fa fa-fw fa-dashboard\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Productos\" id=\"letraBlanca\" name=\"producto\" > </a>");
 		respuesta.println( "                        </li>");
 		respuesta.println( "                    </form>");
-		respuesta.println( "                     <form method=\"GET\" action=\"procesoDeProduccion.htm\">");
+		respuesta.println( "                     <form method=\"GET\" action=\"procesoProduccion.htm\">");
 		respuesta.println( "                        <li>");
 		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Proceso de producci&#243n\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
 		respuesta.println( "                        </li>");
@@ -356,6 +358,40 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                        </div>");
 		respuesta.println( "                </div>");
 		respuesta.println( "                </form>");
+		respuesta.println( "                 <!--Registrar entrega de productos-->");
+		respuesta.println( "                <div class=\"row\">");
+		respuesta.println( "                        <div class=\"panel panel-default\" >");
+		respuesta.println( "                            <div class=\"panel-heading\">");
+		respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Registrar entrega de producto</h3>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                            <br>");
+		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+		respuesta.println( "                             	<div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el Id del producto: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"idproducto\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "								<div class=\"col-lg-4\">");
+		respuesta.println( "	                            	<span>Indique el id del pedido: </span>");
+		respuesta.println( "	                            	<br/>");
+		respuesta.println( "	                            	<br/>");
+		respuesta.println( "	                               	<INPUT type=\"number\" name=\"idPedido\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique la fecha: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"date\" name=\"fecha\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-12\">");
+		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Solicitar\" name=\"registrarEntregaProducto\">");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                       ");
+		respuesta.println( "                        </div>");
+		respuesta.println( "                </div>");
+		respuesta.println( "                <!-- /.row -->");
 		respuesta.println( "                 <!--Registrar pedido de productos-->");
 		respuesta.println( "                <div class=\"row\">");
 		respuesta.println( "                        <div class=\"panel panel-default\" >");

@@ -23,7 +23,7 @@ import org.jboss.system.server.ServerConfigLocator;
 
 import fachada.ProdAndes;
 
-public class ServletProcesoProduccion
+public class ServletProcesoProduccion extends HttpServlet
 {
 
 	/**
@@ -111,10 +111,6 @@ public class ServletProcesoProduccion
 				String idOperario = request.getParameter( "idOperario" );
 				String fecha = request.getParameter( "fecha" );
 				String duracion = request.getParameter( "duracion" );
-				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
-				java.util.Date fechaLl= null;
-				fechaLl = formato.parse(fecha);
-				Date fechaEntrega=(Date) fechaLl;
 				
 				ProdAndes.darInstancia().registrarEjecucionEtapaProduccion(Integer.parseInt(idEtapa),Integer.parseInt(idOperario),fechaEntrega, Integer.parseInt(duracion));
 				imprimirPaginaProcesoProduccion(response);
@@ -198,7 +194,7 @@ public class ServletProcesoProduccion
 		respuesta.println( "                            <a><i class=\"fa fa-fw fa-dashboard\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Productos\" id=\"letraBlanca\" name=\"producto\" > </a>");
 		respuesta.println( "                        </li>");
 		respuesta.println( "                    </form>");
-		respuesta.println( "                     <form method=\"GET\" action=\"procesoDeProduccion.htm\">");
+		respuesta.println( "                     <form method=\"GET\" action=\"procesoProduccion.htm\">");
 		respuesta.println( "                        <li class=\"active\">");
 		respuesta.println( "                              <a><i class=\"fa fa-fw fa-bar-chart-o\"></i> <Input id=\"BotonNegro\" type=\"submit\" value=\"Proceso de producci&#243n\" id=\"letraBlanca\" name=\"procesoProduccion\" > </a>");
 		respuesta.println( "                        </li>");
