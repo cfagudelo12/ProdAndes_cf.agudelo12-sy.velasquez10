@@ -153,7 +153,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ConsultaDAO()
 	{
 		try {
-			registrarEntregaPedido(82, 4, "16/03/16");
+			registrarEntregaPedido(82, 4, "2016-03-16");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -307,10 +307,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				consulta+=" AND idRecurso IN (SELECT idRecurso FROM RECURSOS NATURAL INNER JOIN (SELECT idRecurso FROM Requieren WHERE idEtapaProduccion="+idEtapaProduccion+"))";
 			}
 			if(fechaPedido!=null){
-				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaPedido+"', 'DD/MM/YY'))";
+				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaPedido+"', 'YYYY-MM-DD'))";
 			}
 			if(fechaLlegada!=null){
-				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaLlegada+"', 'DD/MM/YY'))";
+				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaLlegada+"', 'YYYY-MM-DD'))";
 			}
 		}
 		return consulta;
@@ -391,10 +391,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			consulta+=" AND idProcesoProduccion="+idProcesoProduccion;
 		}
 		if(fechaPedido!=null){
-			consulta+=" AND idProducto IN(SELECT idProducto FROM Compran NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaPedido+"', 'DD/MM/YY'))";
+			consulta+=" AND idProducto IN(SELECT idProducto FROM Compran NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaPedido+"', 'YYYY-MM-DD'))";
 		}
 		if(fechaLlegada!=null){
-			consulta+=" AND idProducto IN(SELECT idProducto FROM Compran NATURAL INNER JOIN Pedidos WHERE fechaLlegada=TO_DATE('"+fechaLlegada+"', 'DD/MM/YY'))";
+			consulta+=" AND idProducto IN(SELECT idProducto FROM Compran NATURAL INNER JOIN Pedidos WHERE fechaLlegada=TO_DATE('"+fechaLlegada+"', 'YYYY-MM-DD'))";
 		}
 		return consulta;
 	}
@@ -428,7 +428,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			}
 			if(desde!=null && hasta!=null)
 			{
-				queryConsulta+="AND (p.fechaLlegada>TO_DATE('"+desde+"'DD/MM/YY') OR p.fechaLlegada<TO_DATE('"+hasta+"'DD/MM/YY'))";
+				queryConsulta+="AND (p.fechaLlegada>TO_DATE('"+desde+"','YYYY-MM-DD') OR p.fechaLlegada<TO_DATE('"+hasta+"','YYYY-MM-DD'))";
 			}
 			
 			selStmt = conexion.prepareStatement(queryConsulta);
@@ -556,7 +556,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement stmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada=TO_DATE('"+fechaLlegada+"'DD/MM/YY'), p.estado='Terminado' WHERE p.idPedido="+idPedido;
+			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p.estado='Terminado' WHERE p.idPedido="+idPedido;
 			String queryConsulta = "SELECT * FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
 			String queryTienen = null;
 			updStmt = conexion.prepareStatement(queryPedido);
@@ -628,10 +628,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement updProdStmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado='Terminado' WHERE p.idPedido="+idPedido;
+			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p.estado='Terminado' WHERE p.idPedido="+idPedido;
 			updPedStmt = conexion.prepareStatement(queryPedido);
 			updPedStmt.executeQuery();
-			String queryProducto = "UPDATE Productos p SET p.cantidadEnBodega=p.cantidadEnBodega-(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
+			String queryProducto = "UPDATE Productos p SET p.cantidadEnBodega=p.cantidadEnBodega-(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+"),"
 					+ "p.unidadesVendidas=p.unidadesVendidas+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+") WHERE p.idProducto="+idProducto;
 			updProdStmt = conexion.prepareStatement(queryProducto);
 			updProdStmt.executeQuery();
