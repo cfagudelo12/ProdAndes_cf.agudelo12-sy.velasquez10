@@ -117,20 +117,9 @@ public class ServletProducto extends HttpServlet
 				String desde = request.getParameter( "desde" );
 				String hasta = request.getParameter( "hasta" );
 				String etapaProduccion = request.getParameter( "etapaProduccion" );
-				String fechaS = request.getParameter( "fechaSolicitud" );
-				String fechaE = request.getParameter( "fechaEntrega" );
-				SimpleDateFormat formato = new SimpleDateFormat("MM/dd/yyyy");
-				java.util.Date fechaLl= null;
-				if(fechaS!="")
-				{
-					fechaLl = formato.parse(fechaS);
-				}
-				Date fechaSolicitud=(Date) fechaLl;
-				if(fechaE!="")
-				{
-					fechaLl = formato.parse(fechaE);
-				}
-				Date fechaEntrega=(Date) fechaLl;
+				String fechaSolicitud = request.getParameter( "fechaSolicitud" );
+				String fechaEntrega = request.getParameter( "fechaEntrega" );
+	System.out.println(fechaEntrega);
 
 				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				imprimirPaginaProducto(response);
@@ -155,9 +144,9 @@ public class ServletProducto extends HttpServlet
 				String idCliente = request.getParameter( "idCliente" );
 				String idProducto = request.getParameter( "idProducto" );
 				String cantidad = request.getParameter( "cantidad" );
-				String fecha = request.getParameter( "fechaEntrega" );
+				String fechaEntrega = request.getParameter( "fechaEntrega" );
 
-				ProdAndes.darInstancia().solicitarPedido(idCliente, idProducto, fechaEntrega, Integer.parseInt(cantidad));
+				ProdAndes.darInstancia().solicitarPedido(Integer.parseInt(idCliente), Integer.parseInt(idProducto), fechaEntrega, Integer.parseInt(cantidad));
 				imprimirPaginaProducto(response);
 
 			}
@@ -200,7 +189,7 @@ public class ServletProducto extends HttpServlet
 				String idPedido = request.getParameter( "idPedido" );
 				String fecha= request.getParameter( "fecha" );
 				
-				listaMateriales= ProdAndes.darInstancia().registrarEntregaPedido(Integer.parseInt(idProducto),Integer.parseInt(idPedido),fecha);
+				ProdAndes.darInstancia().registrarEntregaProducto(Integer.parseInt(idProducto),Integer.parseInt(idPedido),fecha);
 				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )
@@ -385,7 +374,7 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                                    <INPUT type=\"date\" name=\"fecha\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-12\">");
-		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Solicitar\" name=\"registrarEntregaProducto\">");
+		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Registrar\" name=\"registrarEntregaProducto\">");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                            </div>");
 		respuesta.println( "                       ");
