@@ -96,7 +96,8 @@ public class ProdAndes
 	{
 		return dao.consultarProducto(cantidad,costo);
 	}
-	public void solicitarPedido(String idCliente, String idProducto, String fechaEntrega, int cantidad) throws Exception 
+
+	public void solicitarPedido(int idCliente, int idProducto, String fechaEntrega, int cantidad) throws Exception 
 	{
 		dao.solicitarPedido(idCliente,idProducto,fechaEntrega, cantidad);
 	}
