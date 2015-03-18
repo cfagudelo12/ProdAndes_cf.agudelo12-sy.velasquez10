@@ -1,10 +1,9 @@
 package dao;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import vos.*;
 
@@ -154,7 +153,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ConsultaDAO()
 	{
 		try {
-			consultarExistenciasRecurso("Materia prima", 47, 49, 51, null, null);	
+			registrarEntregaPedido(82, 4, "16/03/16");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -203,7 +202,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
      */
     public static void main( String[] args ) 
     {
-
         try 
         {
 			ConsultaDAO dao= new ConsultaDAO();
@@ -212,7 +210,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		
 			e.printStackTrace();
 		}
-       
     }
 
 	/**
@@ -247,7 +244,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @return Una lista con los recursos que cumplen con los parametros.
 	 * @throws Exception Si hay algun problema en la conexion o si no y si no hay existencias disponibles.
 	 */
-	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
+	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, String fechaSolicitud, String fechaEntrega) throws Exception
 	{
 		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
 		PreparedStatement selStmt = null;
@@ -298,10 +295,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @param fechaEntrega La fecha de entrega.
 	 * @return El query respectivo a la solicitud.
 	 */
-	private String generarConsultaExistenciaRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, Date fechaSolicitud, Date fechaEntrega)
+	private String generarConsultaExistenciaRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, String fechaPedido, String fechaLlegada)
 	{
 		String consulta = "SELECT * FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+") WHERE tipoRecurso='"+tipoMaterial+"'";
-		if(rInferior!=0||rSuperior!=0||idEtapaProduccion!=0||fechaSolicitud!=null||fechaEntrega!=null){
+		if(rInferior!=0||rSuperior!=0||idEtapaProduccion!=0||fechaPedido!=null||fechaLlegada!=null){
 			if(rInferior>0 && rInferior<rSuperior){
 				consulta+=" AND idRecurso IN (SELECT idRecurso FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+
 						" AND cantidadEnBodega BETWEEN "+rInferior+" AND "+rSuperior+"))";
@@ -309,11 +306,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			if(idEtapaProduccion>0){
 				consulta+=" AND idRecurso IN (SELECT idRecurso FROM RECURSOS NATURAL INNER JOIN (SELECT idRecurso FROM Requieren WHERE idEtapaProduccion="+idEtapaProduccion+"))";
 			}
-			if(fechaSolicitud!=null){
-				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaEntrega+"', 'DD/MM/YY'))";
+			if(fechaPedido!=null){
+				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaPedido+"', 'DD/MM/YY'))";
 			}
-			if(fechaEntrega!=null){
-				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaEntrega+"', 'DD/MM/YY'))";
+			if(fechaLlegada!=null){
+				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaLlegada+"', 'DD/MM/YY'))";
 			}
 		}
 		return consulta;
@@ -331,7 +328,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @return Una lista con los recursos que cumplen con los parametros.
 	 * @throws Exception Si hay algun problema en la conexion o si no y si no hay existencias disponibles.
 	 */
-	public ArrayList<ProductoValue> consultarExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega) throws Exception
+	public ArrayList<ProductoValue> consultarExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, String fechaSolicitud, String fechaEntrega) throws Exception
 	{
 		ArrayList<ProductoValue> productos = new ArrayList<ProductoValue>();
 		PreparedStatement selStmt = null;
@@ -385,21 +382,19 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @param fechaEntrega La fecha de entrega.
 	 * @return El query respectivo a la solicitud.
 	 */
-	private String generarConsultaExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, Date fechaSolicitud, Date fechaEntrega){
-		String consulta = "SELECT * FROM Productos p WHERE p.idEmpresa="+idEmpresaF+" AND p.cantidadEnBodega>0";
+	private String generarConsultaExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, String fechaPedido, String fechaLlegada){
+		String consulta = "SELECT * FROM Productos WHERE idEmpresa="+idEmpresaF+" AND cantidadEnBodega>0";
 		if(rInferior>0 && rInferior<rSuperior){
-			consulta+=" AND p.cantidadEnBodega BETWEEN "+rInferior+" AND "+rSuperior;
+			consulta+=" AND cantidadEnBodega BETWEEN "+rInferior+" AND "+rSuperior;
 		}
 		if(idProcesoProduccion>0){
-			consulta+=" AND p.idProcesoProduccion="+idProcesoProduccion;
+			consulta+=" AND idProcesoProduccion="+idProcesoProduccion;
 		}
-		if(fechaSolicitud!=null){
-			consulta+=" AND IN(SELECT * FROM Productos NATURAL INNER JOIN (SELECT c.idProducto FROM Compran c NATURAL INNER JOIN Pedidos p WHERE"
-					+ " p.fechaSolicitud="+fechaSolicitud+"))";
+		if(fechaPedido!=null){
+			consulta+=" AND idProducto IN(SELECT idProducto FROM Compran NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaPedido+"', 'DD/MM/YY'))";
 		}
-		if(fechaEntrega!=null){
-			consulta+=" AND IN(SELECT * FROM Productos NATURAL INNER JOIN (SELECT c.idProducto FROM Compran c NATURAL INNER JOIN Pedidos p WHERE"
-					+ " p.fechaEntrega="+fechaEntrega+"))";
+		if(fechaLlegada!=null){
+			consulta+=" AND idProducto IN(SELECT idProducto FROM Compran NATURAL INNER JOIN Pedidos WHERE fechaLlegada=TO_DATE('"+fechaLlegada+"', 'DD/MM/YY'))";
 		}
 		return consulta;
 	}
@@ -413,26 +408,27 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @return Una lista con materiales.
 	 * @throws Exception Si hay un error en alguna parte del proceso
 	 */
-	public ArrayList<MaterialValue> consultarRecurso(int volumen, Date desde, Date hasta, Float costo) throws Exception
+	public ArrayList<MaterialValue> consultarRecurso(int volumen, String desde, String hasta, Float costo) throws Exception
 	{
 		ArrayList<MaterialValue> materiales= new ArrayList<MaterialValue>();
 		PreparedStatement selStmt = null;
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryConsulta = "SELECT * FROM"+tRecursos+" r, "+tSolicitan+" s,"+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+ tPedidos+" p, WHERE r.idRecurso=s.idRecurso AND s.idPedido=p.idPedido AND r.idRecurso=req.idRecurso AND req.idEtapaProduccion=e.idEtapaProduccion AND pro.idEtapaProduccion=e.idEtapaProduccion";
-			
+			String queryConsulta = "SELECT * FROM Empresas em,Recursos r,Solicitan s,EtapasProduccion e,Requieren req,ProcesosProduccion pro,Pedidos p, Tienen t"+ 
+					"WHERE em.idEmpresa="+idEmpresaF+" AND r.idRecurso=s.idRecurso AND s.idPedido=p.idPedido AND r.idRecurso=req.idRecurso AND req.idEtapaProduccion=e.idEtapaProduccion"+
+					"AND pro.idProcesoProduccion=e.idProcesoProduccion AND t.idEmpresa=em.idEmpresa AND t.idRecurso=r.idRecurso";
 			if(volumen>0)
 			{
-				queryConsulta+=" AND r.volumen="+volumen;
+				queryConsulta+=" AND t.cantidadEnBodega="+volumen;
 			}
 			if(costo>0)
 			{
-				queryConsulta+=" AND r.costo="+costo;
+				queryConsulta+=" AND p.monto="+costo;
 			}
-			if(desde!=null && hasta!=null && desde.before(hasta))
+			if(desde!=null && hasta!=null)
 			{
-				queryConsulta+="AND (p.fechaLlegada>"+desde+" OR p.fechaLlegada<"+hasta+")";
+				queryConsulta+="AND (p.fechaLlegada>TO_DATE('"+desde+"'DD/MM/YY') OR p.fechaLlegada<TO_DATE('"+hasta+"'DD/MM/YY'))";
 			}
 			
 			selStmt = conexion.prepareStatement(queryConsulta);
@@ -553,14 +549,14 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @param fechaLlegada La fecha de llegada del producto.
 	 * @throws Exception Si hay un error en alguna parte del proceso
 	 */
-	public void registrarLlegadaRecurso(int idRecurso, int idPedido, Date fechaLlegada) throws Exception
+	public void registrarLlegadaRecurso(int idRecurso, int idPedido, String fechaLlegada) throws Exception
 	{
 		PreparedStatement updStmt = null;
 		PreparedStatement selStmt = null;
 		PreparedStatement stmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado='Entregado' WHERE p.idPedido="+idPedido;
+			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada=TO_DATE('"+fechaLlegada+"'DD/MM/YY'), p.estado='Terminado' WHERE p.idPedido="+idPedido;
 			String queryConsulta = "SELECT * FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
 			String queryTienen = null;
 			updStmt = conexion.prepareStatement(queryPedido);
@@ -569,14 +565,14 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			ResultSet rs = selStmt.executeQuery();
 			if(rs.next())
 			{
-				queryTienen="UPDATE Tienen t SET t.cantidad=t.cantidad+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
+				queryTienen="UPDATE Tienen t SET t.cantidadEnBodega=t.cantidadEnBodega+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
 						+ "WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
 				stmt=conexion.prepareStatement(queryTienen);
 				stmt.executeQuery();
 			}	
 			else
 			{
-				queryTienen="INSERT INTO Tienen(idEmpresa,idRecurso,cantidad) VALUES ("+idEmpresaF+","+idRecurso+", "
+				queryTienen="INSERT INTO Tienen(idEmpresa,idRecurso,cantidadEnBodega) VALUES ("+idEmpresaF+","+idRecurso+", "
 						+ "(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+"))";
 				stmt=conexion.prepareStatement(queryTienen);
 				stmt.executeQuery();
@@ -626,13 +622,13 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @param fechaLlegada La fechas de 
 	 * @throws Exception
 	 */
-	public void registrarEntregaPedido(int idCliente,int idProducto,int idPedido, Date fechaLlegada) throws Exception
+	public void registrarEntregaPedido(int idProducto,int idPedido, String fechaLlegada) throws Exception
 	{
 		PreparedStatement updPedStmt = null;
 		PreparedStatement updProdStmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado='Entregado' WHERE p.idPedido="+idPedido;
+			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada="+fechaLlegada+", p.estado='Terminado' WHERE p.idPedido="+idPedido;
 			updPedStmt = conexion.prepareStatement(queryPedido);
 			updPedStmt.executeQuery();
 			String queryProducto = "UPDATE Productos p SET p.cantidadEnBodega=p.cantidadEnBodega-(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
@@ -737,7 +733,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @param duracion es la duracion de la etapa
 	 * @throws Exception Si hay un error en alguna parte del proceso
 	 */
-	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, Date fechaEjecucion, int duracion) throws Exception{
+	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, String fechaEjecucion, int duracion) throws Exception{
 		PreparedStatement insStmt=null;
 		PreparedStatement selStmt=null;
 		PreparedStatement selEStmt=null;
