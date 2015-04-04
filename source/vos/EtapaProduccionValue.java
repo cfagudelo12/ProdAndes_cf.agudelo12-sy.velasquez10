@@ -2,6 +2,10 @@ package vos;
 
 public class EtapaProduccionValue 
 {
+	//----------------------------------------------------
+	// Constantes
+	//----------------------------------------------------
+	
 	public final static String cIdEtapaProduccion = "idEtapaProduccion";
 	
 	public final static String cNumeroEtapa = "numeroEtapa";
@@ -10,8 +14,13 @@ public class EtapaProduccionValue
 	
 	public final static String cIdProcesoProduccion = "idProcesoProduccion";
 	
+	
 	public final static String cDescripcion = "descripcion";
-
+	
+	//----------------------------------------------------
+	// Atributos
+	//----------------------------------------------------
+	
 	private int idEtapaProduccion;
 	
 	private int numeroEtapa;
@@ -21,7 +30,11 @@ public class EtapaProduccionValue
 	private int idProcesoProduccion;
 	
 	private String descripcion;
-
+	
+	//----------------------------------------------------
+	// Métodos
+	//----------------------------------------------------
+	
 	public EtapaProduccionValue() {}
 
 	public int getIdEtapaProduccion() {
@@ -63,6 +76,4 @@ public class EtapaProduccionValue
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
-	
-
 }

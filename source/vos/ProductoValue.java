@@ -2,6 +2,10 @@ package vos;
 
 public class ProductoValue
 {
+	//----------------------------------------------------
+	// Constantes
+	//----------------------------------------------------
+	
 	public final static String cIdProducto = "idProducto";
 	
 	public final static String cNombre = "nombre";
@@ -20,6 +24,12 @@ public class ProductoValue
 	
 	public final static String cIdProcesoProduccion = "idProcesoProduccion";
 	
+	public final static String cfCantidadEnBodega = "cantidadEnBodega";
+	
+	//----------------------------------------------------
+	// Atributos
+	//----------------------------------------------------
+	
 	private int idProducto;
 	
 	private String nombre;
@@ -37,6 +47,10 @@ public class ProductoValue
 	private int idEmpresa;
 	
 	private int idProcesoProduccion;
+
+	//----------------------------------------------------
+	// Métodos
+	//----------------------------------------------------
 	
 	public String toString()
 	{

@@ -1,8 +1,11 @@
 package vos;
 
-
 public class MaterialValue 
 {	
+	//----------------------------------------------------
+	// Atributos
+	//----------------------------------------------------
+	
 	private RecursoValue recurso;
 	
 	private ProductoValue produto;
@@ -16,6 +19,10 @@ public class MaterialValue
 	private String pedidos;
 	
 	private String recursoQueLoCompone;
+	
+	//----------------------------------------------------
+	// Métodos
+	//----------------------------------------------------
 	
 	public MaterialValue(){}
 
@@ -91,6 +98,4 @@ public class MaterialValue
 	public void setRecursoQueLoCompone(String recursoQueLoCompone) {
 		this.recursoQueLoCompone = recursoQueLoCompone;
 	}
-
-
 }

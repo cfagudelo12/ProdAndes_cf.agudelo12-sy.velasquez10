@@ -2,6 +2,10 @@ package vos;
 
 public class RecursoValue 
 {
+	//----------------------------------------------------
+	// Constantes
+	//----------------------------------------------------
+	
 	public final static String materiaPrima = "Materia Prima";
 	
 	public final static String componente = "Componente";
@@ -20,6 +24,12 @@ public class RecursoValue
 	
 	public final static String cTiempoEntrega = "tiempoEntrega";
 	
+	public final static String cfCantidadEnBodega = "cantidadEnBodega";
+	
+	//----------------------------------------------------
+	// Atributos
+	//----------------------------------------------------
+	
 	private int idRecurso;
 	
 	private String nombre;
@@ -33,6 +43,10 @@ public class RecursoValue
 	private int cantidadMDistribucion;
 	
 	private int tiempoEntrega;
+	
+	//----------------------------------------------------
+	// Métodos
+	//----------------------------------------------------
 	
 	public RecursoValue(){}
 	

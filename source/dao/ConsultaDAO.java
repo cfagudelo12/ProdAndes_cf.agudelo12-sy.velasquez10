@@ -1,7 +1,6 @@
 package dao;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.ArrayList;
 
@@ -22,6 +21,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	private static final String ARCHIVO_CONEXION = "/../conexion.properties";
 	
+	/**
+	 * Constante que representa el id de la empresa de prueba.
+	 */
 	private static final int idEmpresaF = 1;
 	
 	//----------------------------------------------------
@@ -93,6 +95,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	private static final String tEtapasProduccion="EtapasProduccion";
 
+	/**
+	 * Constante que representa el nombre de la tabla EtapasProduccion
+	 */
+	private static final String tEtapasProduccionPedido="EtapasProduccionPedido";
+	
 	/**
 	 * Constante que representa el nombre de la tabla EstacionesProduccion
 	 */
@@ -186,8 +193,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	private void establecerConexion(String u,String p,String a) throws SQLException
 	{
-		try
-		{
+		try{
 			conexion = DriverManager.getConnection("jdbc:oracle:thin:@prod.oracle.virtual.uniandes.edu.co:1531:prod","ISIS2304481510","fberrapius");
 		}
 		catch(SQLException exception){
@@ -202,25 +208,22 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
      */
     public static void main( String[] args ) 
     {
-        try 
-        {
-			ConsultaDAO dao= new ConsultaDAO();
+        try {
+			new ConsultaDAO();
 		} 
-        catch (Exception e) 
-        {
+        catch (Exception e) {
 			e.printStackTrace();
 		}
     }
 
 	/**
 	 * Cierra la conexion activa a la base de datos.
-	 * @param con Conexion a la base de datos
-	 * @throws Exception Si se presentan errores de conexion
+	 * @param connection Conexion a la base de datos.
+	 * @throws Exception Si se presentan errores de conexion.
 	 */
 	public void closeConnection(Connection connection) throws Exception 
 	{        
-		try
-		{
+		try{
 			connection.close();
 			connection = null;
 		}
@@ -234,18 +237,18 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
    //---------------------------------------------------
 
 	/**
-	 * Metodo encargado de consultar en la base de datos la existencia de un recurso, segun el tipo de material, un rango de cantidad, una fecha de solicitud y fecha de entrega
-	 * @param tipoMaterial El tipo de material. Materia prima o Componente
-	 * @param rInferior El limite inferior del rango
-	 * @param rSuperior El limite superior del rango
-	 * @param idEtapaProduccion El id de la etapa de produccion
+	 * Metodo encargado de consultar en la base de datos la existencia de un recurso, 
+	 * segun el tipo de material, un rango de cantidad, una fecha de solicitud y fecha de entrega
+	 * @param tipoMaterial El tipo de material. Materia prima o Componente.
+	 * @param rInferior El limite inferior del rango.
+	 * @param rSuperior El limite superior del rango.
+	 * @param idEtapaProduccion El id de la etapa de produccion.
 	 * @param fechaSolicitud La fecha de solicitud.
 	 * @param fechaEntrega La fecha de entrega.
 	 * @return Una lista con los recursos que cumplen con los parametros.
-	 * @throws Exception Si hay algun problema en la conexion o si no y si no hay existencias disponibles.
+	 * @throws Exception Si hay algun problema en la conexion o si no hay existencias disponibles.
 	 */
-	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, String fechaSolicitud, String fechaEntrega) throws Exception
-	{
+	public ArrayList<RecursoValue> consultarExistenciasRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, String fechaSolicitud, String fechaEntrega) throws Exception{
 		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
 		PreparedStatement selStmt = null;
 		try{
@@ -286,60 +289,57 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	}
 	
 	/**
-	 * Metodo encargado en generar el query de la consulta de existencias
-	 * @param tipoMaterial El tipo de material. Materia prima o Componente
-	 * @param rInferior El limite inferior del rango
-	 * @param rSuperior El limite superior del rango
-	 * @param idEtapaProduccion El id de la etapa de produccion
+	 * Metodo encargado en generar el query de la consulta de existencias de un recurso.
+	 * @param tipoMaterial El tipo de material. Materia prima o Componente.
+	 * @param rInferior El limite inferior del rango.
+	 * @param rSuperior El limite superior del rango.
+	 * @param idEtapaProduccion El id de la etapa de produccion.
 	 * @param fechaSolicitud La fecha de solicitud.
 	 * @param fechaEntrega La fecha de entrega.
 	 * @return El query respectivo a la solicitud.
 	 */
 	private String generarConsultaExistenciaRecurso(String tipoMaterial, int rInferior, int rSuperior, int idEtapaProduccion, String fechaPedido, String fechaLlegada)
 	{
-		String consulta = "SELECT * FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+") WHERE tipoRecurso='"+tipoMaterial+"'";
-		if(rInferior!=0||rSuperior!=0||idEtapaProduccion!=0||fechaPedido!=null||fechaLlegada!=null){
+		String consulta = "SELECT * FROM "+tRecursos+" NATURAL INNER JOIN (SELECT "+RecursoValue.cIdRecurso+" FROM "+tTienen+" WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+") WHERE "+RecursoValue.cTipoRecurso+"='"+tipoMaterial+"'";
+		if(rInferior!=0||rSuperior!=0||idEtapaProduccion!=0||!fechaPedido.equals("")||!fechaLlegada.equals("")){
 			if(rInferior>0 && rInferior<rSuperior){
-				consulta+=" AND idRecurso IN (SELECT idRecurso FROM Recursos NATURAL INNER JOIN (SELECT idRecurso FROM Tienen WHERE idEmpresa="+idEmpresaF+
-						" AND cantidadEnBodega BETWEEN "+rInferior+" AND "+rSuperior+"))";
+				consulta+=" AND "+RecursoValue.cIdRecurso+" IN (SELECT "+RecursoValue.cIdRecurso+" FROM "+tRecursos+" NATURAL INNER JOIN (SELECT "+RecursoValue.cIdRecurso+" FROM "+tTienen+" WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+
+						" AND "+RecursoValue.cfCantidadEnBodega+" BETWEEN "+rInferior+" AND "+rSuperior+"))";
 			}
 			if(idEtapaProduccion>0){
-				consulta+=" AND idRecurso IN (SELECT idRecurso FROM RECURSOS NATURAL INNER JOIN (SELECT idRecurso FROM Requieren WHERE idEtapaProduccion="+idEtapaProduccion+"))";
+				consulta+=" AND "+RecursoValue.cIdRecurso+" IN (SELECT "+RecursoValue.cIdRecurso+" FROM "+tRecursos+" NATURAL INNER JOIN (SELECT "+RecursoValue.cIdRecurso+" FROM "+tRequieren+" WHERE "+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+"))";
 			}
 			if(fechaPedido!=null){
-				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaPedido+"', 'YYYY-MM-DD'))";
+				consulta+=" AND "+RecursoValue.cIdRecurso+" IN(SELECT "+RecursoValue.cIdRecurso+" FROM "+tSolicitan+" NATURAL INNER JOIN "+tPedidos+" WHERE "+PedidoValue.cFechaPedido+"=TO_DATE('"+fechaPedido+"', 'YYYY-MM-DD'))";
 			}
 			if(fechaLlegada!=null){
-				consulta+=" AND idRecurso IN(SELECT idRecurso FROM Solicitan NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaLlegada+"', 'YYYY-MM-DD'))";
+				consulta+=" AND "+RecursoValue.cIdRecurso+" IN(SELECT "+RecursoValue.cIdRecurso+" FROM "+tSolicitan+" NATURAL INNER JOIN "+tPedidos+" WHERE "+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"', 'YYYY-MM-DD'))";
 			}
 		}
 		return consulta;
 	}
 	
 	/**
-	 * 
-	 * Metodo encargado de consultar en la base de datos la existencia de un prodcuto, un rango de cantidad, una fecha de solicitud y fecha de entrega
-	 * @param tipoMaterial El tipo de material. Materia prima o Componente
-	 * @param rInferior El limite inferior del rango
-	 * @param rSuperior El limite superior del rango
-	 * @param idEtapaProduccion El id de la etapa de produccion
+	 * Metodo encargado de consultar en la base de datos la existencia de un producto, dado un rango de cantidad,
+	 * un proceso de producción, una fecha de solicitud y fecha de entrega.
+	 * @param rInferior El limite inferior del rango.
+	 * @param rSuperior El limite superior del rango.
+	 * @param idProcesoProduccion El id del proceso de producción.
 	 * @param fechaSolicitud La fecha de solicitud.
 	 * @param fechaEntrega La fecha de entrega.
-	 * @return Una lista con los recursos que cumplen con los parametros.
-	 * @throws Exception Si hay algun problema en la conexion o si no y si no hay existencias disponibles.
+	 * @return Una lista con los productos que cumplen con los parametros.
+	 * @throws Exception Si hay algun problema en la conexion o si no hay existencias disponibles.
 	 */
 	public ArrayList<ProductoValue> consultarExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, String fechaSolicitud, String fechaEntrega) throws Exception
 	{
 		ArrayList<ProductoValue> productos = new ArrayList<ProductoValue>();
 		PreparedStatement selStmt = null;
-		try
-		{
+		try{
 			String consulta	= generarConsultaExistenciasProductos(rInferior, rSuperior, idProcesoProduccion, fechaSolicitud, fechaEntrega);
 			establecerConexion(cadenaConexion, usuario, clave);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();
-			while(rs.next())
-			{
+			while(rs.next()){
 				ProductoValue producto = new ProductoValue();
 				producto.setIdProducto(rs.getInt(ProductoValue.cIdProducto));
 				producto.setNombre(rs.getString(ProductoValue.cNombre));
@@ -373,37 +373,36 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	}
 	
 	/**
-	 * Metodo encargado en generar el query de la consulta de existencias
-	 * @param tipoMaterial El tipo de material. Materia prima o Componente
-	 * @param rInferior El limite inferior del rango
-	 * @param rSuperior El limite superior del rango
-	 * @param idEtapaProduccion El id de la etapa de produccion
+	 * Metodo encargado en generar el query de la consulta de existencias.
+	 * @param rInferior El limite inferior del rango.
+	 * @param rSuperior El limite superior del rango.
+	 * @param idProcesoProduccion El id del proceso de produccion.
 	 * @param fechaSolicitud La fecha de solicitud.
 	 * @param fechaEntrega La fecha de entrega.
 	 * @return El query respectivo a la solicitud.
 	 */
 	private String generarConsultaExistenciasProductos(int rInferior, int rSuperior, int idProcesoProduccion, String fechaPedido, String fechaLlegada){
-		String consulta = "SELECT * FROM Productos WHERE idEmpresa="+idEmpresaF+" AND cantidadEnBodega>0";
+		String consulta = "SELECT * FROM "+tProductos+" WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND "+ProductoValue.cfCantidadEnBodega+">0";
 		if(rInferior>0 && rInferior<rSuperior){
-			consulta+=" AND cantidadEnBodega BETWEEN "+rInferior+" AND "+rSuperior;
+			consulta+=" AND "+ProductoValue.cfCantidadEnBodega+" BETWEEN "+rInferior+" AND "+rSuperior;
 		}
 		if(idProcesoProduccion>0){
-			consulta+=" AND idProcesoProduccion="+idProcesoProduccion;
+			consulta+=" AND "+ProcesoProduccionValue.cIdProcesoProduccion+"="+idProcesoProduccion;
 		}
 		if(fechaPedido!=null){
-			consulta+=" AND idProducto IN(SELECT idProducto FROM Compran NATURAL INNER JOIN Pedidos WHERE fechaPedido=TO_DATE('"+fechaPedido+"', 'YYYY-MM-DD'))";
+			consulta+=" AND "+ProductoValue.cIdProducto+" IN(SELECT "+ProductoValue.cIdProducto+" FROM "+tCompran+" NATURAL INNER JOIN "+tPedidos+" WHERE "+PedidoValue.cFechaPedido+"=TO_DATE('"+fechaPedido+"', 'YYYY-MM-DD'))";
 		}
 		if(fechaLlegada!=null){
-			consulta+=" AND idProducto IN(SELECT idProducto FROM Compran NATURAL INNER JOIN Pedidos WHERE fechaLlegada=TO_DATE('"+fechaLlegada+"', 'YYYY-MM-DD'))";
+			consulta+=" AND "+ProductoValue.cIdProducto+" IN(SELECT "+ProductoValue.cIdProducto+" FROM "+tCompran+" NATURAL INNER JOIN "+tPedidos+" WHERE "+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"', 'YYYY-MM-DD'))";
 		}
 		return consulta;
 	}
 	
 	/**
-	 * Metodo encardo de buscar un objeto segun los parametros
-	 * @param volumen EL volumen que se quiere buscar
-	 * @param desde Desde cuando se quiere buscar
-	 * @param hasta Hasta cuando se quiere buscar
+	 * Metodo encargado de buscar un material segun los parametros.
+	 * @param volumen El volumen que se quiere buscar.
+	 * @param desde Desde cuando se quiere buscar.
+	 * @param hasta Hasta cuando se quiere buscar.
 	 * @param costo El costo de un material.
 	 * @return Una lista con materiales.
 	 * @throws Exception Si hay un error en alguna parte del proceso
@@ -415,29 +414,25 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryConsulta = "SELECT * FROM Empresas em,Recursos r,Solicitan s,EtapasProduccion e,Requieren req,ProcesosProduccion pro,Pedidos p, Tienen t"+ 
-					"WHERE em.idEmpresa="+idEmpresaF+" AND r.idRecurso=s.idRecurso AND s.idPedido=p.idPedido AND r.idRecurso=req.idRecurso AND req.idEtapaProduccion=e.idEtapaProduccion"+
-					"AND pro.idProcesoProduccion=e.idProcesoProduccion AND t.idEmpresa=em.idEmpresa AND t.idRecurso=r.idRecurso";
-			if(volumen>0)
-			{
-				queryConsulta+=" AND t.cantidadEnBodega="+volumen;
+			String queryConsulta = "SELECT * FROM "+tEmpresas+" em,"+tRecursos+" r,"+tSolicitan+" s,"+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+tPedidos+" p, "+tTienen+" t"+ 
+					"WHERE em."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND r."+RecursoValue.cIdRecurso+"=s."+RecursoValue.cIdRecurso+" AND s."+PedidoValue.cIdPedido+"=p."+PedidoValue.cIdPedido+
+					" AND r."+RecursoValue.cIdRecurso+"=req."+RecursoValue.cIdRecurso+" AND req."+EtapaProduccionValue.cIdEtapaProduccion+"=e."+EtapaProduccionValue.cIdEtapaProduccion+""+
+					"AND pro."+ProcesoProduccionValue.cIdProcesoProduccion+"=e."+ProcesoProduccionValue.cIdProcesoProduccion+" AND t."+EmpresaValue.cIdEmpresa+"=em."+EmpresaValue.cIdEmpresa+" AND t."+
+					RecursoValue.cIdRecurso+"=r."+RecursoValue.cIdRecurso+"";
+			if(volumen>0){
+				queryConsulta+=" AND t."+RecursoValue.cfCantidadEnBodega+"="+volumen;
 			}
-			if(costo>0)
-			{
-				queryConsulta+=" AND p.monto="+costo;
+			if(costo>0){
+				queryConsulta+=" AND p."+PedidoValue.cMonto+"="+costo;
 			}
-			if(desde!=null && hasta!=null)
-			{
-				queryConsulta+="AND (p.fechaLlegada>TO_DATE('"+desde+"','YYYY-MM-DD') OR p.fechaLlegada<TO_DATE('"+hasta+"','YYYY-MM-DD'))";
+			if(!desde.equals("")&&!hasta.equals("")){
+				queryConsulta+="AND (p."+PedidoValue.cFechaLlegada+">TO_DATE('"+desde+"','YYYY-MM-DD') OR p."+PedidoValue.cFechaLlegada+"<TO_DATE('"+hasta+"','YYYY-MM-DD'))";
 			}
-			
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
-			
 			while(rs.next())
 			{
 				MaterialValue m= new MaterialValue();
-				
 				RecursoValue recurso = new RecursoValue();
 				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
 				recurso.setNombre(rs.getString(RecursoValue.cNombre));
@@ -446,14 +441,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				recurso.setIdProveedor(rs.getInt(RecursoValue.cIdProveedor));
 				recurso.setCantidadMDistribucion(rs.getInt(RecursoValue.cCantidadMDistribucion));
 				recurso.setTiempoEntrega(rs.getInt(RecursoValue.cTiempoEntrega));
-				
 				m.setRecurso(recurso);
 				m.agregarEtapasProduccion(""+rs.getInt(EtapaProduccionValue.cNumeroEtapa));
 				m.agregarPedidos(""+rs.getInt(PedidoValue.cIdPedido));
 				m.agregarProductos(""+rs.getInt(ProcesoProduccionValue.cIdProducto));
 				materiales.add(m);
 			}
-			
 			return materiales;
 		}
 		catch (SQLException e)
@@ -479,7 +472,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	
 	/**
 	 * Metodo encardo de buscar un proucto segun los parametros
-	 * @param volumen EL volumen que se quiere buscar
+	 * @param volumen El volumen que se quiere buscar
 	 * @param costo El costo de un material.
 	 * @return Una lista con materiales.
 	 * @throws Exception Si hay un error en alguna parte del proceso
@@ -491,29 +484,26 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryConsulta = "SELECT * FROM "+tProductos+" p, "+tRecursos+" r, "+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+tPedidos+" pe, "+tCompran+" c WHERE p.idProducto=pro.idProducto AND pro.idProcesoProduccion=e.idProcesoProduccion AND req.idEtapaProduccion=e.idEtapaProduccion AND req.idRecurso=r.idRecurso AND c.idProducto=p.idProducto AND pe.idPedido=c.idPedido";
-			
-			if(cantidad>0)
-			{
-				queryConsulta+=" AND p.cantidadenbodega="+cantidad;
+			String queryConsulta = "SELECT * FROM "+tProductos+" p, "+tRecursos+" r, "+tEtapasProduccion+" e,"+tRequieren+" req,"+tProcesosProduccion+" pro,"+
+			tPedidos+" pe, "+tCompran+" c WHERE p."+ProductoValue.cIdProducto+"=pro."+ProductoValue.cIdProducto+" AND pro."+ProcesoProduccionValue.cIdProcesoProduccion+
+			"=e."+ProcesoProduccionValue.cIdProcesoProduccion+" AND req."+EtapaProduccionValue.cIdEtapaProduccion+"=e."+EtapaProduccionValue.cIdEtapaProduccion+
+			" AND req."+RecursoValue.cIdRecurso+"=r."+RecursoValue.cIdRecurso+" AND c."+ProductoValue.cIdProducto+"=p."+ProductoValue.cIdProducto+" AND pe."+PedidoValue.cIdPedido+
+			"=c."+PedidoValue.cIdPedido+"";
+			if(cantidad>0){
+				queryConsulta+=" AND p."+ProductoValue.cCantidadEnBodega+"="+cantidad;
 			}
-			if(costo>0)
-			{
-				queryConsulta+=" AND p.costo="+costo;
+			if(costo>0){
+				queryConsulta+=" AND p."+ProductoValue.cCosto+"="+costo;
 			}
-			
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
-			
 			while(rs.next())
 			{
 				MaterialValue m= new MaterialValue();
-		
 				m.agregarRecursoQueLoCompone(rs.getString(RecursoValue.cNombre));
 				m.agregarPedidos(""+rs.getInt(PedidoValue.cIdPedido));
 				materiales.add(m);
 			}
-			
 			return materiales;
 		}
 		catch (SQLException e)
@@ -542,12 +532,73 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	// Metodos asociados a los casos de uso: Modificacion
 	//---------------------------------------------------
 	
+	public void registrarUsuario(int id, String clave, String tipoUsuario,
+			String cedula, String nombre, String nacionalidad, String direccionFisica,
+			String telefono, String email, String departamento, String ciudad, String codigoPostal,
+			int idRepresentanteLegal, int registro_volumen_idEmpresa, String tipoEmpleado, long sueldo) throws Exception{
+		PreparedStatement stmt = null;
+		PreparedStatement stmt2 = null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String query="INSERT INTO "+tUsuarios+"("+UsuarioValue.cId+","+UsuarioValue.cClave+","+UsuarioValue.cTipoUsuario+","+
+					UsuarioValue.cCedula+","+UsuarioValue.cNombre+","+UsuarioValue.cNacionalidad+","+UsuarioValue.cDireccionFisica+","+
+					UsuarioValue.cTelefono+","+UsuarioValue.cEmail+","+UsuarioValue.cDepartamento+","+UsuarioValue.cCiudad+","+UsuarioValue.cCodigoPostal+
+					") VALUES ("+id+","+clave+","+tipoUsuario+","+cedula+","+nombre+","+nacionalidad+","+direccionFisica+","+telefono+","+
+					email+","+departamento+","+ciudad+","+codigoPostal+")";
+			stmt=conexion.prepareStatement(query);
+			stmt.executeQuery();
+			if(tipoUsuario.equals(UsuarioValue.cliente)){
+				String query2="INSERT INTO"+tClientes+"("+ClienteValue.cId+","+ClienteValue.cIdRepresentanteLegal+","+ClienteValue.cRegistroSINV+")"
+						+ " VALUES ("+id+","+idRepresentanteLegal+","+registro_volumen_idEmpresa+")";
+				stmt2=conexion.prepareStatement(query2);
+				stmt2.executeQuery();
+			}
+			else if(tipoUsuario.equals(UsuarioValue.proveedor)){
+				String query2="INSERT INTO"+tProveedores+"("+ProveedorValue.cId+","+ProveedorValue.cIdRepresentanteLegal+","+ProveedorValue.cVolumenMaximo+")"
+						+ " VALUES ("+id+","+idRepresentanteLegal+","+registro_volumen_idEmpresa+")";
+				stmt2=conexion.prepareStatement(query2);
+				stmt2.executeQuery();
+			}
+			else if(tipoUsuario.equals(UsuarioValue.empleado)){
+				String query2="INSERT INTO"+tEmpleados+"("+EmpleadoValue.cId+","+EmpleadoValue.cSueldo+","+EmpleadoValue.cTipoEmpleado+","+EmpleadoValue.cfIdEmpresa+")"
+						+ " VALUES ("+id+","+sueldo+","+tipoEmpleado+","+registro_volumen_idEmpresa+")";
+				stmt2=conexion.prepareStatement(query2);
+				stmt2.executeQuery();
+			}	
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (stmt != null) 
+			{
+				try{
+					stmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (stmt2 != null) 
+			{
+				try{
+					stmt2.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
 	/**
-	 * Metodo encargado de registrar la llegada de un recurso a par tir de lo que hemos entregado.
-	 * @param idRecurso El id del recurso deseado
-	 * @param idPedido El id del pedido al que pertenece el recurso
+	 * Metodo encargado de registrar la llegada de un recurso.
+	 * @param idRecurso El id del recurso deseado.
+	 * @param idPedido El id del pedido al que pertenece el recurso.
 	 * @param fechaLlegada La fecha de llegada del producto.
-	 * @throws Exception Si hay un error en alguna parte del proceso
+	 * @throws Exception Si hay un error en alguna parte del proceso.
 	 */
 	public void registrarLlegadaRecurso(int idRecurso, int idPedido, String fechaLlegada) throws Exception
 	{
@@ -556,24 +607,22 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement stmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p.estado='Terminado' WHERE p.idPedido="+idPedido;
-			String queryConsulta = "SELECT * FROM Tienen t WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
+			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido;
+			String queryConsulta = "SELECT * FROM "+tTienen+" t WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso;
 			String queryTienen = null;
 			updStmt = conexion.prepareStatement(queryPedido);
 			updStmt.executeQuery();
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
-			if(rs.next())
-			{
-				queryTienen="UPDATE Tienen t SET t.cantidadEnBodega=t.cantidadEnBodega+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+")"
-						+ "WHERE t.idEmpresa="+idEmpresaF+" AND t.idRecurso="+idRecurso;
+			if(rs.next()){
+				queryTienen="UPDATE "+tTienen+" t SET t."+RecursoValue.cfCantidadEnBodega+"=t."+RecursoValue.cfCantidadEnBodega+"+(SELECT p.cantidad FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+")"
+						+ "WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso;
 				stmt=conexion.prepareStatement(queryTienen);
 				stmt.executeQuery();
 			}	
-			else
-			{
-				queryTienen="INSERT INTO Tienen(idEmpresa,idRecurso,cantidadEnBodega) VALUES ("+idEmpresaF+","+idRecurso+", "
-						+ "(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+"))";
+			else{
+				queryTienen="INSERT INTO "+tTienen+"("+EmpresaValue.cIdEmpresa+","+RecursoValue.cIdRecurso+","+RecursoValue.cfCantidadEnBodega+") VALUES ("+idEmpresaF+","+idRecurso+", "
+						+ "(SELECT p."+PedidoValue.cCantidad+" FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"))";
 				stmt=conexion.prepareStatement(queryTienen);
 				stmt.executeQuery();
 			}
@@ -615,12 +664,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	}
 	
 	/**
-	 * Metodo encargado de registrar en la base de datos la entrega de un pedido
-	 * @param idCliente EL cliente que realiza la entrega
-	 * @param idProducto El id del producto que esta en el pedido
-	 * @param idPedido El id del pedido 
-	 * @param fechaLlegada La fechas de 
-	 * @throws Exception
+	 * Metodo encargado de registrar en la base de datos la entrega de un pedido.
+	 * @param idCliente EL cliente al que se le realiza la entrega.
+	 * @param idProducto El id del producto que esta en el pedido.
+	 * @param idPedido El id del pedido a entregar.
+	 * @param fechaLlegada La fecha de llegada del pedido.
+	 * @throws Exception Si ocurre algún error durante el proceso.
 	 */
 	public void registrarEntregaPedido(int idProducto,int idPedido, String fechaLlegada) throws Exception
 	{
@@ -628,11 +677,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement updProdStmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryPedido = "UPDATE Pedidos p SET p.fechaLlegada=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p.estado='Terminado' WHERE p.idPedido="+idPedido;
+			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido;
 			updPedStmt = conexion.prepareStatement(queryPedido);
 			updPedStmt.executeQuery();
-			String queryProducto = "UPDATE Productos p SET p.cantidadEnBodega=p.cantidadEnBodega-(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+"),"
-					+ "p.unidadesVendidas=p.unidadesVendidas+(SELECT p.cantidad FROM Pedidos p WHERE p.idPedido="+idPedido+") WHERE p.idProducto="+idProducto;
+			String queryProducto = "UPDATE "+tProductos+" p SET p."+RecursoValue.cfCantidadEnBodega+"=p."+RecursoValue.cfCantidadEnBodega+"-(SELECT p.cantidad FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"),"
+					+ "p."+ProductoValue.cUnidadesVendidas+"=p."+ProductoValue.cUnidadesVendidas+"+(SELECT p."+PedidoValue.cCantidad+" FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+") WHERE p."+
+					ProductoValue.cIdProducto+"="+idProducto;
 			updProdStmt = conexion.prepareStatement(queryProducto);
 			updProdStmt.executeQuery();
 		}
@@ -664,14 +714,13 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	}
 
 	/**
-	 * Metodo encargado de solicitar un pedido
-	 * @param idCliente El id del cliente que realizo el pedido.
+	 * Metodo encargado de registrar la solicitud de un pedido.
+	 * @param idCliente El id del cliente que realiza el pedido.
 	 * @param idProducto El id del producto.
 	 * @param fechaEntrega La fecha de entrega.
 	 * @param cantidad La cantidad de elementos compro.
-	 * @throws Exception
+	 * @throws Exception Si ocurre algún error en el proceso.
 	 */
-
 	public void solicitarPedido(int idCliente, int idProducto, String fechaEntrega, int cantidad) throws Exception 
 	{
 		PreparedStatement insStmt = null;
@@ -679,22 +728,21 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryConsulta = "SELECT p.costo FROM "+tProductos+" p WHERE p.idProducto="+idProducto;
+			String queryConsulta = "SELECT p."+ProductoValue.cCosto+" FROM "+tProductos+" p WHERE p."+ProductoValue.cIdProducto+"="+idProducto;
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			if(rs.next()){
 				Float costo=rs.getFloat(ProductoValue.cCosto);
 				float monto= (float) costo*cantidad;
-				String queryConsulta2 = "SELECT * FROM "+tTienen+" t,(SELECT r.idRecurso,r.cantidad FROM "+tRequieren+" r,etapasProduccion e,procesosProduccion pr WHERE "
-						+ "pr.idProducto="+idProducto+" AND e.idProcesoProduccion=pr.idProcesoProduccion AND e.idEtapaProduccion=r.idEtapaProduccion) n "
-								+ "WHERE t.idRecurso=n.idRecurso AND n.cantidad*"+cantidad+"<=t.cantidadEnBodega";
+				String queryConsulta2 = "SELECT * FROM "+tTienen+" t,(SELECT r."+RecursoValue.cIdRecurso+",r.cantidad FROM "+tRequieren+" r,etapasProduccion e,procesosProduccion pr WHERE "
+						+ "pr."+ProductoValue.cIdProducto+"="+idProducto+" AND e."+ProcesoProduccionValue.cIdProcesoProduccion+"=pr."+ProcesoProduccionValue.cIdProcesoProduccion+" AND e."+EtapaProduccionValue.cIdEtapaProduccion+"=r."+EtapaProduccionValue.cIdEtapaProduccion+") n "
+								+ "WHERE t."+RecursoValue.cIdRecurso+"=n."+RecursoValue.cIdRecurso+" AND n.cantidad*"+cantidad+"<=t."+RecursoValue.cfCantidadEnBodega+"";
 				selStmt = conexion.prepareStatement(queryConsulta2);
 				ResultSet rs2 = selStmt.executeQuery();
-
 				if(rs2.next())
 				{
 					establecerConexion(cadenaConexion, usuario, clave);
-					String queryInsert ="INSERT INTO "+tPedidos+" (cantidad,monto,fechaPedido,fechaEsperada) VALUES ("+cantidad+","+monto+",TO_DATE('"+darFechaActualFormato()+"','YYYY-MM-DD'), TO_DATE('"+fechaEntrega+"','YYYY-MM-DD')))";
+					String queryInsert ="INSERT INTO "+tPedidos+" (cantidad,"+PedidoValue.cMonto+","+PedidoValue.cFechaPedido+",fechaEsperada) VALUES ("+cantidad+","+monto+",TO_DATE('"+darFechaActualFormato()+"','YYYY-MM-DD'), TO_DATE('"+fechaEntrega+"','YYYY-MM-DD')))";
 					insStmt = conexion.prepareStatement(queryInsert);
 					insStmt.executeQuery();
 				}
@@ -728,6 +776,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private String darFechaActualFormato(){
 		Date hoy = new Date();
 		return (hoy.getYear()+1900)+"-"+(hoy.getMonth()+1)+"-"+hoy.getDate();
@@ -749,10 +798,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryInsert="INSERT INTO Operan(idOperario,idEtapaProduccion,fechaEjecucion,duracion) VALUES("+idEtapaProduccion+","+idOperario+",TO_DATE('"+fechaEjecucion+"','YYYY-MM-DD'),"+duracion+")";
-			String querySelectE="SELECT * FROM EtapasProduccionPedido e WHERE e.idEtapaProduccion="+idEtapaProduccion+" AND e.idAnteriorEtapa IS NULL";
-			String querySelect="SELECT * FROM EtapasProduccionPedido e WHERE e.idEtapaProduccion=(SELECT idAnteriorEtapa FROM EtapasProduccionPedido et WHERE et.idEtapaProduccion="+idEtapaProduccion+") AND e.estado='Terminado'";
-			String queryUpdate="UPDATE Tienen t SET t.cantidad=t.cantidad-(SELECT req.cantidad FROM Requieren req WHERE req.idEtapaProduccion="+idEtapaProduccion+")";
+			String queryInsert="INSERT INTO "+tOperan+"(idOperario,"+EtapaProduccionValue.cIdEtapaProduccion+",fechaEjecucion,duracion) VALUES("+idEtapaProduccion+","+idOperario+",TO_DATE('"+fechaEjecucion+"','YYYY-MM-DD'),"+duracion+")";
+			String querySelectE="SELECT * FROM "+tEtapasProduccionPedido+" e WHERE e."+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+" AND e.idAnteriorEtapa IS NULL";
+			String querySelect="SELECT * FROM "+tEtapasProduccionPedido+" e WHERE e."+EtapaProduccionValue.cIdEtapaProduccion+"=(SELECT idAnteriorEtapa FROM "+tEtapasProduccionPedido+" et WHERE et."+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+") AND e."+PedidoValue.cEstado+"='Terminado'";
+			String queryUpdate="UPDATE "+tTienen+" t SET t.cantidad=t.cantidad-(SELECT req.cantidad FROM "+tRequieren+" req WHERE req."+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+")";
 			selEStmt = conexion.prepareStatement(querySelectE);
 			ResultSet rs = selEStmt.executeQuery();
 			if(rs.next()){

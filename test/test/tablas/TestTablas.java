@@ -10,20 +10,11 @@ import junit.framework.TestCase;
 public class TestTablas extends TestCase
 {
 	private Connection conexion;
-	
-	/**
-	 * Nombre del usuario para conectarse a la base de datos.
-	 */
+
 	private final static String usuario="ISIS2304481510";
 	
-	/**
-	 * Clave de conexion a la base de datos.
-	 */
 	private final static String clave="fberrapius";
 	
-	/**
-	 * URL al cual se debe conectar para acceder a la base de datos.
-	 */
 	private final static String cadenaConexion= "jdbc:oracle:thin:@prod.oracle.virtual.uniandes.edu.co:1531:prod";
 	
 	private void establecerConexion(String u,String p,String a) throws SQLException
@@ -37,7 +28,14 @@ public class TestTablas extends TestCase
 		}
 	}
 	
-	private void setupEscenario1(){}
+	private void setupEscenario1(){
+		try {
+			establecerConexion(usuario, clave, cadenaConexion);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public void testUsuarios(){
 //		PreparedStatement s=null;

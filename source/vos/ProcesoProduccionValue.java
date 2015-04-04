@@ -2,7 +2,11 @@ package vos;
 
 public class ProcesoProduccionValue 
 {
-public final static String cIdProcesoProduccion = "idProcesoProduccion";
+	//----------------------------------------------------
+	// Constantes
+	//----------------------------------------------------
+	
+	public final static String cIdProcesoProduccion = "idProcesoProduccion";
 	
 	public final static String cDuracion = "duracion";
 	
@@ -12,6 +16,10 @@ public final static String cIdProcesoProduccion = "idProcesoProduccion";
 	
 	public final static String cIdEmpresa = "idEmpresa";
 
+	//----------------------------------------------------
+	// Atributos
+	//----------------------------------------------------
+	
 	private int duracion;
 	
 	private int idEtapaAnterior;
@@ -19,6 +27,10 @@ public final static String cIdProcesoProduccion = "idProcesoProduccion";
 	private String idProducto;
 	
 	private String idEmpresa;
+	
+	//----------------------------------------------------
+	// Métodos
+	//----------------------------------------------------
 	
 	public ProcesoProduccionValue() {}
 
@@ -53,5 +65,4 @@ public final static String cIdProcesoProduccion = "idProcesoProduccion";
 	public void setIdEmpresa(String idEmpresa) {
 		this.idEmpresa = idEmpresa;
 	}
-
 }
