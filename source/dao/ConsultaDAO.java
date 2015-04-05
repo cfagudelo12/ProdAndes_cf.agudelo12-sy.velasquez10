@@ -160,7 +160,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ConsultaDAO()
 	{
 		try {
-			solicitarPedido(1, 1, "2016-04-01", 3);
+			registrarUsuario(31, "a", UsuarioValue.empleado, "a", "a", "a", "a", "a", "a", "a", "a", "a", 1, 1, EmpleadoValue.operario, 1);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -540,11 +540,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement stmt2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String query="INSERT INTO "+tUsuarios+"("+UsuarioValue.cId+","+UsuarioValue.cClave+","+UsuarioValue.cTipoUsuario+","+
-					UsuarioValue.cCedula+","+UsuarioValue.cNombre+","+UsuarioValue.cNacionalidad+","+UsuarioValue.cDireccionFisica+","+
-					UsuarioValue.cTelefono+","+UsuarioValue.cEmail+","+UsuarioValue.cDepartamento+","+UsuarioValue.cCiudad+","+UsuarioValue.cCodigoPostal+
-					") VALUES ("+id+","+clave+","+tipoUsuario+","+cedula+","+nombre+","+nacionalidad+","+direccionFisica+","+telefono+","+
-					email+","+departamento+","+ciudad+","+codigoPostal+")";
+			String query="INSERT INTO "+tUsuarios+"("+UsuarioValue.cId+","+UsuarioValue.cTipoUsuario+","+UsuarioValue.cClave+","+UsuarioValue.cCedula+","+UsuarioValue.cNombre+","+
+			UsuarioValue.cNacionalidad+","+UsuarioValue.cDireccionFisica+","+UsuarioValue.cTelefono+","+UsuarioValue.cEmail+","+
+			UsuarioValue.cDepartamento+","+UsuarioValue.cCiudad+","+UsuarioValue.cCodigoPostal+") VALUES ("+id+",'"+tipoUsuario+"','"+clave+"','"+cedula+"','"+nombre+
+			"','"+nacionalidad+"','"+direccionFisica+"','"+telefono+"','"+email+"','"+departamento+"','"+ciudad+"','"+codigoPostal+"')";
 			stmt=conexion.prepareStatement(query);
 			stmt.executeQuery();
 			if(tipoUsuario.equals(UsuarioValue.cliente)){
