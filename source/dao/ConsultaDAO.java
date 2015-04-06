@@ -527,10 +527,43 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 
-
+	//TODO:
+	public EmpleadoValue consultarOperarioMasActivo() throws Exception{
+		EmpleadoValue r=null;
+		PreparedStatement selStmt = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryConsulta = "SELECT FROM "+tEmpleados+"";
+			return null;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
 	//---------------------------------------------------
 	// Metodos asociados a los casos de uso: Modificacion
 	//---------------------------------------------------
+	
+	//TODO:
+	public void registrarProducto(int idProducto, String nombre, float costo){}
 	
 	public void registrarUsuario(int id, String clave, String tipoUsuario,
 			String cedula, String nombre, String nacionalidad, String direccionFisica,
@@ -712,6 +745,67 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 
+	//TODO PRECIO DE RECURSO.
+	public void registrarPedidoRecurso(int idRecurso, int idPedido, int cantidad, String fechaEsperada) throws Exception{
+		PreparedStatement selStmt = null;
+		PreparedStatement insStmt = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryConsulta = "SELECT * FROM "+tRecursos+" r WHERE r."+RecursoValue.cIdRecurso+"=="+idRecurso+"";
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			if(rs.next()){
+				RecursoValue recurso = new RecursoValue();
+				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
+				recurso.setNombre(rs.getString(RecursoValue.cNombre));
+				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
+				recurso.setUnidadMedida(rs.getString(RecursoValue.cUnidadMedida));
+				recurso.setIdProveedor(rs.getInt(RecursoValue.cIdProveedor));
+				recurso.setCantidadMDistribucion(rs.getInt(RecursoValue.cCantidadMDistribucion));
+				recurso.setTiempoEntrega(rs.getInt(RecursoValue.cTiempoEntrega));
+				if(recurso.getCantidadMDistribucion()<cantidad){
+					throw new Exception("La cantidad exigida supera la cantidad máxima de distribución del recurso");
+				}
+				String queryInsert = "INSERT INTO "+tPedidos+"("+PedidoValue.cIdPedido+","+PedidoValue.cCantidad+","+
+				PedidoValue.cMonto+","+PedidoValue.cFechaPedido+","+PedidoValue.cFechaEsperada+")"
+				+ " VALUES ("+idPedido+","+cantidad+","+0+","+darFechaActualFormato()+","+fechaEsperada+")";
+			}
+			else{
+				throw new Exception("No existe ningún recurso con el id especificado");
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (insStmt != null) 
+			{
+				try
+				{
+					insStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
 	/**
 	 * Metodo encargado de registrar la solicitud de un pedido.
 	 * @param idCliente El id del cliente que realiza el pedido.
