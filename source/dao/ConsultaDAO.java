@@ -770,6 +770,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				String queryInsert = "INSERT INTO "+tPedidos+"("+PedidoValue.cIdPedido+","+PedidoValue.cCantidad+","+
 				PedidoValue.cMonto+","+PedidoValue.cFechaPedido+","+PedidoValue.cFechaEsperada+")"
 				+ " VALUES ("+idPedido+","+cantidad+","+0+","+darFechaActualFormato()+","+fechaEsperada+")";
+				insStmt = conexion.prepareStatement(queryInsert);
+				insStmt.executeQuery();
+				
 			}
 			else{
 				throw new Exception("No existe ningún recurso con el id especificado");
