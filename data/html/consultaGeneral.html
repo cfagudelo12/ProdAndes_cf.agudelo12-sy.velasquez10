@@ -1,0 +1,171 @@
+<html>
+	<head>
+		<title>ProdAndes Sistemas Transaccionales</title>
+		<meta charset"UTF-8">
+		<meta name="description"></meta>
+		<link rel="stylesheet" type="text/css" href="css/estilo.css"/>
+		<meta name"viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	
+		<!-- Bootstrap Core CSS -->
+		    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+		    <!-- Custom CSS -->
+		    <link href="css/sb-admin.css" rel="stylesheet">
+		      <!-- Custom Fonts -->
+    		<link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    		 <!-- Morris Charts CSS -->
+    		<link href="css/plugins/morris.css" rel="stylesheet">
+	</head>
+	<body>
+	
+	<div id="wrapper">
+        <!-- Navbar -->
+        <nav id="fondoAzul" class="navbar navbar-fixed-top navbar-fixed-top" role="navigation">
+            <!-- Para navegación en celulare	s-->
+            <div  id="fondoAzul" class="navbar-header">
+                <a id="fondoAzul" class="navbar-brand" href="index.html">Consultas generales</a>
+            </div>
+            <!-- elementos de la parte de arriba del navbar-->
+            <ul id="fondoAzul" class="nav navbar-right top-nav">
+                <li id="fondoAzul"  class="dropdown">
+                    <a id="fondoAzul"  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Carlos y Sergio <b class="caret"></b></a>
+                    <ul id="fondoAzul" class="dropdown-menu">
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+		</div>
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- titulo de la pagina -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Consultas <small>Informaci&#243n general</small>
+                        </h1>
+                        
+                    </div>
+                </div>
+                <!--consultar existencias de productos-->
+                 <form method="GET" action="producto.htm">
+                <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Consultar existencias de productos</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                  <div class="col-lg-4">
+                                    <span>Indique el rango de existencias: </span>
+                                    <br/>
+                                    <br/>
+                                    <span>Desde: </span>
+                                    <br/>
+                                    <INPUT type="number" name="desde"/>
+                                    <br/>
+                                    <span>Hasta: </span>
+                                    <br/>
+                                    <INPUT type="number" name="hasta"/>
+                                </div>
+                                 <div class="col-lg-4">
+                                    <span>Indique el id del proceso de producci&#243n: </span>
+                                    <br/>
+                                    <br/>
+                                    <select name="etapaProduccion" >  
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4</option>
+                                    </select>    
+                                </div>  
+                                 <div class="col-lg-4">
+                                    <span>Indique la fecha de solicitud: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="date" name="fechaSolicitud"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique la fecha de entrega: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="date" name="fechaEntrega"/>
+                                </div>
+                                <div class="col-lg-12">
+                                    <INPUT type="submit" value="Consultar" name="consultarExistencias"/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </form>
+                 
+            <!--Buscar un producto-->
+                <form method="GET" action="producto.htm">
+                <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Consultar un Producto</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Indique la cantidad en bodega: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="cantidadBodega"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el costo: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="costo"/>
+                                </div>
+                                <div class="col-lg-12">
+                                    <INPUT type="submit" value="Buscar" name="buscarProducto"/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <!-- /.row -->
+            </form>
+          <div id="littleWrap" class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> La informaci&#243n del producto consultado</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Materiales que lo componen: </span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Pedidos de compra en los que esta involucrado: </span>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <!-- /.row -->
+                </div>
+            </div>
+        
+        <!-- /#page-wrapper -->
+    </div>
+    <!-- /#wrapper -->
+	
+	</body>
+</html>
+	
