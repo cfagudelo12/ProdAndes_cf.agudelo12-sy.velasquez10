@@ -1,6 +1,7 @@
 package vos;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class PedidoValue {
 	
@@ -42,11 +43,18 @@ public class PedidoValue {
 	
 	private String estado;
 	
+	private ArrayList<ProductoValue> productos;
+	
+	private ArrayList<RecursoValue> recursosRequeridos;
+	
 	//----------------------------------------------------
 	// Métodos
 	//----------------------------------------------------
 	
-	public PedidoValue(){}
+	public PedidoValue(){
+		productos = new ArrayList<ProductoValue>();
+		recursosRequeridos = new ArrayList<RecursoValue>();
+	}
 
 	public int getIdPedido() {
 		return idPedido;
@@ -94,5 +102,21 @@ public class PedidoValue {
 
 	public void setEstado(String estado) {
 		this.estado = estado;
+	}
+	
+	public ArrayList<ProductoValue> getProductos(){
+		return productos;
+	}
+	
+	public void agregarProducto(ProductoValue producto){
+		productos.add(producto);
+	}
+	
+	public ArrayList<RecursoValue> getRecursosRequeridos(){
+		return recursosRequeridos;
+	}
+	
+	public void agregarRecursoRequerido(RecursoValue recurso){
+		recursosRequeridos.add(recurso);
 	}
 }
