@@ -105,4 +105,12 @@ public class ProdAndes
 	{
 		return dao.darProcesosProduccion();
 	}
+	public ArrayList<ProductoValue> darProductosParaRegistrarEntrega() throws Exception 
+	{
+		return dao.darProductosParaRegistrarEntrega();
+	}
+	public ArrayList<ProductoValue> darProductos() throws Exception 
+	{
+		return dao.darProductos();
+	}
 }

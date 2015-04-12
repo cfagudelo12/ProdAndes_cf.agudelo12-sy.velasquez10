@@ -26,6 +26,7 @@ public class ProductoValue
 	
 	public final static String cfCantidadEnBodega = "cantidadEnBodega";
 	
+	
 	//----------------------------------------------------
 	// Atributos
 	//----------------------------------------------------
@@ -47,6 +48,8 @@ public class ProductoValue
 	private int idEmpresa;
 	
 	private int idProcesoProduccion;
+	
+	private int idPedido;
 
 	//----------------------------------------------------
 	// Métodos
@@ -54,7 +57,7 @@ public class ProductoValue
 	
 	public String toString()
 	{
-		return cNombre+" "+nombre+" "+cCosto+" "+costo+" "+cUnidadesProducidas+" "+unidadesProducidas+" "+cUnidadesEnProduccion+" "+unidadesEnProduccion+" "+cCantidadEnBodega+" "+cantidadEnBodega;
+		return "<br/><b>"+cNombre+"</b>: "+nombre+"<br/><b>"+cCosto+"</b>: "+costo+"<br/><b>"+cUnidadesProducidas+"</b>: "+unidadesProducidas+"<br/><b>"+cUnidadesEnProduccion+"</b>: "+unidadesEnProduccion+"<br/><b>"+cCantidadEnBodega+"</b>: "+cantidadEnBodega+"<br/>";
 	}
 
 	public ProductoValue(){}
@@ -129,5 +132,13 @@ public class ProductoValue
 	
 	public void setIdProcesoProduccion(int idProcesoProduccion){
 		this.idProcesoProduccion=idProcesoProduccion;
+	}
+
+	public int getIdPedido() {
+		return idPedido;
+	}
+
+	public void setIdPedido(int idPedido) {
+		this.idPedido = idPedido;
 	}
 }
