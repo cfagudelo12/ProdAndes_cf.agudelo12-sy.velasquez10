@@ -288,7 +288,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				pedido.setEstado(rs.getString(PedidoValue.cEstado));
 				String consulta2 = "SELECT * FROM "+tSolicitan+" s NATURAL INNER JOIN "+tProductos+" WHERE s."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND s."+PedidoValue.cIdPedido+"";
 				selStmt2 = conexion.prepareStatement(consulta2);
-				ResultSet rs2 = selStmt.executeQuery();	
+				ResultSet rs2 = selStmt2.executeQuery();	
 				while(rs2.next()){
 					ProductoValue producto = new ProductoValue();
 					producto.setCantidadEnBodega(rs2.getInt(ProductoValue.cCantidadEnBodega));
@@ -358,6 +358,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ArrayList<ClienteValue> consultarClientes() throws Exception{
 		ArrayList<ClienteValue> clientes = new ArrayList<ClienteValue>();
 		PreparedStatement selStmt = null;
+		PreparedStatement selStmt2 = null;
 		try{
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
 			establecerConexion(cadenaConexion, usuario, clave);
@@ -379,6 +380,19 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				cliente.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
 				cliente.setIdRepresentanteLegal(rs.getInt(ClienteValue.cIdRepresentanteLegal));
 				cliente.setRegistroSINV(rs.getInt(ClienteValue.cRegistroSINV));
+				String consulta2 = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tSolicitan+" s WHERE s."+ClienteValue.cId+"="+cliente.getId();
+				selStmt2 = conexion.prepareStatement(consulta2);
+				ResultSet rs2 = selStmt2.executeQuery();	
+				while(rs2.next()){
+					PedidoValue pedido = new PedidoValue();
+					pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
+					pedido.setMonto(rs.getFloat(PedidoValue.cMonto));
+					pedido.setFechaPedido(rs.getDate(PedidoValue.cFechaPedido));
+					pedido.setFechaEsperada(rs.getDate(PedidoValue.cFechaEsperada));
+					pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
+					pedido.setEstado(rs.getString(PedidoValue.cEstado));
+					cliente.agregarPedido(pedido);
+				}
 				clientes.add(cliente);
 				cliente = new ClienteValue();
 			}
@@ -388,10 +402,17 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 		finally{
-			if (selStmt != null) 
-			{
+			if (selStmt != null){
 				try{
 					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (selStmt2 != null){
+				try{
+					selStmt2.close();
 				} 
 				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
