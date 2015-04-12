@@ -235,6 +235,39 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
 
+	public ArrayList<Integer> darProcesosProduccion() throws Exception
+	{
+		ArrayList<Integer> procesos = new ArrayList<Integer>();
+		PreparedStatement selStmt = null;
+		try{
+			String consulta = "SELECT * FROM "+tProcesosProduccion;
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();		
+			while(rs.next())
+			{
+				procesos.add(rs.getInt(ProcesoProduccionValue.cIdProcesoProduccion));
+			}
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return procesos;
+	}
+	
 	public ArrayList<PedidoValue> consultarPedidos() throws Exception{
 		ArrayList<PedidoValue> pedidos = new ArrayList<PedidoValue>();
 		PreparedStatement selStmt = null;

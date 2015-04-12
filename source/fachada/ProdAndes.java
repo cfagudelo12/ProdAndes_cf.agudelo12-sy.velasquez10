@@ -101,4 +101,8 @@ public class ProdAndes
 	{
 		dao.solicitarPedido(idCliente,idProducto,fechaEntrega, cantidad);
 	}
+	public ArrayList<Integer> darProcesosProduccion() throws Exception 
+	{
+		return dao.darProcesosProduccion();
+	}
 }

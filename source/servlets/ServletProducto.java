@@ -119,7 +119,7 @@ public class ServletProducto extends HttpServlet
 				String etapaProduccion = request.getParameter( "etapaProduccion" );
 				String fechaSolicitud = request.getParameter( "fechaSolicitud" );
 				String fechaEntrega = request.getParameter( "fechaEntrega" );
-	System.out.println(fechaEntrega);
+				System.out.println(fechaEntrega);
 
 				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				imprimirPaginaProducto(response);
@@ -323,10 +323,24 @@ public class ServletProducto extends HttpServlet
 		respuesta.println( "                                    <INPUT type=\"number\" name=\"hasta\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                 <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique el id del proceso de producci&#243n: </span>");
+		respuesta.println( "                                    <span>Selecciones el proceso de producci&#243n: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"number\" name=\"etapaProduccion\"/>");
+		
+		respuesta.println( "                                    <select name=\"procesoProduccion\"		>");
+																try
+																{
+																	ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion();
+																	for(int i=0; i<procesos.size();i++)
+																	{
+																		respuesta.println( "                                    <option value="+procesos.get(i)+">"+procesos.get(i)+"</option>");
+																	}
+																}
+																catch (Exception e)
+																{
+																	imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+																}
+		respuesta.println( "                                    </select>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                 <div class=\"col-lg-4\">");
 		respuesta.println( "                                    <span>Indique la fecha de solicitud: </span>");
