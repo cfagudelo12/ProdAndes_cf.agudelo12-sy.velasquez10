@@ -103,7 +103,6 @@ public class ServletProducto extends HttpServlet
 			try
 			{
 				imprimirPaginaProducto(response);
-
 			}
 			catch( NumberFormatException e )
 			{
@@ -116,12 +115,12 @@ public class ServletProducto extends HttpServlet
 			{	
 				String desde = request.getParameter( "desde" );
 				String hasta = request.getParameter( "hasta" );
-				String etapaProduccion = request.getParameter( "etapaProduccion" );
+				String procesoProduccion = request.getParameter( "procesoProduccion" );
 				String fechaSolicitud = request.getParameter( "fechaSolicitud" );
 				String fechaEntrega = request.getParameter( "fechaEntrega" );
 				System.out.println(fechaEntrega);
 
-				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
+				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(procesoProduccion),fechaEntrega,fechaSolicitud);
 				imprimirPaginaProducto(response);
 			}
 			catch( NumberFormatException e )

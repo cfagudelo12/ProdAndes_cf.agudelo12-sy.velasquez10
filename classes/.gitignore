@@ -1,8 +1,4 @@
-/servlets/
-/fachada/
-/vos/
 /dao/
 /vos/
-/fachada/
 /servlets/
-/test/
+/fachada/

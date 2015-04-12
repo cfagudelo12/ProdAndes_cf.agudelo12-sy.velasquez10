@@ -159,15 +159,15 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO()
 	{
-		try {
-			registrarUsuario(31, "a", UsuarioValue.empleado, "a", "a", "a", "a", "a", "a", "a", "a", "a", 1, 1, EmpleadoValue.operario, 1);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			registrarUsuario(31, "a", UsuarioValue.empleado, "a", "a", "a", "a", "a", "a", "a", "a", "a", 1, 1, EmpleadoValue.operario, 1);
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	//-------------------------------------------------
