@@ -23,7 +23,7 @@ public class convertorhtml
 
         try 
         {
-			convertorhtml convertor = new convertorhtml( "./data/html/materiales.html");
+			convertorhtml convertor = new convertorhtml( "./data/html/consultaGeneral.html");
 		} 
         catch (Exception e) {
 		

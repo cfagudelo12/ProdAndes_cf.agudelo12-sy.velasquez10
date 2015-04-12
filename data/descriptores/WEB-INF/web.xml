@@ -13,36 +13,44 @@ Autor: Pablo Barvo - 05-Mayo-2006
 <web-app>
  <description>Servlet Calculadora Web</description>
  <!-- SERVLETS --><servlet>
- 	<servlet-name>Recursos</servlet-name>
- 	<servlet-class>servlets.ServletRecurso</servlet-class>
+ 	<servlet-name>Inicio</servlet-name>
+ 	<servlet-class>servlets.ServletInicio</servlet-class>
+</servlet>
+ <servlet>
+ 	<servlet-name>Gerente</servlet-name>
+ 	<servlet-class>servlets.ServletGerente</servlet-class>
 </servlet>
 	<servlet>
-  <servlet-name>Producto</servlet-name>
-  <servlet-class>servlets.ServletProducto</servlet-class>
+  <servlet-name>Cliente</servlet-name>
+  <servlet-class>servlets.ServletCliente</servlet-class>
  </servlet>
 	<servlet>
-		<servlet-name>Proceso</servlet-name>
-		<servlet-class>servlets.ServletProcesoProduccion</servlet-class>
+		<servlet-name>ConsultaGeneral</servlet-name>
+		<servlet-class>servlets.ServletConsultaGeneral</servlet-class>
 	</servlet>
 	<servlet>
-		<servlet-name>Empleados</servlet-name>
-		<servlet-class>servlets.ServletEmpleados</servlet-class>
+		<servlet-name>Operario</servlet-name>
+		<servlet-class>servlets.ServletOperario</servlet-class>
 	</servlet>
 	<!-- MAPPING --><servlet-mapping>
- 	<servlet-name>Recursos</servlet-name>
- 	<url-pattern>/recursos.htm</url-pattern>
+		<servlet-name>Inicio</servlet-name>
+		<url-pattern>/paginaInicio.htm</url-pattern>
+</servlet-mapping>
+	<servlet-mapping>
+ 	<servlet-name>Gerente</servlet-name>
+ 	<url-pattern>/gerente.htm</url-pattern>
 </servlet-mapping>
  <servlet-mapping>
- 	<servlet-name>Producto</servlet-name>
- 	<url-pattern>/producto.htm</url-pattern>
+ 	<servlet-name>Cliente</servlet-name>
+ 	<url-pattern>/cliente.htm</url-pattern>
 </servlet-mapping>
  <servlet-mapping>
- 	<servlet-name>Proceso</servlet-name>
- 	<url-pattern>/procesoProduccion.htm</url-pattern>
+ 	<servlet-name>ConsultaGeneral</servlet-name>
+ 	<url-pattern>/consultaGeneral.htm</url-pattern>
  </servlet-mapping>
  <servlet-mapping>
- 	<servlet-name>Empleados</servlet-name>
- 	<url-pattern>/empleados.htm</url-pattern>
+ 	<servlet-name>Operario</servlet-name>
+ 	<url-pattern>/operario.htm</url-pattern>
  </servlet-mapping>
  <login-config>
   <auth-method>BASIC</auth-method>
