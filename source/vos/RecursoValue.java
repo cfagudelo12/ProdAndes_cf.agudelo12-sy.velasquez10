@@ -44,6 +44,8 @@ public class RecursoValue
 	
 	private int tiempoEntrega;
 	
+	private ProveedorValue proveedor;
+	
 	//----------------------------------------------------
 	// Métodos
 	//----------------------------------------------------
@@ -78,6 +80,10 @@ public class RecursoValue
 		return tiempoEntrega;
 	}
 	
+	public ProveedorValue getProveedor(){
+		return proveedor;
+	}
+	
 	public void setIdRecurso(int idRecurso){
 		this.idRecurso=idRecurso;
 	}
@@ -104,5 +110,9 @@ public class RecursoValue
 	
 	public void setTiempoEntrega(int tiempoEntrega){
 		this.tiempoEntrega=tiempoEntrega;
+	}
+	
+	public void setProveedor(ProveedorValue proveedor){
+		this.proveedor=proveedor;
 	}
 }

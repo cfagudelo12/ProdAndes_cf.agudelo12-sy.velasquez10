@@ -1,5 +1,7 @@
 package vos;
 
+import java.util.ArrayList;
+
 public class ClienteValue extends UsuarioValue
 {
 	//----------------------------------------------------
@@ -17,12 +19,20 @@ public class ClienteValue extends UsuarioValue
 	private int idRepresentanteLegal;
 	
 	private int registroSINV;
+	
+	private ArrayList<PedidoValue> pedidos;
 
 	//----------------------------------------------------
 	// Métodos
 	//----------------------------------------------------
 	
-	public ClienteValue(){}
+	public ClienteValue(){
+		pedidos=new ArrayList<PedidoValue>();
+	}
+	
+	public ArrayList<PedidoValue> getPedidos(){
+		return pedidos;
+	}
 	
 	public int getIdRepresentanteLegal(){
 		return idRepresentanteLegal;
@@ -30,6 +40,10 @@ public class ClienteValue extends UsuarioValue
 	
 	public int getRegistroSINV(){
 		return registroSINV;
+	}
+	
+	public void agregarPedido(PedidoValue pedido){
+		pedidos.add(pedido);
 	}
 	
 	public void setIdRepresentanteLegal(int idRepresentanteLegal){
