@@ -345,8 +345,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 		finally{
-			if (selStmt != null) 
-			{
+			if (selStmt != null){
 				try{
 					selStmt.close();
 				} 
@@ -1281,6 +1280,46 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				}
 			}
 			closeConnection(conexion);
+		}
+	}
+	
+	public void cancelarPedidoCliente(int idPedido) throws Exception{
+		PreparedStatement delStmt = null;
+		PreparedStatement delStmt2 = null;
+		PreparedStatement rollback = null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryDelete = "BEGIN TRANSACTION DELETE FROM "+tSolicitan+" s WHERE s."+PedidoValue.cIdPedido+"="+idPedido+" COMMIT";
+			String queryDelete2 = "BEGIN TRANSACTION DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" COMMIT";
+			delStmt = conexion.prepareStatement(queryDelete);
+			delStmt.executeQuery();
+			delStmt2 = conexion.prepareStatement(queryDelete2);
+			delStmt2.executeQuery();
+		}
+		catch (SQLException e){
+			String rollbackS = "ROLLBACK";
+			rollback = conexion.prepareStatement(rollbackS);
+			rollback.executeQuery();
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (delStmt != null){
+				try{
+					delStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (delStmt2 != null){
+				try{
+					delStmt2.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
 		}
 	}
 
