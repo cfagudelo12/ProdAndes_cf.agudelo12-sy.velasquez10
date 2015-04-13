@@ -235,6 +235,124 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
 	
+	public ArrayList<EstacionProduccionValue> darEstacionesProduccion() throws Exception 
+	{
+		ArrayList<EstacionProduccionValue> estaciones = new ArrayList<EstacionProduccionValue>();
+		PreparedStatement selStmt = null;
+		try
+		{
+			String consulta = "SELECT * FROM "+tEstacionesProduccion;
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();		
+			while(rs.next())
+			{
+				EstacionProduccionValue estacion= new EstacionProduccionValue();
+				estacion.setIdEstacionProduccion(rs.getInt(EstacionProduccionValue.cIdEstacionProduccion));
+				estacion.setCapacidadProduccion(rs.getInt(EstacionProduccionValue.cCapacidadProduccion));
+				estacion.setIdEtapaProduccion(rs.getInt(EstacionProduccionValue.cIdEtapaProduccion));
+				estaciones.add(estacion);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return estaciones;
+	}
+	
+	public ArrayList<ProveedorValue> darProveedores() throws Exception 
+	{
+		ArrayList<ProveedorValue> proveedores = new ArrayList<ProveedorValue>();
+		PreparedStatement selStmt = null;
+		try
+		{
+			String consulta = "SELECT * FROM "+tProveedores;
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();		
+			while(rs.next())
+			{
+				ProveedorValue proveedor= new ProveedorValue();
+				proveedor.setId(rs.getInt(ProveedorValue.cId));
+				proveedor.setNombre(rs.getString(ProveedorValue.cNombreEmpresa));
+				proveedores.add(proveedor);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return proveedores;
+	}
+	
+	public ArrayList<ClienteValue> darClientes() throws Exception 
+	{
+		ArrayList<ClienteValue> clientes = new ArrayList<ClienteValue>();
+		PreparedStatement selStmt = null;
+		try
+		{
+			String consulta = "SELECT * FROM "+tClientes+" NATURAL JOIN "+tClientela+" WHERE idEmpresa=1";
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();		
+			while(rs.next())
+			{
+				ClienteValue cliente= new ClienteValue();
+				cliente.setId(rs.getInt(ClienteValue.cId));
+				cliente.setNombre(rs.getString(ClienteValue.cNombre));
+				clientes.add(cliente);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return clientes;
+	}
+	
 	public ArrayList<ProductoValue> darPedidosCliente() throws Exception 
 	{
 		ArrayList<ProductoValue> productos = new ArrayList<ProductoValue>();
@@ -624,7 +742,86 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		return pedidos;
 	}
 	
-	public ArrayList<ClienteValue> consultarClientes() throws Exception{
+	public ClienteValue consultarClientesPorId(int idCliente) throws Exception
+	{
+		ClienteValue cliente = new ClienteValue();
+		PreparedStatement selStmt = null;
+		PreparedStatement selStmt2 = null;
+		try
+		{
+			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND "+ClienteValue.cId+"="+idCliente;
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();		
+			while(rs.next())
+			{
+				cliente.setId(rs.getInt(UsuarioValue.cId));
+				cliente.setClave(rs.getString(UsuarioValue.cClave));
+				cliente.setTipoUsuario(rs.getString(UsuarioValue.cTipoUsuario));
+				cliente.setCedula(rs.getString(UsuarioValue.cCedula));
+				cliente.setNombre(rs.getString(UsuarioValue.cNombre));
+				cliente.setNacionalidad(rs.getString(UsuarioValue.cNacionalidad));
+				cliente.setDireccionFisica(rs.getString(UsuarioValue.cDireccionFisica));
+				cliente.setTelefono(rs.getString(UsuarioValue.cTelefono));
+				cliente.setEmail(rs.getString(UsuarioValue.cEmail));
+				cliente.setDepartamento(rs.getString(UsuarioValue.cDepartamento));
+				cliente.setCiudad(rs.getString(UsuarioValue.cCiudad));
+				cliente.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
+				cliente.setIdRepresentanteLegal(rs.getInt(ClienteValue.cIdRepresentanteLegal));
+				cliente.setRegistroSINV(rs.getInt(ClienteValue.cRegistroSINV));
+				String consulta2 = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tCompran+" s NATURAL INNER JOIN"+tProductos+" WHERE s."+ClienteValue.cId+"="+cliente.getId();
+				selStmt2 = conexion.prepareStatement(consulta2);
+				ResultSet rs2 = selStmt2.executeQuery();	
+				while(rs2.next())
+				{
+					ProductoValue producto = new ProductoValue();
+					producto.setNombre(rs.getString(ProductoValue.cNombre));
+					PedidoValue pedido = new PedidoValue();
+					pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
+					pedido.setMonto(rs.getFloat(PedidoValue.cMonto));
+					pedido.setFechaPedido(rs.getDate(PedidoValue.cFechaPedido));
+					pedido.setFechaEsperada(rs.getDate(PedidoValue.cFechaEsperada));
+					pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
+					pedido.setEstado(rs.getString(PedidoValue.cEstado));
+					pedido.agregarProducto(producto);
+					cliente.agregarPedido(pedido);
+				}
+			}
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null)
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (selStmt2 != null)
+			{
+				try
+				{
+					selStmt2.close();
+				} 
+				catch (SQLException exception)
+				{
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return cliente;
+	}
+	
+	public ArrayList<ClienteValue> consultarClientes() throws Exception
+	{
 		ArrayList<ClienteValue> clientes = new ArrayList<ClienteValue>();
 		PreparedStatement selStmt = null;
 		PreparedStatement selStmt2 = null;
@@ -690,6 +887,57 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			closeConnection(conexion);
 		}
 		return clientes;
+	}
+	
+	public ProveedorValue consultarProveedorPorId(int idProveedor) throws Exception{
+		ProveedorValue proveedor = new ProveedorValue();
+		PreparedStatement selStmt = null;
+		try
+		{
+			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tProveedores+" WHERE id="+idProveedor;
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();		
+			while(rs.next())
+			{
+				proveedor.setId(rs.getInt(UsuarioValue.cId));
+				proveedor.setClave(rs.getString(UsuarioValue.cClave));
+				proveedor.setTipoUsuario(rs.getString(UsuarioValue.cTipoUsuario));
+				proveedor.setCedula(rs.getString(UsuarioValue.cCedula));
+				proveedor.setNombre(rs.getString(UsuarioValue.cNombre));
+				proveedor.setNacionalidad(rs.getString(UsuarioValue.cNacionalidad));
+				proveedor.setDireccionFisica(rs.getString(UsuarioValue.cDireccionFisica));
+				proveedor.setTelefono(rs.getString(UsuarioValue.cTelefono));
+				proveedor.setEmail(rs.getString(UsuarioValue.cEmail));
+				proveedor.setDepartamento(rs.getString(UsuarioValue.cDepartamento));
+				proveedor.setCiudad(rs.getString(UsuarioValue.cCiudad));
+				proveedor.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
+				proveedor.setIdRepresentanteLegal(rs.getInt(ProveedorValue.cIdRepresentanteLegal));
+				proveedor.setVolumenMaximo(rs.getInt(ProveedorValue.cVolumenMaximo));
+				proveedor = new ProveedorValue();
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception)
+				{
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return proveedor;
 	}
 	
 	public ArrayList<ProveedorValue> consultarProveedores() throws Exception{
@@ -1615,4 +1863,5 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			closeConnection(conexion);
 		}
 	}
+
 }

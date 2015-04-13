@@ -3,9 +3,12 @@ package fachada;
 import java.sql.Date;
 import java.util.ArrayList;
 
+import vos.ClienteValue;
+import vos.EstacionProduccionValue;
 import vos.MaterialValue;
 import vos.PedidoValue;
 import vos.ProductoValue;
+import vos.ProveedorValue;
 import vos.RecursoValue;
 import dao.ConsultaDAO;
 
@@ -140,5 +143,35 @@ public class ProdAndes
 		ArrayList<PedidoValue> a= new ArrayList<PedidoValue>();
 		a.add(dao.consultarPedidoPorId(idPedido));
 		return a;
+	}
+
+	public ArrayList<ClienteValue> darClientes() throws Exception 
+	{
+		return dao.darClientes();
+	}
+
+	public ArrayList<ClienteValue> consultarClientePorId(int idCliente) throws Exception
+	{
+		ArrayList<ClienteValue> a= new ArrayList<ClienteValue>();
+		a.add(dao.consultarClientesPorId(idCliente));
+		return a;
+	}
+	
+	public ArrayList<ProveedorValue> darProveedores() throws Exception
+	{
+		return dao.darProveedores();
+	}
+
+	public ArrayList<ProveedorValue> consultarProveedorPorId(int idProveedor) throws Exception
+	{
+		ArrayList<ProveedorValue> a= new ArrayList<ProveedorValue>();
+		a.add(dao.consultarProveedorPorId(idProveedor));
+		return a;
+
+	}
+
+	public ArrayList<EstacionProduccionValue> darEstacionesProduccion() throws Exception
+	{
+		return dao.darEstacionesProduccion();
 	}
 }

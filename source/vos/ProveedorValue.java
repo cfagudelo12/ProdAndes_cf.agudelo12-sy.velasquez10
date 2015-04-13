@@ -11,6 +11,8 @@ public class ProveedorValue extends UsuarioValue
 	public final static String cIdRepresentanteLegal="idRepresentanteLegal";
 	
 	public final static String cVolumenMaximo="volumenMaximo";
+
+	public final static String cNombreEmpresa="nombreEmpresa";
 	
 	//----------------------------------------------------
 	// Atributos

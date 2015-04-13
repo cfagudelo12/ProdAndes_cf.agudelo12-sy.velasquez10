@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
 
+import vos.EstacionProduccionValue;
 import vos.MaterialValue;
 import vos.ProductoValue;
 import vos.RecursoValue;
@@ -659,8 +660,8 @@ public class ServletInicio extends HttpServlet
 		respuesta.println( "                        </div>");
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
-
 		respuesta.println( "				</form>");
+		respuesta.println( "        </div>");
 		respuesta.println( "        <div id=\"page-wrapper\">");
 		respuesta.println( "");
 		respuesta.println( "            <div class=\"container-fluid\">");
@@ -709,6 +710,66 @@ public class ServletInicio extends HttpServlet
 		respuesta.println( "                        </div>");
 		respuesta.println( "                </div>");
 		respuesta.println( "                </form>");
+		respuesta.println( "        <div id=\"page-wrapper\">");
+		respuesta.println( "");
+		respuesta.println( "            <div class=\"container-fluid\">");
+		respuesta.println( "");
+		respuesta.println( "                <!-- titulo de la pagina -->");
+		respuesta.println( "                <div class=\"row\">");
+		respuesta.println( "                    <div class=\"col-lg-12\">");
+		respuesta.println( "                        <h1 class=\"page-header\">");
+		respuesta.println( "                            Reportes");
+		respuesta.println( "                        </h1>");
+		respuesta.println( "                        ");
+		respuesta.println( "                    </div>");
+		respuesta.println( "                </div>");
+		respuesta.println( "                 <!--Reportar Cambio de estado estación producción-->");
+		respuesta.println( "				<form method=\"GET\" action=\"gerente.htm\">" );
+		respuesta.println( "                <div class=\"row\">");
+		respuesta.println( "                        <div class=\"panel panel-default\" >");
+		respuesta.println( "                            <div class=\"panel-heading\">");
+		respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Reportar Cambio de estado estaci&#243n producci&#243n</h3>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                            <br>");
+		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+		respuesta.println( "                             	<div class=\"col-lg-9\">");
+		respuesta.println( "                                    <span>Seleccione la estaci&#243n: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( " 									<select name=\"idEstacion\">");
+																try
+																{
+																	ArrayList<EstacionProduccionValue> estaciones=ProdAndes.darInstancia().darEstacionesProduccion();
+																	for(int i=0; i<estaciones.size();i++)
+																	{
+																		respuesta.println( "<option value=\""+estaciones.get(i).getIdEstacionProduccion()+"\">"+estaciones.get(i).getIdEstacionProduccion()+"</option>");
+																	}
+																}
+																catch (Exception e)
+																{
+																	imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+																}
+		respuesta.println( "                                    </select>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el nuevo estado: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                	<select name=\"estado\">");
+		respuesta.println( "                               		<option>as</option>");
+		respuesta.println( "                               		</select>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-12\">");
+		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Reportar\" name=\"reportarEstadoEstacionProduccion\">");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                       ");
+		respuesta.println( "                        </div>");
+		respuesta.println( "                </div>");
+		respuesta.println( "                <!-- /.row -->");			
+		respuesta.println( "				</form>");
+		respuesta.println( "            </div>");
+		respuesta.println( "		</div>");
 		respuesta.println( "    </div>");
 		respuesta.println( "    <!-- /#wrapper -->");
 		respuesta.println( "</body>" );
