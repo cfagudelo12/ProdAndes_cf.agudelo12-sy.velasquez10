@@ -33,6 +33,7 @@ public class ServletCliente extends HttpServlet
 	public final static String RUTA_ARCHIVO_SERIALIZADO = "/calculadoraWeb.data";
 
 	private boolean seLogroSolicitudProducto;
+	private boolean seCanceloSolicitudProducto;
 	
 	// -----------------------------------------------------------------
 	// Métodos
@@ -44,6 +45,7 @@ public class ServletCliente extends HttpServlet
 	public void init( ) throws ServletException
 	{
 		seLogroSolicitudProducto=false;
+		seCanceloSolicitudProducto=false;
 	}
 
 	public void destroy( )
@@ -87,6 +89,7 @@ public class ServletCliente extends HttpServlet
 		imprimirEncabezado( response );
 
 		String solicitarProducto = request.getParameter( "solicitarProducto" );
+		String cancelarSolicitudProducto = request.getParameter( "cancelarSolicitudProducto" );
 		
 		if(solicitarProducto!=null)
 		{
@@ -98,6 +101,7 @@ public class ServletCliente extends HttpServlet
 				String fechaEntrega = request.getParameter( "fechaEntrega" );
 
 				ProdAndes.darInstancia().solicitarPedido(Integer.parseInt(idCliente), Integer.parseInt(idProducto), fechaEntrega, Integer.parseInt(cantidad));
+				seLogroSolicitudProducto=true;
 				imprimirPaginaCliente(response);
 			}
 			catch( NumberFormatException e )
@@ -108,6 +112,21 @@ public class ServletCliente extends HttpServlet
 			{
 				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
 			} 
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			}
+		}
+		else if(cancelarSolicitudProducto!=null)
+		{
+			try
+			{
+				String idPedido = request.getParameter( "idPedido" );
+
+				ProdAndes.darInstancia().cancelarPedidoCliente(Integer.parseInt(idPedido));
+				seCanceloSolicitudProducto=true;
+				imprimirPaginaCliente(response);
+			}
 			catch (Exception e) 
 			{
 				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
@@ -203,9 +222,8 @@ public class ServletCliente extends HttpServlet
 		respuesta.println( "                        ");
 		respuesta.println( "                    </div>");
 		respuesta.println( "                </div>");
-		
-		respuesta.println( "                 <!--Solicitud de productos-->");
-		respuesta.println( "<form method=\"GET\" action=\"cliente.htm\">" );
+		respuesta.println( "         <!--Solicitud de productos-->");
+		respuesta.println( "				<form method=\"GET\" action=\"cliente.htm\">" );
 		respuesta.println( "                <div class=\"row\">");
 		respuesta.println( "                        <div class=\"panel panel-default\" >");
 		respuesta.println( "                            <div class=\"panel-heading\">");
@@ -256,16 +274,56 @@ public class ServletCliente extends HttpServlet
 		respuesta.println( "                            </div>");
 		respuesta.println( "                       ");
 		respuesta.println( "                        </div>");
-		respuesta.println( "                </div>");
-		respuesta.println( "                <!-- /.row -->");
-		respuesta.println( "");
-		respuesta.println( "            </div>");
 		if(seLogroSolicitudProducto)
 		{
 			seLogroSolicitudProducto=false;
 			respuesta.println( "<script> alert(\"La solicitud fue exitosa\"); </script>");
 		}
-		respuesta.println( "</form>" );
+		respuesta.println( "						</form>" );
+		respuesta.println( "         <!--Cancelar solicitud de productos-->");
+		respuesta.println( "				<form method=\"GET\" action=\"cliente.htm\">" );
+		respuesta.println( "                <div class=\"row\">");
+		respuesta.println( "                        <div class=\"panel panel-default\" >");
+		respuesta.println( "                            <div class=\"panel-heading\">");
+		respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Cancelar Solicitud de Productos</h3>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                            <br>");
+		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+		respuesta.println( "								<div class=\"col-lg-9\">");
+		respuesta.println( "									<span>Seleccione el pedido: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( " 									<select name=\"idPedido\"		>");
+																try
+																{
+																	ArrayList<ProductoValue> procesos=ProdAndes.darInstancia().darPedidosPendientesCliente();
+																	for(int i=0; i<procesos.size();i++)
+																	{
+																		respuesta.println( "<option value=\""+procesos.get(i).getIdPedido()+"\">"+procesos.get(i).getNombre()+" - "+procesos.get(i).getIdPedido()+"</option>");
+																	}
+																}
+																catch (Exception e)
+																{
+																	imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+																}
+		respuesta.println( "                                    </select>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-12\">");
+		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Cancelar\" name=\"cancelarSolicitudProducto\">");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                       ");
+		respuesta.println( "                        </div>");
+		if(seCanceloSolicitudProducto)
+		{
+			seCanceloSolicitudProducto=false;
+			respuesta.println( "<script> alert(\"La solicitud del producto fue cancelada\"); </script>");
+		}
+		respuesta.println( "				</form>" );
+		respuesta.println( "                </div>");
+		respuesta.println( "                <!-- /.row -->");
+		respuesta.println( "");
+		respuesta.println( "            </div>");
         respuesta.println( "    		</div>");
  		respuesta.println( "		</div>");
 		respuesta.println( "    </body>");

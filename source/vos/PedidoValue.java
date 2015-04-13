@@ -35,6 +35,8 @@ public class PedidoValue {
 	
 	private float monto;
 	
+	private int cantidad;
+	
 	private Date fechaPedido;
 	
 	private Date fechaEsperada;
@@ -118,5 +120,13 @@ public class PedidoValue {
 	
 	public void agregarRecursoRequerido(RecursoValue recurso){
 		recursosRequeridos.add(recurso);
+	}
+
+	public int getCantidad() {
+		return cantidad;
+	}
+
+	public void setCantidad(int cantidad) {
+		this.cantidad = cantidad;
 	}
 }

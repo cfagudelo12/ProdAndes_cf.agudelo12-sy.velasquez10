@@ -416,113 +416,148 @@ public class ServletInicio extends HttpServlet
 	private void imprimirPaginaCliente( HttpServletResponse response) throws IOException
 	{
 		// Obtiene el flujo de escritura de la respuesta
-		PrintWriter respuesta = response.getWriter( );
-		
-		respuesta.println( "	<body>");
-		respuesta.println( "	");
-		respuesta.println( "	<div id=\"wrapper\">");
-		respuesta.println( "        <!-- Navbar -->");
-		respuesta.println( "        <nav id=\"fondoAzul\" class=\"navbar navbar-fixed-top navbar-fixed-top\" role=\"navigation\">");
-		respuesta.println( "            <!-- Para navegación en celulares-->");
-		respuesta.println( "            <div  id=\"fondoAzul\" class=\"navbar-header\">");
-		respuesta.println( "                <a id=\"fondoAzul\" class=\"navbar-brand\" href=\"index.html\">Consultas generales</a>");
-		respuesta.println( "            </div>");
-		respuesta.println( "            <!-- elementos de la parte de arriba del navbar-->");
-		respuesta.println( "            <ul id=\"fondoAzul\" class=\"nav navbar-right top-nav\">");
-		respuesta.println( "                <li id=\"fondoAzul\"  class=\"dropdown\">");
-		respuesta.println( "                    <a id=\"fondoAzul\"  href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"fa fa-user\"></i> Carlos y Sergio <b class=\"caret\"></b></a>");
-		respuesta.println( "                    <ul id=\"fondoAzul\" class=\"dropdown-menu\">");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-user\"></i> Profile</a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-envelope\"></i> Inbox</a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-gear\"></i> Settings</a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                        <li class=\"divider\"></li>");
-		respuesta.println( "                        <li>");
-		respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-power-off\"></i> Log Out</a>");
-		respuesta.println( "                        </li>");
-		respuesta.println( "                    </ul>");
-		respuesta.println( "                </li>");
-		respuesta.println( "            </ul>");
-		respuesta.println( "        </nav>");
-		respuesta.println( "	</div>");
-		respuesta.println( "        <div id=\"page-wrapper\">");
-		respuesta.println( "");
-		respuesta.println( "            <div class=\"container-fluid\">");
-		respuesta.println( "");
-		respuesta.println( "                <!-- titulo de la pagina -->");
-		respuesta.println( "                <div class=\"row\">");
-		respuesta.println( "                    <div class=\"col-lg-12\">");
-		respuesta.println( "                        <h1 class=\"page-header\">");
-		respuesta.println( "                            Cliente <small>Acciones Generales</small>");
-		respuesta.println( "                        </h1>");
-		respuesta.println( "                        ");
-		respuesta.println( "                    </div>");
-		respuesta.println( "                </div>");
-		respuesta.println( "                 <!--Solicitud de productos-->");
-		respuesta.println( "<form method=\"GET\" action=\"cliente.htm\">" );
-		respuesta.println( "                <div class=\"row\">");
-		respuesta.println( "                        <div class=\"panel panel-default\" >");
-		respuesta.println( "                            <div class=\"panel-heading\">");
-		respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Solicitar Productos</h3>");
-		respuesta.println( "                            </div>");
-		respuesta.println( "                            <br>");
-		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-		respuesta.println( "                             	<div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique su Id: </span>");
-		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"number\" name=\"idCliente\"/>");
-		respuesta.println( "                                </div>");
-		respuesta.println( "								<div class=\"col-lg-4\">");
-		respuesta.println( "									<span>Seleccione el producto: </span>");
-		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <br/>");
-		respuesta.println( " 									<select name=\"idProducto\"		>");
-																try
-																{
-																	ArrayList<ProductoValue> procesos=ProdAndes.darInstancia().darProductosParaRegistrarEntrega();
-																	for(int i=0; i<procesos.size();i++)
-																	{
-																		respuesta.println( "                                    <option value=\""+procesos.get(i).getIdProducto()+"\">"+procesos.get(i).getNombre()+"</option>");
-																	}
-																}
-																catch (Exception e)
-																{
-																	imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
-																}
-		respuesta.println( "                                    </select>");
-		respuesta.println( "                                </div>");
-		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique la cantidad: </span>");
-		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"number\" name=\"cantidad\"/>");
-		respuesta.println( "                                </div>");
-		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "	                            	<span>Indique la fecha de entrega deseada: </span>");
-		respuesta.println( "	                            	<br/>");
-		respuesta.println( "	                            	<br/>");
-		respuesta.println( "	                               	<INPUT type=\"date\" name=\"fechaEntrega\"/>");
-		respuesta.println( "                                </div>");
-		respuesta.println( "                                <div class=\"col-lg-12\">");
-		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Solicitar\" name=\"solicitarProducto\">");
-		respuesta.println( "                                </div>");
-		respuesta.println( "                            </div>");
-		respuesta.println( "                       ");
-		respuesta.println( "                        </div>");
-		respuesta.println( "                </div>");
-		respuesta.println( "                <!-- /.row -->");
-		respuesta.println( "");
-		respuesta.println( "            </div>");
-		respuesta.println( "</form>" );
-        respuesta.println( "    		</div>");
- 		respuesta.println( "		</div>");
-		respuesta.println( "    </body>");
+				PrintWriter respuesta = response.getWriter( );
+				
+				respuesta.println( "	<body>");
+				respuesta.println( "	");
+				respuesta.println( "	<div id=\"wrapper\">");
+				respuesta.println( "        <!-- Navbar -->");
+				respuesta.println( "        <nav id=\"fondoAzul\" class=\"navbar navbar-fixed-top navbar-fixed-top\" role=\"navigation\">");
+				respuesta.println( "            <!-- Para navegación en celulares-->");
+				respuesta.println( "            <div  id=\"fondoAzul\" class=\"navbar-header\">");
+				respuesta.println( "                <a id=\"fondoAzul\" class=\"navbar-brand\" href=\"index.html\">Consultas generales</a>");
+				respuesta.println( "            </div>");
+				respuesta.println( "            <!-- elementos de la parte de arriba del navbar-->");
+				respuesta.println( "            <ul id=\"fondoAzul\" class=\"nav navbar-right top-nav\">");
+				respuesta.println( "                <li id=\"fondoAzul\"  class=\"dropdown\">");
+				respuesta.println( "                    <a id=\"fondoAzul\"  href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\"><i class=\"fa fa-user\"></i> Carlos y Sergio <b class=\"caret\"></b></a>");
+				respuesta.println( "                    <ul id=\"fondoAzul\" class=\"dropdown-menu\">");
+				respuesta.println( "                        <li>");
+				respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-user\"></i> Profile</a>");
+				respuesta.println( "                        </li>");
+				respuesta.println( "                        <li>");
+				respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-envelope\"></i> Inbox</a>");
+				respuesta.println( "                        </li>");
+				respuesta.println( "                        <li>");
+				respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-gear\"></i> Settings</a>");
+				respuesta.println( "                        </li>");
+				respuesta.println( "                        <li class=\"divider\"></li>");
+				respuesta.println( "                        <li>");
+				respuesta.println( "                            <a href=\"#\"><i class=\"fa fa-fw fa-power-off\"></i> Log Out</a>");
+				respuesta.println( "                        </li>");
+				respuesta.println( "                    </ul>");
+				respuesta.println( "                </li>");
+				respuesta.println( "            </ul>");
+				respuesta.println( "        </nav>");
+				respuesta.println( "	</div>");
+				respuesta.println( "        <div id=\"page-wrapper\">");
+				respuesta.println( "");
+				respuesta.println( "            <div class=\"container-fluid\">");
+				respuesta.println( "");
+				respuesta.println( "                <!-- titulo de la pagina -->");
+				respuesta.println( "                <div class=\"row\">");
+				respuesta.println( "                    <div class=\"col-lg-12\">");
+				respuesta.println( "                        <h1 class=\"page-header\">");
+				respuesta.println( "                            Cliente <small>Acciones Generales</small>");
+				respuesta.println( "                        </h1>");
+				respuesta.println( "                        ");
+				respuesta.println( "                    </div>");
+				respuesta.println( "                </div>");
+				respuesta.println( "         <!--Solicitud de productos-->");
+				respuesta.println( "				<form method=\"GET\" action=\"cliente.htm\">" );
+				respuesta.println( "                <div class=\"row\">");
+				respuesta.println( "                        <div class=\"panel panel-default\" >");
+				respuesta.println( "                            <div class=\"panel-heading\">");
+				respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Solicitar Productos</h3>");
+				respuesta.println( "                            </div>");
+				respuesta.println( "                            <br>");
+				respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+				respuesta.println( "                             	<div class=\"col-lg-4\">");
+				respuesta.println( "                                    <span>Indique su Id: </span>");
+				respuesta.println( "                                    <br/>");
+				respuesta.println( "                                    <br/>");
+				respuesta.println( "                                    <INPUT type=\"number\" name=\"idCliente\"/>");
+				respuesta.println( "                                </div>");
+				respuesta.println( "								<div class=\"col-lg-4\">");
+				respuesta.println( "									<span>Seleccione el producto: </span>");
+				respuesta.println( "                                    <br/>");
+				respuesta.println( "                                    <br/>");
+				respuesta.println( " 									<select name=\"idProducto\"		>");
+																		try
+																		{
+																			ArrayList<ProductoValue> procesos=ProdAndes.darInstancia().darProductosParaRegistrarEntrega();
+																			for(int i=0; i<procesos.size();i++)
+																			{
+																				respuesta.println( "                                    <option value=\""+procesos.get(i).getIdProducto()+"\">"+procesos.get(i).getNombre()+"</option>");
+																			}
+																		}
+																		catch (Exception e)
+																		{
+																			imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+																		}
+				respuesta.println( "                                    </select>");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                                <div class=\"col-lg-4\">");
+				respuesta.println( "                                    <span>Indique la cantidad: </span>");
+				respuesta.println( "                                    <br/>");
+				respuesta.println( "                                    <br/>");
+				respuesta.println( "                                    <INPUT type=\"number\" name=\"cantidad\"/>");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                                <div class=\"col-lg-4\">");
+				respuesta.println( "	                            	<span>Indique la fecha de entrega deseada: </span>");
+				respuesta.println( "	                            	<br/>");
+				respuesta.println( "	                            	<br/>");
+				respuesta.println( "	                               	<INPUT type=\"date\" name=\"fechaEntrega\"/>");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                                <div class=\"col-lg-12\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Solicitar\" name=\"solicitarProducto\">");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                            </div>");
+				respuesta.println( "                       ");
+				respuesta.println( "                        </div>");
+				respuesta.println( "						</form>" );
+				respuesta.println( "         <!--Cancelar solicitud de productos-->");
+				respuesta.println( "				<form method=\"GET\" action=\"cliente.htm\">" );
+				respuesta.println( "                <div class=\"row\">");
+				respuesta.println( "                        <div class=\"panel panel-default\" >");
+				respuesta.println( "                            <div class=\"panel-heading\">");
+				respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Cancelar Solicitud de Productos</h3>");
+				respuesta.println( "                            </div>");
+				respuesta.println( "                            <br>");
+				respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+				respuesta.println( "								<div class=\"col-lg-9\">");
+				respuesta.println( "									<span>Seleccione el pedido: </span>");
+				respuesta.println( "                                    <br/>");
+				respuesta.println( "                                    <br/>");
+				respuesta.println( " 									<select name=\"idPedido\"		>");
+																		try
+																		{
+																			ArrayList<ProductoValue> procesos=ProdAndes.darInstancia().darPedidosPendientesCliente();
+																			for(int i=0; i<procesos.size();i++)
+																			{
+																				respuesta.println( "<option value=\""+procesos.get(i).getIdPedido()+"\">"+procesos.get(i).getNombre()+" - "+procesos.get(i).getIdPedido()+"</option>");
+																			}
+																		}
+																		catch (Exception e)
+																		{
+																			imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+																		}
+				respuesta.println( "                                    </select>");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                                <div class=\"col-lg-12\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Cancelar\" name=\"cancelarSolicitudProducto\">");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                            </div>");
+				respuesta.println( "                       ");
+				respuesta.println( "                        </div>");
+				respuesta.println( "				</form>" );
+				respuesta.println( "                </div>");
+				respuesta.println( "                <!-- /.row -->");
+				respuesta.println( "");
+				respuesta.println( "            </div>");
+		        respuesta.println( "    		</div>");
+		 		respuesta.println( "		</div>");
+				respuesta.println( "    </body>");
 	}
 	
 	
@@ -545,7 +580,7 @@ public class ServletInicio extends HttpServlet
 		respuesta.println( "        <nav id=\"fondoAzul\" class=\"navbar navbar-fixed-top navbar-fixed-top\" role=\"navigation\">");
 		respuesta.println( "            <!-- Para navegación en celulare	s-->");
 		respuesta.println( "            <div  id=\"fondoAzul\" class=\"navbar-header\">");
-		respuesta.println( "                <a id=\"fondoAzul\" class=\"navbar-brand\" href=\"index.html\">Administrador</a>");
+		respuesta.println( "                <a id=\"fondoAzul\" class=\"navbar-brand\" href=\"index.html\">Empresa</a>");
 		respuesta.println( "            </div>");
 		respuesta.println( "            <!-- elementos de la parte de arriba del navbar- para pantallas pequeñas -->");
 		respuesta.println( "            <div  class=\"collapse navbar-collapse navbar-ex1-collapse\">");

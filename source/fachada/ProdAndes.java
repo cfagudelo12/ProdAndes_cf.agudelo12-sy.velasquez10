@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 import vos.MaterialValue;
+import vos.PedidoValue;
 import vos.ProductoValue;
 import vos.RecursoValue;
 import dao.ConsultaDAO;
@@ -112,5 +113,32 @@ public class ProdAndes
 	public ArrayList<ProductoValue> darProductos() throws Exception 
 	{
 		return dao.darProductos();
+	}
+
+	public void cancelarPedidoCliente(int idPedido) throws Exception 
+	{
+		dao.cancelarPedidoCliente(idPedido);
+	}
+
+	public ArrayList<ProductoValue> darPedidosPendientesCliente() throws Exception
+	{
+		return dao.darPedidosPendientesCliente();
+	}
+
+	public ArrayList<ProductoValue> darPedidosCliente() throws Exception 
+	{
+		return dao.darPedidosCliente();
+	}
+
+	public ArrayList<PedidoValue> consultarPedidos() throws Exception 
+	{
+		return dao.consultarPedidos();
+	}
+	
+	public ArrayList<PedidoValue> consultarPedidoPorId(int idPedido) throws Exception 
+	{
+		ArrayList<PedidoValue> a= new ArrayList<PedidoValue>();
+		a.add(dao.consultarPedidoPorId(idPedido));
+		return a;
 	}
 }

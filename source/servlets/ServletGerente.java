@@ -205,7 +205,7 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "        <nav id=\"fondoAzul\" class=\"navbar navbar-fixed-top navbar-fixed-top\" role=\"navigation\">");
 				respuesta.println( "            <!-- Para navegación en celulare	s-->");
 				respuesta.println( "            <div  id=\"fondoAzul\" class=\"navbar-header\">");
-				respuesta.println( "                <a id=\"fondoAzul\" class=\"navbar-brand\" href=\"index.html\">Administrador</a>");
+				respuesta.println( "                <a id=\"fondoAzul\" class=\"navbar-brand\" href=\"index.html\">Empresa</a>");
 				respuesta.println( "            </div>");
 				respuesta.println( "            <!-- elementos de la parte de arriba del navbar- para pantallas pequeñas -->");
 				respuesta.println( "            <div  class=\"collapse navbar-collapse navbar-ex1-collapse\">");

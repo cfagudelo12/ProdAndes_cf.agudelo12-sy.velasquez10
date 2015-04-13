@@ -13,6 +13,10 @@ Autor: Pablo Barvo - 05-Mayo-2006
 <web-app>
  <description>Servlet Calculadora Web</description>
  <!-- SERVLETS --><servlet>
+ 	<servlet-name>Administrador</servlet-name>
+ 	<servlet-class>servlets.ServletAdministrador</servlet-class>
+</servlet>
+ <servlet>
  	<servlet-name>Inicio</servlet-name>
  	<servlet-class>servlets.ServletInicio</servlet-class>
 </servlet>
@@ -33,6 +37,10 @@ Autor: Pablo Barvo - 05-Mayo-2006
 		<servlet-class>servlets.ServletOperario</servlet-class>
 	</servlet>
 	<!-- MAPPING --><servlet-mapping>
+		<servlet-name>Administrador</servlet-name>
+		<url-pattern>/administrador.htm</url-pattern>
+</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>Inicio</servlet-name>
 		<url-pattern>/paginaInicio.htm</url-pattern>
 </servlet-mapping>
