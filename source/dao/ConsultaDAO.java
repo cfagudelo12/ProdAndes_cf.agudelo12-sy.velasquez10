@@ -159,15 +159,15 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO()
 	{
-//		try {
-//			registrarUsuario(31, "a", UsuarioValue.empleado, "a", "a", "a", "a", "a", "a", "a", "a", "a", 1, 1, EmpleadoValue.operario, 1);
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			cancelarPedidoCliente(101);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//-------------------------------------------------
@@ -320,15 +320,27 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement selStmt = null;
 		try
 		{
-			String consulta = "SELECT * FROM "+tClientes+" NATURAL JOIN "+tClientela+" WHERE idEmpresa=1";
+			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
 			establecerConexion(cadenaConexion, usuario, clave);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
 			{
 				ClienteValue cliente= new ClienteValue();
-				cliente.setId(rs.getInt(ClienteValue.cId));
-				cliente.setNombre(rs.getString(ClienteValue.cNombre));
+				cliente.setId(rs.getInt(UsuarioValue.cId));
+				cliente.setClave(rs.getString(UsuarioValue.cClave));
+				cliente.setTipoUsuario(rs.getString(UsuarioValue.cTipoUsuario));
+				cliente.setCedula(rs.getString(UsuarioValue.cCedula));
+				cliente.setNombre(rs.getString(UsuarioValue.cNombre));
+				cliente.setNacionalidad(rs.getString(UsuarioValue.cNacionalidad));
+				cliente.setDireccionFisica(rs.getString(UsuarioValue.cDireccionFisica));
+				cliente.setTelefono(rs.getString(UsuarioValue.cTelefono));
+				cliente.setEmail(rs.getString(UsuarioValue.cEmail));
+				cliente.setDepartamento(rs.getString(UsuarioValue.cDepartamento));
+				cliente.setCiudad(rs.getString(UsuarioValue.cCiudad));
+				cliente.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
+				cliente.setIdRepresentanteLegal(rs.getInt(ClienteValue.cIdRepresentanteLegal));
+				cliente.setRegistroSINV(rs.getString(ClienteValue.cRegistroSINV));
 				clientes.add(cliente);
 			}
 		}
@@ -768,21 +780,21 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				cliente.setCiudad(rs.getString(UsuarioValue.cCiudad));
 				cliente.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
 				cliente.setIdRepresentanteLegal(rs.getInt(ClienteValue.cIdRepresentanteLegal));
-				cliente.setRegistroSINV(rs.getInt(ClienteValue.cRegistroSINV));
-				String consulta2 = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tCompran+" s NATURAL INNER JOIN"+tProductos+" WHERE s."+ClienteValue.cId+"="+cliente.getId();
+				cliente.setRegistroSINV(rs.getString(ClienteValue.cRegistroSINV));
+				String consulta2 = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tCompran+" s NATURAL INNER JOIN "+tProductos+" WHERE s."+ClienteValue.cfIdCliente+"="+cliente.getId();
 				selStmt2 = conexion.prepareStatement(consulta2);
 				ResultSet rs2 = selStmt2.executeQuery();	
 				while(rs2.next())
 				{
 					ProductoValue producto = new ProductoValue();
-					producto.setNombre(rs.getString(ProductoValue.cNombre));
+					producto.setNombre(rs2.getString(ProductoValue.cNombre));
 					PedidoValue pedido = new PedidoValue();
-					pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
-					pedido.setMonto(rs.getFloat(PedidoValue.cMonto));
-					pedido.setFechaPedido(rs.getDate(PedidoValue.cFechaPedido));
-					pedido.setFechaEsperada(rs.getDate(PedidoValue.cFechaEsperada));
-					pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
-					pedido.setEstado(rs.getString(PedidoValue.cEstado));
+					pedido.setIdPedido(rs2.getInt(PedidoValue.cIdPedido));
+					pedido.setMonto(rs2.getFloat(PedidoValue.cMonto));
+					pedido.setFechaPedido(rs2.getDate(PedidoValue.cFechaPedido));
+					pedido.setFechaEsperada(rs2.getDate(PedidoValue.cFechaEsperada));
+					pedido.setFechaLlegada(rs2.getDate(PedidoValue.cFechaLlegada));
+					pedido.setEstado(rs2.getString(PedidoValue.cEstado));
 					pedido.agregarProducto(producto);
 					cliente.agregarPedido(pedido);
 				}
@@ -845,7 +857,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				cliente.setCiudad(rs.getString(UsuarioValue.cCiudad));
 				cliente.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
 				cliente.setIdRepresentanteLegal(rs.getInt(ClienteValue.cIdRepresentanteLegal));
-				cliente.setRegistroSINV(rs.getInt(ClienteValue.cRegistroSINV));
+				cliente.setRegistroSINV(rs.getString(ClienteValue.cRegistroSINV));
 				String consulta2 = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tSolicitan+" s WHERE s."+ClienteValue.cId+"="+cliente.getId();
 				selStmt2 = conexion.prepareStatement(consulta2);
 				ResultSet rs2 = selStmt2.executeQuery();	
@@ -1714,21 +1726,18 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	{
 		PreparedStatement delStmt = null;
 		PreparedStatement delStmt2 = null;
-		PreparedStatement rollback = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryDelete = "BEGIN TRANSACTION DELETE FROM "+tCompran+" s WHERE s."+PedidoValue.cIdPedido+"="+idPedido+" COMMIT";
-			String queryDelete2 = "BEGIN TRANSACTION DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" COMMIT";
+			String queryDelete = "DELETE FROM "+tCompran+" s WHERE s."+PedidoValue.cIdPedido+"="+idPedido;
+			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido;
 			delStmt = conexion.prepareStatement(queryDelete);
-			System.out.println(queryDelete);
 			delStmt.executeQuery();
 			delStmt2 = conexion.prepareStatement(queryDelete2);
 			delStmt2.executeQuery();
+			conexion.commit();
 		}
 		catch (SQLException e){
-			String rollbackS = "ROLLBACK";
-			rollback = conexion.prepareStatement(rollbackS);
-			rollback.executeQuery();
+			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}

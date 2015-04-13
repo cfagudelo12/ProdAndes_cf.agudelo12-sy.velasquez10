@@ -12,13 +12,15 @@ public class ClienteValue extends UsuarioValue
 	
 	public final static String cRegistroSINV="registroSINV";
 	
+	public final static String cfIdCliente = "idCliente";
+	
 	//----------------------------------------------------
 	// Atributos
 	//----------------------------------------------------
 	
 	private int idRepresentanteLegal;
 	
-	private int registroSINV;
+	private String registroSINV;
 	
 	private ArrayList<PedidoValue> pedidos;
 
@@ -38,7 +40,7 @@ public class ClienteValue extends UsuarioValue
 		return idRepresentanteLegal;
 	}
 	
-	public int getRegistroSINV(){
+	public String getRegistroSINV(){
 		return registroSINV;
 	}
 	
@@ -50,7 +52,7 @@ public class ClienteValue extends UsuarioValue
 		this.idRepresentanteLegal=idRepresentanteLegal;
 	}
 	
-	public void setRegistroSINV(int registroSINV){
+	public void setRegistroSINV(String registroSINV){
 		this.registroSINV=registroSINV;
 	}
 }
