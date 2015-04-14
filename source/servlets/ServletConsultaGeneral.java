@@ -36,7 +36,9 @@ public class ServletConsultaGeneral extends HttpServlet
 	private ArrayList<MaterialValue> listaBuscarProductos;
 	private ArrayList<MaterialValue> listaMateriales;
 	private ArrayList<RecursoValue> listaRecursos;
-	
+	private boolean listaVacia;
+	private boolean escribioNada;
+
 	// -----------------------------------------------------------------
 	// Métodos
 	// -----------------------------------------------------------------
@@ -50,12 +52,14 @@ public class ServletConsultaGeneral extends HttpServlet
 		listaBuscarProductos= new ArrayList<MaterialValue>();
 		listaMateriales= new ArrayList<MaterialValue>();
 		listaRecursos=new ArrayList<RecursoValue>();
+		listaVacia=false;
+		escribioNada=false;
 	}
 
 	public void destroy( )
 	{
 		System.out.println("Destruyendo instancia");
-		
+
 	}
 
 
@@ -92,11 +96,12 @@ public class ServletConsultaGeneral extends HttpServlet
 		// Envía a la respuesta el encabezado del template
 		imprimirEncabezado( response );
 
+
 		String consultarExistencias = request.getParameter( "consultarExistencias" );
 		String buscarProducto = request.getParameter( "buscarProducto" );
 		String consultarExistenciasMaterial = request.getParameter( "consultarExistenciasMaterial" );
 		String buscarMaterial = request.getParameter( "buscarMaterial" );
-		
+
 		if(consultarExistencias!=null)
 		{
 			try
@@ -106,19 +111,14 @@ public class ServletConsultaGeneral extends HttpServlet
 				String procesoProduccion = request.getParameter( "procesoProduccion" );
 				String fechaSolicitud = request.getParameter( "fechaSolicitud" );
 				String fechaEntrega = request.getParameter( "fechaEntrega" );
-
+				
 				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(procesoProduccion),fechaSolicitud,fechaEntrega);
-				System.out.println(listaProductos.size());
+				if(listaProductos.size()==0)
+				{
+					listaVacia=true;
+				}
 				imprimirPaginaGeneral(response);
 			}
-			catch( NumberFormatException e )
-			{
-				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
-			} 
-			catch (ParseException e) 
-			{
-				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
-			} 
 			catch (Exception e) 
 			{
 				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
@@ -128,17 +128,26 @@ public class ServletConsultaGeneral extends HttpServlet
 		{
 			try
 			{
-				String cantidad = request.getParameter( "cantidad" );
+				String cantidad = request.getParameter( "cantidadBodega" );
 				String costo = request.getParameter( "costo" );
-				listaBuscarProductos= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
-				imprimirPaginaGeneral(response);
+				if(cantidad.equals("")&&costo.equals(""))
+				{
+					escribioNada=true;
+					imprimirPaginaGeneral(response);
+				}
+				else
+				{
+					listaBuscarProductos= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
+					if(listaBuscarProductos.size()==0)
+					{
+						listaVacia=true;
+					}
+					imprimirPaginaGeneral(response);
+				}
 			}
-			catch( NumberFormatException e )
-			{
-				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
-			} 
 			catch (Exception e) 
 			{
+				e.printStackTrace();
 				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
 			}
 		}
@@ -154,16 +163,12 @@ public class ServletConsultaGeneral extends HttpServlet
 				String fechaEntrega = request.getParameter( "fechaEntrega" );
 
 				listaRecursos= ProdAndes.darInstancia().consultarExistenciasRecurso(tipo,Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
+				if(listaRecursos.size()==0)
+				{
+					listaVacia=true;
+				}
 				imprimirPaginaGeneral(response);
 			}
-			catch( NumberFormatException e )
-			{
-				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
-			}
-			catch (ParseException e) 
-			{
-				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
-			} 
 			catch (Exception e) 
 			{
 				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
@@ -177,14 +182,20 @@ public class ServletConsultaGeneral extends HttpServlet
 				String costo = request.getParameter( "costo" );
 				String fechaDesde = request.getParameter( "desde" );
 				String fechaHasta = request.getParameter( "hasta" );
-				
-				listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(volumen), fechaDesde, fechaHasta, Float.parseFloat(costo));
-
-				imprimirPaginaGeneral(response);
-			}
-			catch( NumberFormatException e )
-			{
-				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+				if(volumen.equals("")&&costo.equals("")&&fechaDesde.equals("")&&fechaHasta.equals(""))
+				{
+					escribioNada=true;
+					imprimirPaginaGeneral(response);
+				}
+				else
+				{
+					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(volumen), fechaDesde, fechaHasta, Float.parseFloat(costo));
+					if(listaMateriales.size()==0)
+					{
+						listaVacia=true;
+					}
+					imprimirPaginaGeneral(response);
+				}
 			}
 			catch (Exception e) 
 			{
@@ -193,7 +204,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		}
 		imprimirfooter(response);
 	}
-	
+
 
 	/**
 	 * Imprime el encabezado con el diseño de la página
@@ -225,7 +236,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "    		<link href=\"css/plugins/morris.css\" rel=\"stylesheet\">");
 		respuesta.println( "</head>" );
 	}
-	
+
 	/**
 	 * Imprime el cuerpo con el diseño de la página general
 	 * @param response Respuesta
@@ -235,7 +246,7 @@ public class ServletConsultaGeneral extends HttpServlet
 	{
 		// Obtiene el flujo de escritura de la respuesta
 		PrintWriter respuesta = response.getWriter( );
-		
+
 		respuesta.println( "	<body>");
 		respuesta.println( "	");
 		respuesta.println( "	<div id=\"wrapper\">");
@@ -268,6 +279,16 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "            </ul>");
 		respuesta.println( "        </nav>");
 		respuesta.println( "	</div>");
+		if(listaVacia)
+		{
+			listaVacia=false;
+			respuesta.println( "<script> alert(\"La solicitud no retorno ningún resultado\"); </script>");
+		}
+		else if(escribioNada)
+		{
+			escribioNada=false;
+			respuesta.println( "<script> alert(\"Por favor llene los campos paran realizar la busqueda\"); </script>");
+		}
 		respuesta.println( "        <div id=\"page-wrapper\">");
 		respuesta.println( "");
 		respuesta.println( "            <div class=\"container-fluid\">");
@@ -307,18 +328,18 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <select name=\"procesoProduccion\"		>");
-																try
-																{
-																	ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion();
-																	for(int i=0; i<procesos.size();i++)
-																	{
-																		respuesta.println( "                                    <option value=\""+procesos.get(i)+"\">"+procesos.get(i)+"</option>");
-																	}
-																}
-																catch (Exception e)
-																{
-																	imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
-																}
+		try
+		{
+			ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion();
+			for(int i=0; i<procesos.size();i++)
+			{
+				respuesta.println( "                                    <option value=\""+procesos.get(i)+"\">"+procesos.get(i)+"</option>");
+			}
+		}
+		catch (Exception e)
+		{
+			imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+		}
 		respuesta.println( "                                    </select>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                 <div class=\"col-lg-4\">");
@@ -558,9 +579,9 @@ public class ServletConsultaGeneral extends HttpServlet
 			respuesta.println( "                        </div>");
 			respuesta.println( "                </div>");
 		}
-		
-        respuesta.println( "    		</div>");
- 		respuesta.println( "		</div>");
+
+		respuesta.println( "    		</div>");
+		respuesta.println( "		</div>");
 		respuesta.println( "    </body>");
 	}
 
@@ -578,7 +599,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                      operación nuevamente. Si el problema persiste, contacte" );
 		respuesta.println( "                      al administrador del sistema.</p>" );
 	}
-	
+
 	/**
 	 * Imprime el footer 
 	 * @param respuesta Respuesta al cliente

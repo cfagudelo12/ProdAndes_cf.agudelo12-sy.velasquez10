@@ -313,7 +313,6 @@ public class ServletGerente extends HttpServlet
 					seLogroEntregaProducto=false;
 					respuesta.println( "<script> alert(\"El registro fue exitoso\"); </script>");
 				}
-				
 				respuesta.println( "				</form>");
 				respuesta.println( "        <div id=\"page-wrapper\">");
 				respuesta.println( "");

@@ -1254,10 +1254,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			"=e."+ProcesoProduccionValue.cIdProcesoProduccion+" AND req."+EtapaProduccionValue.cIdEtapaProduccion+"=e."+EtapaProduccionValue.cIdEtapaProduccion+
 			" AND req."+RecursoValue.cIdRecurso+"=r."+RecursoValue.cIdRecurso+" AND c."+ProductoValue.cIdProducto+"=p."+ProductoValue.cIdProducto+" AND pe."+PedidoValue.cIdPedido+
 			"=c."+PedidoValue.cIdPedido+"";
-			if(cantidad>0){
+			if(cantidad>0)
+			{
 				queryConsulta+=" AND p."+ProductoValue.cCantidadEnBodega+"="+cantidad;
 			}
-			if(costo>0){
+			if(costo>0)
+			{
 				queryConsulta+=" AND p."+ProductoValue.cCosto+"="+costo;
 			}
 			selStmt = conexion.prepareStatement(queryConsulta);
