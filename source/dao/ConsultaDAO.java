@@ -162,7 +162,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ConsultaDAO()
 	{
 		try {
-			cancelarPedidoCliente(101);
+			registrarCambioEstadoEstacionProduccion(1, EstacionProduccionValue.activa);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1729,8 +1729,15 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	
 	public void registrarCambioEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception{
 		PreparedStatement updStmt=null;
+		PreparedStatement selStmt=null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
+			String querySelect="SELECT * FROM ESTACIONESPRODUCCION WHERE idEstacionProduccion="+idEstacionProduccion+" AND ESTADO='"+estado+"'";
+			selStmt = conexion.prepareStatement(querySelect);
+			ResultSet rs = selStmt.executeQuery();
+			if(rs.next()){
+				throw new Exception("La estación de producción ya se encuentra en ese estado");
+			}
 			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"="+estado;
 			updStmt = conexion.prepareStatement(queryUpdate);
 			updStmt.executeQuery();
@@ -1845,20 +1852,16 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				int j=0;
 				ArrayList<Integer> etapasProduccion = new ArrayList<Integer>();
 				ArrayList<Integer> estacionesProduccion = new ArrayList<Integer>();
-				
 				String querySelect = "Select  idEtapaProduccion FROM "+tEjecutan+" order by idEtapaProduccion";
 				selStmt = conexion.prepareStatement(querySelect);
 				ResultSet rs = selStmt.executeQuery();
 				while(rs.next())
 				{
 					etapasProduccion.add(rs.getInt("idEtapaProduccion"));
-				}
-				
+				}	
 				String queryDelete = "TRUNCATE TABLE "+tEjecutan;
 				delStmt = conexion.prepareStatement(queryDelete);
 				delStmt.executeQuery();
-				
-				
 				querySelect = "Select IDESTACIONPRODUCCION FROM "+tEstacionesProduccion;
 				selStmt2 = conexion.prepareStatement(querySelect);
 				ResultSet rs2 = selStmt2.executeQuery();
@@ -1877,7 +1880,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 						i=0;
 					}
 				}
-				
 			}
 			else if(estado.equals(EstacionProduccionValue.inactiva))
 			{
