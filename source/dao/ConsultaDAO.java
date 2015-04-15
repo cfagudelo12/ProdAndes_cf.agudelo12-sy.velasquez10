@@ -162,7 +162,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ConsultaDAO()
 	{
 		try {
-			cancelarPedidoCliente(101);
+			consultarProducto(1, 353);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

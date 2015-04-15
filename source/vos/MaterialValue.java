@@ -66,8 +66,10 @@ public class MaterialValue
 	}
 
 	public void agregarPedidos(String pedidos) {
+		if(this.pedidos==null)
+			setPedidos(pedidos);
+		else
 		this.pedidos+= pedidos + ", ";
-		
 	}
 
 	public ProductoValue getProduto() {
@@ -88,9 +90,15 @@ public class MaterialValue
 
 	public void agregarRecursoQueLoCompone(String recurso) 
 	{
-		this.recursoQueLoCompone+= recurso + ", ";
+		if(this.recursoQueLoCompone==null)
+		{
+			setMaterialesQueLoComponen(recurso);
+		}
+		else
+		{
+			this.recursoQueLoCompone+= recurso + ", ";
+		}
 	}
-
 	public String getRecursoQueLoCompone() {
 		return recursoQueLoCompone;
 	}
