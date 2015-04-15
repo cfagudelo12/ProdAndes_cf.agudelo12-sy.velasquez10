@@ -89,7 +89,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * Constante que representa el nombre de la tabla ProcesosProduccion
 	 */
 	private static final String tProcesosProduccion="ProcesosProduccion";
-
+	
+	private static final String tEjecutan="Ejecutan";
+	
 	/**
 	 * Constante que representa el nombre de la tabla EtapasProduccion
 	 */
@@ -1597,7 +1599,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				ResultSet rs2 = selStmt2.executeQuery();
 				if(rs2.next()){
 					establecerConexion(cadenaConexion, usuario, clave);
-					String queryInsert ="BEGIN TRANSACTION INSERT INTO "+tPedidos+" (cantidad,"+PedidoValue.cMonto+","+PedidoValue.cFechaPedido+",fechaEsperada) VALUES ("+cantidad+","+monto+",TO_DATE('"+darFechaActualFormato()+"','YYYY-MM-DD'), TO_DATE('"+fechaEntrega+"','YYYY-MM-DD'))) COMMIT";
+					String queryInsert ="INSERT INTO "+tPedidos+" (cantidad,"+PedidoValue.cMonto+","+PedidoValue.cFechaPedido+",fechaEsperada) VALUES ("+cantidad+","+monto+",TO_DATE('"+darFechaActualFormato()+"','YYYY-MM-DD'), TO_DATE('"+fechaEntrega+"','YYYY-MM-DD')))";
 					insStmt = conexion.prepareStatement(queryInsert);
 					insStmt.executeQuery();
 				}
@@ -1688,6 +1690,33 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		return (hoy.getYear()+1900)+"-"+(hoy.getMonth()+1)+"-"+hoy.getDate();
 	}
 	
+	public void registrarCambioEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception{
+		PreparedStatement updStmt=null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"="+estado;
+			updStmt = conexion.prepareStatement(queryUpdate);
+			updStmt.executeQuery();
+			balancearCarga();
+		}
+		catch (SQLException e){
+			conexion.rollback();
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (updStmt != null) {
+				try{
+					updStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
 	/**
 	 * Metodo encargado de registrar la ejecucion en la base de datos.
 	 * @param idEtapaProduccion la etapa de produccion.
@@ -1765,4 +1794,13 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 
+	private void balancearCarga(int idEstacionProduccion, String estado){
+		PreparedStatement delStmt = null;
+		if(estado.equals(EstacionProduccionValue.activa)){
+			
+		}
+		else if(estado.equals(EstacionProduccionValue.inactiva)){
+			String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e."+EstacionProduccionValue.cIdEstacionProduccion+"="+idEstacionProduccion;
+		}
+	}
 }
