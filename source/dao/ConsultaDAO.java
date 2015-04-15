@@ -1697,7 +1697,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"="+estado;
 			updStmt = conexion.prepareStatement(queryUpdate);
 			updStmt.executeQuery();
-			balancearCarga();
+			balancearCarga(idEstacionProduccion, estado);
 		}
 		catch (SQLException e){
 			conexion.rollback();
@@ -1794,13 +1794,46 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 
-	private void balancearCarga(int idEstacionProduccion, String estado){
+	private void balancearCarga(int idEstacionProduccion, String estado) throws Exception{
 		PreparedStatement delStmt = null;
-		if(estado.equals(EstacionProduccionValue.activa)){
-			
+		PreparedStatement selStmt = null;
+		PreparedStatement selStmt2 = null;
+		PreparedStatement insStmt = null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			if(estado.equals(EstacionProduccionValue.activa)){
+				
+			}
+			else if(estado.equals(EstacionProduccionValue.inactiva)){
+				ArrayList<Integer> estacionesProduccion = new ArrayList<Integer>();
+				int i = 0;
+				String querySelect = "SELECT idEtapaProduccion FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
+				String querySelect2 = "SELECT idEstacionProduccion FROM "+tEstacionesProduccion+" e WHERE e."+EstacionProduccionValue.cEstado+"="+EstacionProduccionValue.activa+"";
+				String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
+				delStmt = conexion.prepareStatement(queryDelete);
+				delStmt.executeQuery();
+				selStmt = conexion.prepareStatement(querySelect);
+				ResultSet rs = selStmt.executeQuery();
+				selStmt2 = conexion.prepareStatement(querySelect2);
+				ResultSet rs2 = selStmt2.executeQuery();
+				while(rs2.next()){
+					estacionesProduccion.add(rs2.getInt("idEstacionProduccion"));
+				}
+				while(rs.next()){
+					String queryInsert = "INSERT INTO "+tEjecutan+"(idEstacionProduccion, idEtapaProduccion) VALUES ("+estacionesProduccion.get(i)+","+rs.getInt("idEtapaProduccion")+")";
+					insStmt = conexion.prepareStatement(queryInsert);
+					insStmt.executeQuery();
+					i++;
+					if(i==estacionesProduccion.size()){
+						i=0;
+					}
+				}
+			}
 		}
-		else if(estado.equals(EstacionProduccionValue.inactiva)){
-			String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e."+EstacionProduccionValue.cIdEstacionProduccion+"="+idEstacionProduccion;
+		catch (SQLException e){
+			conexion.rollback();
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 	}
 }
