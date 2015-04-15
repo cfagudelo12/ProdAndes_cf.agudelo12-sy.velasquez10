@@ -37,6 +37,7 @@ public class ServletGerente extends HttpServlet
 	private boolean seLogroEntregaProducto;
 	private boolean seRegistroMaterial;
 	private boolean seReportoEstadoEstacionProduccion;
+	private boolean seRegistroElCambioDeEstado;
 	
 	// -----------------------------------------------------------------
 	// Métodos
@@ -50,6 +51,7 @@ public class ServletGerente extends HttpServlet
 		seRegistroMaterial=false;
 		seLogroEntregaProducto=false;
 		seReportoEstadoEstacionProduccion=false;
+		seRegistroElCambioDeEstado=false;
 	}
 
 	public void destroy( )
@@ -105,6 +107,7 @@ public class ServletGerente extends HttpServlet
 				seRegistroMaterial=false;
 				seLogroEntregaProducto=false;
 				seReportoEstadoEstacionProduccion=false;
+				seRegistroElCambioDeEstado=false;
 				imprimirPaginaGerente(response);
 			}
 			catch( NumberFormatException e )
@@ -164,8 +167,8 @@ public class ServletGerente extends HttpServlet
 				String idEstacion = request.getParameter( "idEstacion" );
 				String estado =  request.getParameter( "estado" );
 	
-//				ProdAndes.darInstancia().reportarCambioDeEstadoEstacionProduccion(Integer.parseInt(idEstacion,estado));
-				seRegistroMaterial=true;
+				ProdAndes.darInstancia().reportarCambioDeEstadoEstacionProduccion(Integer.parseInt(idEstacion),estado);
+				seRegistroElCambioDeEstado=true;
 				imprimirPaginaGerente(response);		
 			}
 			catch( NumberFormatException e )
@@ -406,7 +409,8 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                	<select name=\"estado\">");
-				respuesta.println( "                               		<option>as</option>");
+				respuesta.println( "                               		<option>Activa</option>");
+				respuesta.println( "                               		<option>Inactiva</option>");
 				respuesta.println( "                               		</select>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-12\">");
@@ -436,7 +440,12 @@ public class ServletGerente extends HttpServlet
 				if(seReportoEstadoEstacionProduccion)
 				{
 					seReportoEstadoEstacionProduccion=false;
-					respuesta.println( "<srcipt>alert(\"Se reporto el estadod de forma exitosa\")</srcipt>");
+					respuesta.println( "<srcipt>alert(\"Se reporto el estado de forma exitosa\")</srcipt>");
+				}
+				if(seRegistroElCambioDeEstado)
+				{
+					seRegistroElCambioDeEstado=false;
+					respuesta.println( "<srcipt>alert(\"Se reporto el cambio de estado de la estación de producción\")</srcipt>");
 				}
 	}
 

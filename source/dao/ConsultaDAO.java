@@ -163,7 +163,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	{
 		try 
 		{
-			consultarProveedorPorId(11);
+			reportarCambioEstadoEstacionProduccion(1, "inactivo");;
 		}
 		catch (SQLException e) 
 		{
@@ -1997,11 +1997,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		return (hoy.getYear()+1900)+"-"+(hoy.getMonth()+1)+"-"+hoy.getDate();
 	}
 	
-	public void registrarCambioEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception{
+	public void reportarCambioEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception{
 		PreparedStatement updStmt=null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"="+estado;
+			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"='"+estado+"'";
 			updStmt = conexion.prepareStatement(queryUpdate);
 			updStmt.executeQuery();
 			balancearCarga(idEstacionProduccion, estado);

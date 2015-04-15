@@ -202,4 +202,9 @@ public class ProdAndes
 		return dao.consultarProveedoresPorNombre(nombre);
 	}
 
+	public void reportarCambioDeEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception
+	{
+		dao.reportarCambioEstadoEstacionProduccion(idEstacionProduccion, estado);
+	}
+
 }
