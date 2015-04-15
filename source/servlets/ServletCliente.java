@@ -274,11 +274,6 @@ public class ServletCliente extends HttpServlet
 		respuesta.println( "                            </div>");
 		respuesta.println( "                       ");
 		respuesta.println( "                        </div>");
-		if(seLogroSolicitudProducto)
-		{
-			seLogroSolicitudProducto=false;
-			respuesta.println( "<script> alert(\"La solicitud fue exitosa\"); </script>");
-		}
 		respuesta.println( "						</form>" );
 		respuesta.println( "         <!--Cancelar solicitud de productos-->");
 		respuesta.println( "				<form method=\"GET\" action=\"cliente.htm\">" );
@@ -314,11 +309,6 @@ public class ServletCliente extends HttpServlet
 		respuesta.println( "                            </div>");
 		respuesta.println( "                       ");
 		respuesta.println( "                        </div>");
-		if(seCanceloSolicitudProducto)
-		{
-			seCanceloSolicitudProducto=false;
-			respuesta.println( "<script> alert(\"La solicitud del producto fue cancelada\"); </script>");
-		}
 		respuesta.println( "				</form>" );
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
@@ -327,6 +317,16 @@ public class ServletCliente extends HttpServlet
         respuesta.println( "    		</div>");
  		respuesta.println( "		</div>");
 		respuesta.println( "    </body>");
+		if(seLogroSolicitudProducto)
+		{
+			seLogroSolicitudProducto=false;
+			respuesta.println( "<script> alert(\"La solicitud fue exitosa\"); </script>");
+		}
+		if(seCanceloSolicitudProducto)
+		{
+			seCanceloSolicitudProducto=false;
+			respuesta.println( "<script> alert(\"La solicitud del producto fue cancelada\"); </script>");
+		}
 	}
 
 	/**

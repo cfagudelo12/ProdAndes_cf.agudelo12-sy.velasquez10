@@ -311,11 +311,6 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "                        </div>");
 				respuesta.println( "                </div>");
 				respuesta.println( "                <!-- /.row -->");
-				if(seLogroEntregaProducto)
-				{
-					seLogroEntregaProducto=false;
-					respuesta.println( "<script> alert(\"El registro fue exitoso\"); </script>");
-				}
 				respuesta.println( "				</form>");
 				respuesta.println( "        <div id=\"page-wrapper\">");
 				respuesta.println( "");
@@ -364,11 +359,6 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "                            </div>");
 				respuesta.println( "                        </div>");
 				respuesta.println( "                </div>");
-				if(seRegistroMaterial)
-				{
-					seRegistroMaterial=false;
-					respuesta.println( "<srcipt>alert(\"Se registro el material de forma exitosa\")</srcipt>");
-				}
 				respuesta.println( "                </form>");
 				respuesta.println( "        <div id=\"page-wrapper\">");
 				respuesta.println( "");
@@ -423,11 +413,6 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Reportar\" name=\"reportarEstadoEstacionProduccion\">");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                            </div>");
-				if(seReportoEstadoEstacionProduccion)
-				{
-					seReportoEstadoEstacionProduccion=false;
-					respuesta.println( "<srcipt>alert(\"Se reporto el estadod de forma exitosa\")</srcipt>");
-				}
 				respuesta.println( "                       ");
 				respuesta.println( "                        </div>");
 				respuesta.println( "                </div>");
@@ -438,6 +423,21 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "    </div>");
 				respuesta.println( "    <!-- /#wrapper -->");
 				respuesta.println( "</body>" );
+				if(seLogroEntregaProducto)
+				{
+					seLogroEntregaProducto=false;
+					respuesta.println( "<script> alert(\"El registro fue exitoso\"); </script>");
+				}
+				if(seRegistroMaterial)
+				{
+					seRegistroMaterial=false;
+					respuesta.println( "<srcipt>alert(\"Se registro el material de forma exitosa\")</srcipt>");
+				}
+				if(seReportoEstadoEstacionProduccion)
+				{
+					seReportoEstadoEstacionProduccion=false;
+					respuesta.println( "<srcipt>alert(\"Se reporto el estadod de forma exitosa\")</srcipt>");
+				}
 	}
 
 	/**

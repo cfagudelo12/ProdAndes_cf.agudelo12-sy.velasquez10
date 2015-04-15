@@ -283,16 +283,6 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "            </ul>");
 		respuesta.println( "        </nav>");
 		respuesta.println( "	</div>");
-		if(listaVacia)
-		{
-			listaVacia=false;
-			respuesta.println( "<script> alert(\"La solicitud no retorno ningún resultado\"); </script>");
-		}
-		else if(escribioNada)
-		{
-			escribioNada=false;
-			respuesta.println( "<script> alert(\"Por favor llene los campos paran realizar la busqueda\"); </script>");
-		}
 		respuesta.println( "        <div id=\"page-wrapper\">");
 		respuesta.println( "");
 		respuesta.println( "            <div class=\"container-fluid\">");
@@ -590,6 +580,16 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "    		</div>");
 		respuesta.println( "		</div>");
 		respuesta.println( "    </body>");
+		if(listaVacia)
+		{
+			listaVacia=false;
+			respuesta.println( "<script> alert(\"La solicitud no retorno ningún resultado\"); </script>");
+		}
+		else if(escribioNada)
+		{
+			escribioNada=false;
+			respuesta.println( "<script> alert(\"Por favor llene los campos paran realizar la busqueda\"); </script>");
+		}
 	}
 
 	/**

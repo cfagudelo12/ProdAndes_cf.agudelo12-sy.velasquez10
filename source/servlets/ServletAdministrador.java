@@ -40,6 +40,8 @@ public class ServletAdministrador extends HttpServlet
 	private ArrayList<ProveedorValue>listaConsultarProveedores;
 
 	private boolean listaVacia;
+
+	private boolean noEscribioNada;
 	
 	// -----------------------------------------------------------------
 	// Métodos
@@ -54,6 +56,7 @@ public class ServletAdministrador extends HttpServlet
 		listaConsultarClientes= new ArrayList<ClienteValue>();
 		listaConsultarProveedores = new ArrayList<ProveedorValue>();
 		listaVacia=false;
+		noEscribioNada=false;
 	}
 
 	public void destroy( )
@@ -115,6 +118,7 @@ public class ServletAdministrador extends HttpServlet
 				listaConsultarClientes= new ArrayList<ClienteValue>();
 				listaConsultarProveedores = new ArrayList<ProveedorValue>();
 				listaVacia=false;
+				noEscribioNada=false;
 				imprimirPaginaAdministrador(response);
 			}
 			catch( NumberFormatException e )
@@ -142,11 +146,17 @@ public class ServletAdministrador extends HttpServlet
 			try
 			{
 				String monto = request.getParameter( "monto" );
-			
-				listaConsultarPedidos=ProdAndes.darInstancia().consultarPedidosPorMonto(Integer.parseInt(monto));
-				if(listaConsultarPedidos.size()==0)
+				if(monto.equals(""))
 				{
-					listaVacia=true;
+					noEscribioNada=true;
+				}
+				else
+				{
+					listaConsultarPedidos=ProdAndes.darInstancia().consultarPedidosPorMonto(Integer.parseInt(monto));
+					if(listaConsultarPedidos.size()==0)
+					{
+						listaVacia=true;
+					}
 				}
 				imprimirPaginaAdministrador(response);
 			}
@@ -202,11 +212,17 @@ public class ServletAdministrador extends HttpServlet
 			try
 			{
 				String email = request.getParameter( "email" );
-			
-				listaConsultarClientes=ProdAndes.darInstancia().consultarClientesPorEmail(email);
-				if(listaConsultarClientes.size()==0)
+				if(email.equals(""))
 				{
-					listaVacia=true;
+					noEscribioNada=true;
+				}
+				else
+				{
+					listaConsultarClientes=ProdAndes.darInstancia().consultarClientesPorEmail(email);
+					if(listaConsultarClientes.size()==0)
+					{
+						listaVacia=true;
+					}
 				}
 				imprimirPaginaAdministrador(response);
 			}
@@ -249,13 +265,20 @@ public class ServletAdministrador extends HttpServlet
 			try
 			{
 				String nombre = request.getParameter( "nombre" );
-			
-				listaConsultarProveedores=ProdAndes.darInstancia().consultarProveedorPorNombre(nombre);
-				if(listaConsultarProveedores.size()==0)
+				if(nombre.equals(""))
 				{
-					listaVacia=true;
+					noEscribioNada=true;
+				}
+				else
+				{
+					listaConsultarProveedores=ProdAndes.darInstancia().consultarProveedorPorNombre(nombre);
+					if(listaConsultarProveedores.size()==0)
+					{
+						listaVacia=true;
+					}
 				}
 				imprimirPaginaAdministrador(response);
+				
 			}
 			catch (Exception e) 
 			{
@@ -344,11 +367,6 @@ public class ServletAdministrador extends HttpServlet
 				respuesta.println( "        </nav>");
 				respuesta.println( "		");
 				respuesta.println( "        <div id=\"page-wrapper\">");
-				if(listaVacia)
-				{
-					listaVacia=false;
-					respuesta.println( "<script> alert(\"La solicitud no retorno ningún resultado\"); </script>");
-				}
 				respuesta.println( "            <div class=\"container-fluid\">");
 				respuesta.println( "");
 				respuesta.println( "                <!-- titulo de la pagina -->");
@@ -692,6 +710,17 @@ public class ServletAdministrador extends HttpServlet
 				respuesta.println( "                </div>");
 				respuesta.println( "    <!-- /#wrapper -->");
 				respuesta.println( "</body>" );
+				if(noEscribioNada)
+				{
+					noEscribioNada=false;
+					respuesta.println( "<script> alert(\"Por favor llene los campos\"); </script>");
+				}
+				if(listaVacia)
+				{
+					listaVacia=false;
+					respuesta.println( "<script> alert(\"La solicitud no retorno ningún resultado\"); </script>");
+
+				}
 	}
 
 	/**
