@@ -161,6 +161,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO()
 	{
+
 		try 
 		{
 			consultarRecurso(84, "2016-03-10",  "2016-03-12", (float)458.0);
@@ -326,7 +327,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement selStmt = null;
 		try
 		{
-			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
+			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" INNER JOIN "+tClientela+" ON id=idCliente WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
 			establecerConexion(cadenaConexion, usuario, clave);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -622,7 +623,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				pedido.agregarProducto(producto);
 				
 				String consulta2 = "SELECT * FROM "+tProcesosProduccion+" p, "+tEtapasProduccion+" s NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN "+tRecursos+" WHERE p."+ProcesoProduccionValue.cIdProcesoProduccion+"= s."+ProcesoProduccionValue.cIdProcesoProduccion+" AND "+ProductoValue.cIdProducto+"="+producto.getIdProducto()+"";
-				System.out.println(consulta2);
 				selStmt2 = conexion.prepareStatement(consulta2);
 				ResultSet rs2 = selStmt2.executeQuery();	
 				while(rs2.next())
@@ -677,7 +677,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement selStmt2 = null;
 		PreparedStatement selStmt3 = null;
 		try{
-			String consulta = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tSolicitan+" s WHERE s."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
+			String consulta = "SELECT * FROM "+tCompran+" NATURAL INNER JOIN "+tPedidos;
 			establecerConexion(cadenaConexion, usuario, clave);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -690,9 +690,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
 				pedido.setCantidad(rs.getInt(PedidoValue.cCantidad));
 				pedido.setEstado(rs.getString(PedidoValue.cEstado));
-				String consulta2 = "SELECT * FROM "+tSolicitan+" s NATURAL INNER JOIN "+tProductos+" WHERE s."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND s."+PedidoValue.cIdPedido+"";
+				String consulta2 = "SELECT * FROM "+tCompran+" NATURAL INNER JOIN "+tProductos+" WHERE "+PedidoValue.cIdPedido+"="+pedido.getIdPedido();
 				selStmt2 = conexion.prepareStatement(consulta2);
-				System.out.println(consulta2);
 				ResultSet rs2 = selStmt2.executeQuery();	
 				while(rs2.next()){
 					ProductoValue producto = new ProductoValue();
@@ -706,7 +705,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					producto.setUnidadesProducidas(rs2.getInt(ProductoValue.cUnidadesProducidas));
 					producto.setUnidadesVendidas(rs2.getInt(ProductoValue.cUnidadesVendidas));
 					pedido.agregarProducto(producto);
-					String consulta3 = "SELECT * FROM "+tRequieren+" r NATURAL INNER JOIN "+tRecursos+" WHERE r."+ProductoValue.cIdProducto+"="+producto.getIdProducto()+"";
+					String consulta3 = "SELECT * FROM "+tRequieren+" NATURAL INNER JOIN "+tRecursos+" NATURAL INNER JOIN ETAPASPRODUCCION NATURAL INNER JOIN PROCESOSPRODUCCION WHERE "+ProductoValue.cIdProducto+"="+producto.getIdProducto()+"";
 					selStmt3 = conexion.prepareStatement(consulta3);
 					ResultSet rs3 = selStmt3.executeQuery();	
 					while(rs3.next()){
@@ -844,8 +843,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement selStmt = null;
 		PreparedStatement selStmt2 = null;
 		try{
-			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
 			establecerConexion(cadenaConexion, usuario, clave);
+			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" INNER JOIN "+tClientela+" ON id=idCliente WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next()){
@@ -864,17 +863,17 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				cliente.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
 				cliente.setIdRepresentanteLegal(rs.getInt(ClienteValue.cIdRepresentanteLegal));
 				cliente.setRegistroSINV(rs.getString(ClienteValue.cRegistroSINV));
-				String consulta2 = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tSolicitan+" s WHERE s."+ClienteValue.cId+"="+cliente.getId();
+				String consulta2 = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tCompran+" c WHERE c."+ClienteValue.cfIdCliente+"="+cliente.getId();
 				selStmt2 = conexion.prepareStatement(consulta2);
 				ResultSet rs2 = selStmt2.executeQuery();	
 				while(rs2.next()){
 					PedidoValue pedido = new PedidoValue();
-					pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
-					pedido.setMonto(rs.getFloat(PedidoValue.cMonto));
-					pedido.setFechaPedido(rs.getDate(PedidoValue.cFechaPedido));
-					pedido.setFechaEsperada(rs.getDate(PedidoValue.cFechaEsperada));
-					pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
-					pedido.setEstado(rs.getString(PedidoValue.cEstado));
+					pedido.setIdPedido(rs2.getInt(PedidoValue.cIdPedido));
+					pedido.setMonto(rs2.getFloat(PedidoValue.cMonto));
+					pedido.setFechaPedido(rs2.getDate(PedidoValue.cFechaPedido));
+					pedido.setFechaEsperada(rs2.getDate(PedidoValue.cFechaEsperada));
+					pedido.setFechaLlegada(rs2.getDate(PedidoValue.cFechaLlegada));
+					pedido.setEstado(rs2.getString(PedidoValue.cEstado));
 					cliente.agregarPedido(pedido);
 				}
 				clientes.add(cliente);
@@ -982,6 +981,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				proveedor.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
 				proveedor.setIdRepresentanteLegal(rs.getInt(ProveedorValue.cIdRepresentanteLegal));
 				proveedor.setVolumenMaximo(rs.getInt(ProveedorValue.cVolumenMaximo));
+				proveedor.setNombreEmpresa(rs.getString(ProveedorValue.cNombreEmpresa));
 				proveedores.add(proveedor);
 				proveedor = new ProveedorValue();
 			}
@@ -1722,12 +1722,19 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	
 	public void cancelarPedidoCliente(int idPedido) throws Exception
 	{
+		PreparedStatement selStmt = null;
 		PreparedStatement delStmt = null;
 		PreparedStatement delStmt2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryDelete = "DELETE FROM "+tCompran+" c WHERE c."+PedidoValue.cIdPedido+"="+idPedido+" AND c."+PedidoValue.cEstado+"="+PedidoValue.pendiente;
-			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" AND c."+PedidoValue.cEstado+"="+PedidoValue.pendiente;
+			String querySelect = "SELECT * FROM COMPRAN NATURAL INNER JOIN PEDIDOS WHERE ESTADO='Pendiente' AND IDPEDIDO="+idPedido;
+			String queryDelete = "DELETE FROM "+tCompran+" c WHERE c."+PedidoValue.cIdPedido+"="+idPedido+"";
+			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" AND p."+PedidoValue.cEstado+"='"+PedidoValue.pendiente+"'";
+			selStmt=conexion.prepareStatement(querySelect);
+			ResultSet rs = selStmt.executeQuery();
+			if(!rs.next()){
+				throw new Exception("No se puede cancelar el pedido, bien porque no existe o porque el pedido ya fue entregado");
+			}
 			delStmt = conexion.prepareStatement(queryDelete);
 			delStmt.executeQuery();
 			delStmt2 = conexion.prepareStatement(queryDelete2);

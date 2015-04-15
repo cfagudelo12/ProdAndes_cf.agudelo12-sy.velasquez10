@@ -18,6 +18,8 @@ public class ProveedorValue extends UsuarioValue
 	// Atributos
 	//----------------------------------------------------
 	
+	private String nombreEmpresa;
+	
 	private int idRepresentanteLegal;
 	
 	private int volumenMaximo;
@@ -46,6 +48,10 @@ public class ProveedorValue extends UsuarioValue
 		return volumenMaximo;
 	}
 	
+	public String getNombreEmpresa(){
+		return nombreEmpresa;
+	}
+	
 	public ArrayList<PedidoValue> getPedidos(){
 		return pedidos;
 	}
@@ -56,6 +62,10 @@ public class ProveedorValue extends UsuarioValue
 	
 	public ArrayList<ProductoValue> getProductosDependen(){
 		return productosDependen;
+	}
+	
+	public void setNombreEmpresa(String nombreEmpresa){
+		this.nombreEmpresa=nombreEmpresa;
 	}
 	
 	public void setIdRepresentanteLegal(int idRepresentanteLegal){
