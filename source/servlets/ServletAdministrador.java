@@ -38,6 +38,8 @@ public class ServletAdministrador extends HttpServlet
 	private ArrayList<PedidoValue>listaConsultarPedidos;
 	private ArrayList<ClienteValue>listaConsultarClientes;
 	private ArrayList<ProveedorValue>listaConsultarProveedores;
+
+	private boolean listaVacia;
 	
 	// -----------------------------------------------------------------
 	// Métodos
@@ -51,6 +53,7 @@ public class ServletAdministrador extends HttpServlet
 		listaConsultarPedidos=new ArrayList<PedidoValue>();
 		listaConsultarClientes= new ArrayList<ClienteValue>();
 		listaConsultarProveedores = new ArrayList<ProveedorValue>();
+		listaVacia=false;
 	}
 
 	public void destroy( )
@@ -108,6 +111,10 @@ public class ServletAdministrador extends HttpServlet
 		{
 			try
 			{
+				listaConsultarPedidos=new ArrayList<PedidoValue>();
+				listaConsultarClientes= new ArrayList<ClienteValue>();
+				listaConsultarProveedores = new ArrayList<ProveedorValue>();
+				listaVacia=false;
 				imprimirPaginaAdministrador(response);
 			}
 			catch( NumberFormatException e )
@@ -134,10 +141,13 @@ public class ServletAdministrador extends HttpServlet
 		{
 			try
 			{
-				String idPedido = request.getParameter( "idPedido" );
+				String monto = request.getParameter( "monto" );
 			
-				listaConsultarPedidos=ProdAndes.darInstancia().consultarPedidosPorMonto();
-
+				listaConsultarPedidos=ProdAndes.darInstancia().consultarPedidosPorMonto(Integer.parseInt(monto));
+				if(listaConsultarPedidos.size()==0)
+				{
+					listaVacia=true;
+				}
 				imprimirPaginaAdministrador(response);
 			}
 			catch (Exception e) 
@@ -149,10 +159,8 @@ public class ServletAdministrador extends HttpServlet
 		else if(consultarPedidos!=null)
 		{
 			try
-			{
-				String idPedido = request.getParameter( "idPedido" );
-			
-				listaConsultarPedidos=ProdAndes.darInstancia().consultarPedidos(Integer.parseInt(idPedido));
+			{			
+				listaConsultarPedidos=ProdAndes.darInstancia().consultarPedidos();
 				imprimirPaginaAdministrador(response);
 			}
 			catch (Exception e) 
@@ -165,9 +173,7 @@ public class ServletAdministrador extends HttpServlet
 		{
 			try
 			{
-				String idCliente = request.getParameter( "idCliente" );
-			
-				listaConsultarClientes=ProdAndes.darInstancia().consultarClientes(Integer.parseInt(idCliente));
+				listaConsultarClientes=ProdAndes.darInstancia().consultarClientes();
 				imprimirPaginaAdministrador(response);
 			}
 			catch (Exception e) 
@@ -195,9 +201,13 @@ public class ServletAdministrador extends HttpServlet
 		{
 			try
 			{
-				String idCliente = request.getParameter( "idCliente" );
+				String email = request.getParameter( "email" );
 			
-				listaConsultarClientes=ProdAndes.darInstancia().consultarClientesPorEmail(Integer.parseInt(idCliente));
+				listaConsultarClientes=ProdAndes.darInstancia().consultarClientesPorEmail(email);
+				if(listaConsultarClientes.size()==0)
+				{
+					listaVacia=true;
+				}
 				imprimirPaginaAdministrador(response);
 			}
 			catch (Exception e) 
@@ -210,9 +220,7 @@ public class ServletAdministrador extends HttpServlet
 		{
 			try
 			{
-				String idProveedor = request.getParameter( "idProveedor" );
-			
-				listaConsultarProveedores=ProdAndes.darInstancia().consultarProveedores(Integer.parseInt(idProveedor));
+				listaConsultarProveedores=ProdAndes.darInstancia().consultarProveedores();
 				imprimirPaginaAdministrador(response);
 			}
 			catch (Exception e) 
@@ -226,7 +234,7 @@ public class ServletAdministrador extends HttpServlet
 			try
 			{
 				String idProveedor = request.getParameter( "idProveedor" );
-			
+				
 				listaConsultarProveedores=ProdAndes.darInstancia().consultarProveedorPorId(Integer.parseInt(idProveedor));
 				imprimirPaginaAdministrador(response);
 			}
@@ -240,9 +248,13 @@ public class ServletAdministrador extends HttpServlet
 		{
 			try
 			{
-				String idProveedor = request.getParameter( "idProveedor" );
+				String nombre = request.getParameter( "nombre" );
 			
-				listaConsultarProveedores=ProdAndes.darInstancia().consultarProveedorPorNombre(Integer.parseInt(idProveedor));
+				listaConsultarProveedores=ProdAndes.darInstancia().consultarProveedorPorNombre(nombre);
+				if(listaConsultarProveedores.size()==0)
+				{
+					listaVacia=true;
+				}
 				imprimirPaginaAdministrador(response);
 			}
 			catch (Exception e) 
@@ -332,7 +344,11 @@ public class ServletAdministrador extends HttpServlet
 				respuesta.println( "        </nav>");
 				respuesta.println( "		");
 				respuesta.println( "        <div id=\"page-wrapper\">");
-				respuesta.println( "");
+				if(listaVacia)
+				{
+					listaVacia=false;
+					respuesta.println( "<script> alert(\"La solicitud no retorno ningún resultado\"); </script>");
+				}
 				respuesta.println( "            <div class=\"container-fluid\">");
 				respuesta.println( "");
 				respuesta.println( "                <!-- titulo de la pagina -->");
@@ -515,7 +531,7 @@ public class ServletAdministrador extends HttpServlet
 				respuesta.println( "                                    </select>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-12\">");
-				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Consultar\" name=\"consultarClientePorEmail\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Consultar\" name=\"consultarClientesPorEmail\">");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                </div>");
 				
@@ -549,8 +565,17 @@ public class ServletAdministrador extends HttpServlet
 																				PedidoValue pedidoActual= listaPedidos.get(j);
 																				respuesta.println( "<br/><b> id:</b> "+pedidoActual.getIdPedido());
 																				respuesta.println( "<br/><b> Monto:</b> "+pedidoActual.getMonto());
-																				respuesta.println( "<br/><b> Estado:</b> "+pedidoActual.getEstado());
-																				respuesta.println( "<br/><b> Producto:</b> "+pedidoActual.getProductos().get(0));
+																				respuesta.println( "<br/><b> Estado:</b> "+pedidoActual.getEstado());	
+																				for(int k=0;k<pedidoActual.getProductos().size();k++)
+																				{
+																					ProductoValue actual= pedidoActual.getProductos().get(k);
+																					respuesta.println( "<br/><b> Producto:</b> "+actual.getNombre());
+																				}
+																				for(int k=0;k<pedidoActual.getRecursosRequeridos().size();k++)
+																				{
+																					RecursoValue actual= pedidoActual.getRecursosRequeridos().get(k);
+																					respuesta.println( "<br/><b> Producto:</b> "+actual.getNombre());
+																				}
 																			}
 					respuesta.println( "									</p>");
 					respuesta.println( "                                </div>");
@@ -581,7 +606,7 @@ public class ServletAdministrador extends HttpServlet
 				respuesta.println( "                                    <span>Seleccione el proveedor: </span>");
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                    <br/>");
-				respuesta.println( " 									<select name=\"idProveedor\"		>");
+				respuesta.println( " 									<select name=\"idProveedor\">");
 																		try
 																		{
 																			ArrayList<ProveedorValue> proveedores=ProdAndes.darInstancia().darProveedores();
@@ -610,7 +635,7 @@ public class ServletAdministrador extends HttpServlet
 				respuesta.println( "                                    </select>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-12\">");
-				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Consultar\" name=\"consultarClientePorNombre\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Consultar\" name=\"consultarProveedoresPorNombre\">");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                            </div>");
@@ -630,7 +655,7 @@ public class ServletAdministrador extends HttpServlet
 					respuesta.println( "                            <br/>");
 					respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 					respuesta.println( "                                <div class=\"col-lg-4\">");
-					respuesta.println( "                                    <br/><p><b>Nombre Empresa: </b> "+m.getNombre()+"</p>");
+					respuesta.println( "                                    <br/><p><b>Nombre Empresa: </b> "+m.getNombreEmpresa()+"</p>");
 					respuesta.println( "                                </div>");
 					respuesta.println( "                                <div class=\"col-lg-4\">");
 					respuesta.println( "                                    <br/><p><b>Id: </b> "+m.getId()+"</p>");
@@ -653,9 +678,9 @@ public class ServletAdministrador extends HttpServlet
 																			for(int j=0;j<listaPedidos.size();j++)
 																			{
 																				PedidoValue pedidoActual= listaPedidos.get(j);
-																				respuesta.println( "<br/><b> id: "+pedidoActual.getIdPedido()+"</b>");
-																				respuesta.println( "<br/><b> Monto: "+pedidoActual.getMonto()+"</b>");
-																				respuesta.println( "<br/><b> Estado: "+pedidoActual.getEstado()+"</b>");
+																				respuesta.println( "<br/><br/><b> id:</b> "+pedidoActual.getIdPedido());
+																				respuesta.println( "<br/><b> Monto: </b>"+pedidoActual.getMonto());
+																				respuesta.println( "<br/><b> Estado: </b>"+pedidoActual.getEstado());
 																			}
 					respuesta.println( "									</p>");
 					respuesta.println( "                                </div>");

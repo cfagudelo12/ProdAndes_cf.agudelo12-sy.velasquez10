@@ -49,6 +49,7 @@ public class PedidoValue {
 	
 	private ArrayList<RecursoValue> recursosRequeridos;
 	
+	
 	//----------------------------------------------------
 	// Métodos
 	//----------------------------------------------------
@@ -128,5 +129,5 @@ public class PedidoValue {
 
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
-	}
+	}	
 }

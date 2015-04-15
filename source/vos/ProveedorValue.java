@@ -30,6 +30,7 @@ public class ProveedorValue extends UsuarioValue
 	
 	private ArrayList<ProductoValue> productosDependen;
 	
+	
 	//----------------------------------------------------
 	// Métodos
 	//----------------------------------------------------
@@ -87,4 +88,6 @@ public class ProveedorValue extends UsuarioValue
 	public void agregarProducto(ProductoValue producto){
 		productosDependen.add(producto);
 	}
+
+
 }

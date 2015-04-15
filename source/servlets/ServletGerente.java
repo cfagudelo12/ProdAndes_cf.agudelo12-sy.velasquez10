@@ -102,6 +102,9 @@ public class ServletGerente extends HttpServlet
 		{
 			try
 			{
+				seRegistroMaterial=false;
+				seLogroEntregaProducto=false;
+				seReportoEstadoEstacionProduccion=false;
 				imprimirPaginaGerente(response);
 			}
 			catch( NumberFormatException e )
