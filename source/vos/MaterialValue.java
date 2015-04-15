@@ -44,7 +44,10 @@ public class MaterialValue
 	}
 
 	public void setProductosQueCompone(String productosQueCompone) {
-		this.productosQueCompone = productosQueCompone;
+		if(this.productosQueCompone==null)
+			setProductosQueCompone(productosQueCompone);
+		else
+		this.productosQueCompone+= ", "+productosQueCompone;
 	}
 
 	public String getEtapasProduccion() {
@@ -54,7 +57,10 @@ public class MaterialValue
 		this.etapasProduccion = etapasProduccion;
 	}
 	public void agregarEtapasProduccion(String etapasProduccion) {
-		this.etapasProduccion += etapasProduccion +", ";
+		if(this.etapasProduccion==null)
+			setEtapasProduccion(etapasProduccion);
+		else
+		this.etapasProduccion+= ", "+etapasProduccion;
 	}
 
 	public String getPedidos() {

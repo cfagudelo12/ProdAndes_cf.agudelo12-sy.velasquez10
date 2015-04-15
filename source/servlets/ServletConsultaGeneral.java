@@ -161,7 +161,11 @@ public class ServletConsultaGeneral extends HttpServlet
 				String etapaProduccion = request.getParameter( "etapaProduccion" );
 				String fechaSolicitud = request.getParameter( "fechaSolicitud" );
 				String fechaEntrega = request.getParameter( "fechaEntrega" );
-
+				if(desde.equals("")&&hasta.equals("")&&etapaProduccion.equals("")&&fechaSolicitud.equals(""))
+				{
+					escribioNada=true;
+					imprimirPaginaGeneral(response);
+				}
 				listaRecursos= ProdAndes.darInstancia().consultarExistenciasRecurso(tipo,Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				if(listaRecursos.size()==0)
 				{
@@ -178,18 +182,18 @@ public class ServletConsultaGeneral extends HttpServlet
 		{
 			try
 			{
-				String volumen = request.getParameter( "volumen" );
+				String cantidadEnBodega = request.getParameter( "cantidadEnBodega" );
 				String costo = request.getParameter( "costo" );
 				String fechaDesde = request.getParameter( "desde" );
 				String fechaHasta = request.getParameter( "hasta" );
-				if(volumen.equals("")&&costo.equals("")&&fechaDesde.equals("")&&fechaHasta.equals(""))
+				if(cantidadEnBodega.equals("")&&costo.equals("")&&fechaDesde.equals("")&&fechaHasta.equals(""))
 				{
 					escribioNada=true;
 					imprimirPaginaGeneral(response);
 				}
 				else
 				{
-					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(volumen), fechaDesde, fechaHasta, Float.parseFloat(costo));
+					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(cantidadEnBodega), fechaDesde, fechaHasta, Float.parseFloat(costo));
 					if(listaMateriales.size()==0)
 					{
 						listaVacia=true;
@@ -522,10 +526,10 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                            <br/>");
 		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 		respuesta.println( "								<div class=\"col-lg-4\">");
-		respuesta.println( "	                            	<span>Indique el volumen: </span>");
+		respuesta.println( "	                            	<span>Indique la cantidad en bodega: </span>");
 		respuesta.println( "	                            	<br/>");
 		respuesta.println( "	                            	<br/>");
-		respuesta.println( "	                               	<INPUT type=\"number\" name=\"volumen\"/>");
+		respuesta.println( "	                               	<INPUT type=\"number\" name=\"cantidadEnBodega\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
 		respuesta.println( "                                    <span>Indique el costo: </span>");
@@ -564,11 +568,14 @@ public class ServletConsultaGeneral extends HttpServlet
 			respuesta.println( "                            <br/>");
 			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <p><b>Nombre:</b> "+ r.getRecurso().getNombre() +"</p>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
 			respuesta.println( "                                    <span>Tipo: "+ r.getRecurso().getTipoRecurso() +"</span>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
 			respuesta.println( "                                    <span>Productos que compone: "+ r.getProductosQueCompone() +"</span>");
-			respuesta.println( "                                </div>");
+			respuesta.println( "                                </div>"); 
 			respuesta.println( "                                <div class=\"col-lg-4\">");
 			respuesta.println( "                                    <span>Etapas de producci&#243n en las que participa: "+ r.getEtapasProduccion() +" </span>");
 			respuesta.println( "                                </div>");
