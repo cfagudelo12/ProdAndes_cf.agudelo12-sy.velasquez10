@@ -89,7 +89,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * Constante que representa el nombre de la tabla ProcesosProduccion
 	 */
 	private static final String tProcesosProduccion="ProcesosProduccion";
-
+	
+	private static final String tEjecutan="Ejecutan";
+	
 	/**
 	 * Constante que representa el nombre de la tabla EtapasProduccion
 	 */
@@ -1338,38 +1340,36 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			int idRepresentanteLegal, int registro_volumen_idEmpresa, String tipoEmpleado, long sueldo) throws Exception{
 		PreparedStatement stmt = null;
 		PreparedStatement stmt2 = null;
-		PreparedStatement rollback = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String query="BEGIN TRANSACTION INSERT INTO "+tUsuarios+"("+UsuarioValue.cId+","+UsuarioValue.cTipoUsuario+","+UsuarioValue.cClave+","+UsuarioValue.cCedula+","+UsuarioValue.cNombre+","+
+			String query="INSERT INTO "+tUsuarios+"("+UsuarioValue.cId+","+UsuarioValue.cTipoUsuario+","+UsuarioValue.cClave+","+UsuarioValue.cCedula+","+UsuarioValue.cNombre+","+
 			UsuarioValue.cNacionalidad+","+UsuarioValue.cDireccionFisica+","+UsuarioValue.cTelefono+","+UsuarioValue.cEmail+","+
 			UsuarioValue.cDepartamento+","+UsuarioValue.cCiudad+","+UsuarioValue.cCodigoPostal+") VALUES ("+id+",'"+tipoUsuario+"','"+clave+"','"+cedula+"','"+nombre+
-			"','"+nacionalidad+"','"+direccionFisica+"','"+telefono+"','"+email+"','"+departamento+"','"+ciudad+"','"+codigoPostal+"') COMMIT";
+			"','"+nacionalidad+"','"+direccionFisica+"','"+telefono+"','"+email+"','"+departamento+"','"+ciudad+"','"+codigoPostal+"')";
 			stmt=conexion.prepareStatement(query);
 			stmt.executeQuery();
 			if(tipoUsuario.equals(UsuarioValue.cliente)){
-				String query2="BEGIN TRANSACTION INSERT INTO"+tClientes+"("+ClienteValue.cId+","+ClienteValue.cIdRepresentanteLegal+","+ClienteValue.cRegistroSINV+")"
-						+ " VALUES ("+id+","+idRepresentanteLegal+","+registro_volumen_idEmpresa+") COMMIT";
+				String query2="INSERT INTO"+tClientes+"("+ClienteValue.cId+","+ClienteValue.cIdRepresentanteLegal+","+ClienteValue.cRegistroSINV+")"
+						+ " VALUES ("+id+","+idRepresentanteLegal+","+registro_volumen_idEmpresa+")";
 				stmt2=conexion.prepareStatement(query2);
 				stmt2.executeQuery();
 			}
 			else if(tipoUsuario.equals(UsuarioValue.proveedor)){
-				String query2="BEGIN TRANSACTION INSERT INTO"+tProveedores+"("+ProveedorValue.cId+","+ProveedorValue.cIdRepresentanteLegal+","+ProveedorValue.cVolumenMaximo+")"
-						+ " VALUES ("+id+","+idRepresentanteLegal+","+registro_volumen_idEmpresa+") COMMIT";
+				String query2="INSERT INTO"+tProveedores+"("+ProveedorValue.cId+","+ProveedorValue.cIdRepresentanteLegal+","+ProveedorValue.cVolumenMaximo+")"
+						+ " VALUES ("+id+","+idRepresentanteLegal+","+registro_volumen_idEmpresa+")";
 				stmt2=conexion.prepareStatement(query2);
 				stmt2.executeQuery();
 			}
 			else if(tipoUsuario.equals(UsuarioValue.empleado)){
-				String query2="BEGIN TRANSACTION INSERT INTO"+tEmpleados+"("+EmpleadoValue.cId+","+EmpleadoValue.cSueldo+","+EmpleadoValue.cTipoEmpleado+","+EmpleadoValue.cfIdEmpresa+")"
-						+ " VALUES ("+id+","+sueldo+","+tipoEmpleado+","+registro_volumen_idEmpresa+") COMMIT";
+				String query2="INSERT INTO"+tEmpleados+"("+EmpleadoValue.cId+","+EmpleadoValue.cSueldo+","+EmpleadoValue.cTipoEmpleado+","+EmpleadoValue.cfIdEmpresa+")"
+						+ " VALUES ("+id+","+sueldo+","+tipoEmpleado+","+registro_volumen_idEmpresa+")";
 				stmt2=conexion.prepareStatement(query2);
 				stmt2.executeQuery();
-			}	
+			}
+			conexion.commit();
 		}
 		catch (SQLException e){
-			String rollbackS = "ROLLBACK";
-			rollback = conexion.prepareStatement(rollbackS);
-			rollback.executeQuery();
+			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
@@ -1385,14 +1385,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			if (stmt2 != null){
 				try{
 					stmt2.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (rollback != null){
-				try{
-					rollback.close();
 				} 
 				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
@@ -1414,10 +1406,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement updStmt = null;
 		PreparedStatement selStmt = null;
 		PreparedStatement stmt = null;
-		PreparedStatement rollback = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryPedido = "BEGIN TRANSACTION UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" COMMIT";
+			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"";
 			String queryConsulta = "SELECT * FROM "+tTienen+" t WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso;
 			String queryTienen = null;
 			updStmt = conexion.prepareStatement(queryPedido);
@@ -1425,22 +1416,21 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			if(rs.next()){
-				queryTienen="BEGIN TRANSACTION UPDATE "+tTienen+" t SET t."+RecursoValue.cfCantidadEnBodega+"=t."+RecursoValue.cfCantidadEnBodega+"+(SELECT p.cantidad FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+")"
-						+ "WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso+" COMMIT";
+				queryTienen="UPDATE "+tTienen+" t SET t."+RecursoValue.cfCantidadEnBodega+"=t."+RecursoValue.cfCantidadEnBodega+"+(SELECT p.cantidad FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+")"
+						+ "WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso+"";
 				stmt=conexion.prepareStatement(queryTienen);
 				stmt.executeQuery();
 			}	
 			else{
 				queryTienen="INSERT INTO "+tTienen+"("+EmpresaValue.cIdEmpresa+","+RecursoValue.cIdRecurso+","+RecursoValue.cfCantidadEnBodega+") VALUES ("+idEmpresaF+","+idRecurso+", "
-						+ "(SELECT p."+PedidoValue.cCantidad+" FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+")) COMMIT";
+						+ "(SELECT p."+PedidoValue.cCantidad+" FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"))";
 				stmt=conexion.prepareStatement(queryTienen);
 				stmt.executeQuery();
 			}
+			conexion.commit();
 		}
 		catch (SQLException e){
-			String rollbackS = "ROLLBACK";
-			rollback = conexion.prepareStatement(rollbackS);
-			rollback.executeQuery();
+			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
@@ -1469,14 +1459,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
-			if (rollback != null){
-				try{
-					rollback.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
 			closeConnection(conexion);
 		}
 	}
@@ -1493,7 +1475,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	{
 		PreparedStatement updPedStmt = null;
 		PreparedStatement updProdStmt = null;
-		PreparedStatement rollback = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido;
@@ -1504,11 +1485,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					ProductoValue.cIdProducto+"="+idProducto;
 			updProdStmt = conexion.prepareStatement(queryProducto);
 			updProdStmt.executeQuery();
+			conexion.commit();
 		}
 		catch (SQLException e){
-			String rollbackS = "ROLLBACK";
-			rollback = conexion.prepareStatement(rollbackS);
-			rollback.executeQuery();
+			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
@@ -1529,14 +1509,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
-			if (rollback != null){
-				try{
-					rollback.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
 			closeConnection(conexion);
 		}
 	}
@@ -1545,8 +1517,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public void registrarPedidoRecurso(int idRecurso, int idPedido, int cantidad, String fechaEsperada) throws Exception{
 		PreparedStatement selStmt = null;
 		PreparedStatement insStmt = null;
-		PreparedStatement rollback = null;
-		PreparedStatement rollback2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			String queryConsulta = "SELECT * FROM "+tRecursos+" r WHERE r."+RecursoValue.cIdRecurso+"=="+idRecurso+"";
@@ -1562,9 +1532,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				recurso.setCantidadMDistribucion(rs.getInt(RecursoValue.cCantidadMDistribucion));
 				recurso.setTiempoEntrega(rs.getInt(RecursoValue.cTiempoEntrega));
 				if(recurso.getCantidadMDistribucion()<cantidad){
-					String rollbackS = "ROLLBACK";
-					rollback = conexion.prepareStatement(rollbackS);
-					rollback.executeQuery();
 					throw new Exception("La cantidad exigida supera la cantidad máxima de distribución del recurso");
 				}
 				String queryInsert = "INSERT INTO "+tPedidos+"("+PedidoValue.cIdPedido+","+PedidoValue.cCantidad+","+
@@ -1572,19 +1539,14 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				+ " VALUES ("+idPedido+","+cantidad+","+0+","+darFechaActualFormato()+","+fechaEsperada+")";
 				insStmt = conexion.prepareStatement(queryInsert);
 				insStmt.executeQuery();
-				
+				conexion.commit();
 			}
 			else{
-				String rollbackS = "ROLLBACK";
-				rollback = conexion.prepareStatement(rollbackS);
-				rollback.executeQuery();
 				throw new Exception("No existe ningún recurso con el id especificado");
 			}
 		}
 		catch (SQLException e){
-			String rollbackS = "ROLLBACK";
-			rollback2 = conexion.prepareStatement(rollbackS);
-			rollback2.executeQuery();
+			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
@@ -1600,22 +1562,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			if (insStmt != null){
 				try{
 					insStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (rollback != null){
-				try{
-					rollback.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (rollback2 != null){
-				try{
-					rollback2.close();
 				} 
 				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
@@ -1637,8 +1583,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	{
 		PreparedStatement insStmt = null;
 		PreparedStatement selStmt = null;
-		PreparedStatement rollback = null;
-		PreparedStatement rollback2 = null;
+		PreparedStatement selStmt2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			String queryConsulta = "SELECT p."+ProductoValue.cCosto+" FROM "+tProductos+" p WHERE p."+ProductoValue.cIdProducto+"="+idProducto;
@@ -1650,71 +1595,47 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				String queryConsulta2 = "SELECT * FROM "+tTienen+" t,(SELECT r."+RecursoValue.cIdRecurso+",r.cantidad FROM "+tRequieren+" r,etapasProduccion e,procesosProduccion pr WHERE "
 						+ "pr."+ProductoValue.cIdProducto+"="+idProducto+" AND e."+ProcesoProduccionValue.cIdProcesoProduccion+"=pr."+ProcesoProduccionValue.cIdProcesoProduccion+" AND e."+EtapaProduccionValue.cIdEtapaProduccion+"=r."+EtapaProduccionValue.cIdEtapaProduccion+") n "
 								+ "WHERE t."+RecursoValue.cIdRecurso+"=n."+RecursoValue.cIdRecurso+" AND n.cantidad*"+cantidad+"<=t."+RecursoValue.cfCantidadEnBodega+"";
-				selStmt = conexion.prepareStatement(queryConsulta2);
-				ResultSet rs2 = selStmt.executeQuery();
+				selStmt2 = conexion.prepareStatement(queryConsulta2);
+				ResultSet rs2 = selStmt2.executeQuery();
 				if(rs2.next()){
 					establecerConexion(cadenaConexion, usuario, clave);
-					String queryInsert ="BEGIN TRANSACTION INSERT INTO "+tPedidos+" (cantidad,"+PedidoValue.cMonto+","+PedidoValue.cFechaPedido+",fechaEsperada) VALUES ("+cantidad+","+monto+",TO_DATE('"+darFechaActualFormato()+"','YYYY-MM-DD'), TO_DATE('"+fechaEntrega+"','YYYY-MM-DD'))) COMMIT";
+					String queryInsert ="INSERT INTO "+tPedidos+" (cantidad,"+PedidoValue.cMonto+","+PedidoValue.cFechaPedido+",fechaEsperada) VALUES ("+cantidad+","+monto+",TO_DATE('"+darFechaActualFormato()+"','YYYY-MM-DD'), TO_DATE('"+fechaEntrega+"','YYYY-MM-DD')))";
 					insStmt = conexion.prepareStatement(queryInsert);
 					insStmt.executeQuery();
 				}
 				else{
-					String rollbackS = "ROLLBACK";
-					rollback = conexion.prepareStatement(rollbackS);
-					rollback.executeQuery();
 					throw new Exception("No se pudo realizar el pedido del producto, porque no se cuenta con los recursos necesarios. EL pedido se archivara para luego de tener los recursos informar sobre la posibilidad de realizar la solicitud");
 				}
 			}
 			else{
-				String rollbackS = "ROLLBACK";
-				rollback = conexion.prepareStatement(rollbackS);
-				rollback.executeQuery();
 				throw new Exception("No existe el producto");
 			}
 		}
 		catch (SQLException e){
-			String rollbackS = "ROLLBACK";
-			rollback2 = conexion.prepareStatement(rollbackS);
-			rollback2.executeQuery();
+			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 		finally{
+			if (selStmt != null){
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (selStmt2 != null){
+				try{
+					selStmt2.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
 			if (insStmt != null) {
 				try{
 					insStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (insStmt != null){
-				try{
-					insStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (insStmt != null){
-				try{
-					insStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (rollback != null){
-				try{
-					rollback.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (rollback2 != null){
-				try{
-					rollback2.close();
 				} 
 				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
@@ -1769,6 +1690,33 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		return (hoy.getYear()+1900)+"-"+(hoy.getMonth()+1)+"-"+hoy.getDate();
 	}
 	
+	public void registrarCambioEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception{
+		PreparedStatement updStmt=null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"="+estado;
+			updStmt = conexion.prepareStatement(queryUpdate);
+			updStmt.executeQuery();
+			balancearCarga();
+		}
+		catch (SQLException e){
+			conexion.rollback();
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (updStmt != null) {
+				try{
+					updStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
 	/**
 	 * Metodo encargado de registrar la ejecucion en la base de datos.
 	 * @param idEtapaProduccion la etapa de produccion.
@@ -1782,8 +1730,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement selStmt=null;
 		PreparedStatement selEStmt=null;
 		PreparedStatement updStmt=null;
-		PreparedStatement rollback = null;
-		PreparedStatement rollback2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			String queryInsert="INSERT INTO "+tOperan+"(idOperario,"+EtapaProduccionValue.cIdEtapaProduccion+",fechaEjecucion,duracion) VALUES("+idEtapaProduccion+","+idOperario+",TO_DATE('"+fechaEjecucion+"','YYYY-MM-DD'),"+duracion+")";
@@ -1797,14 +1743,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				insStmt.executeQuery();
 				updStmt=conexion.prepareStatement(queryUpdate);
 				updStmt.executeQuery();
+				conexion.commit();
 			}
 			else{
 				selStmt=conexion.prepareStatement(querySelect);
 				ResultSet rs2=selStmt.executeQuery();
 				if(rs2.next()){
-					String rollbackS = "ROLLBACK";
-					rollback = conexion.prepareStatement(rollbackS);
-					rollback.executeQuery();
 					throw new Exception("Aun no se han terminado las etapas anteriores a esta");
 				}
 				else{
@@ -1812,13 +1756,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					insStmt.executeQuery();
 					updStmt=conexion.prepareStatement(queryUpdate);
 					updStmt.executeQuery();
+					conexion.commit();
 				}
 			}
 		}
 		catch (SQLException e){
-			String rollbackS = "ROLLBACK";
-			rollback2 = conexion.prepareStatement(rollbackS);
-			rollback2.executeQuery();
+			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
@@ -1826,14 +1769,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			if (insStmt != null){
 				try{
 					insStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (selStmt != null){
-				try{
-					selStmt.close();
 				} 
 				catch (SQLException exception){
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
@@ -1855,24 +1790,17 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
-			if (rollback != null){
-				try{
-					rollback.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			if (rollback2 != null){
-				try{
-					rollback2.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
 			closeConnection(conexion);
 		}
 	}
 
+	private void balancearCarga(int idEstacionProduccion, String estado){
+		PreparedStatement delStmt = null;
+		if(estado.equals(EstacionProduccionValue.activa)){
+			
+		}
+		else if(estado.equals(EstacionProduccionValue.inactiva)){
+			String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e."+EstacionProduccionValue.cIdEstacionProduccion+"="+idEstacionProduccion;
+		}
+	}
 }
