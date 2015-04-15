@@ -418,10 +418,10 @@ public class ServletConsultaGeneral extends HttpServlet
 			respuesta.println( "                            <br/>");
 			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Materiales que lo componen: "+m.getMaterialesQueLoComponen() +"</span>");
+			respuesta.println( "                                    <p><b>Materiales que lo componen:</b> "+m.getRecursoQueLoCompone()+"</p>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+m.getPedidos()+"</span>");
+			respuesta.println( "                                    <p><b>Pedidos de compra en los que esta involucrado:</b> "+m.getPedidos()+"</p>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");

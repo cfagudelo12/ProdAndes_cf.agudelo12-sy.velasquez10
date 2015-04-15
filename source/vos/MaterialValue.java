@@ -69,7 +69,7 @@ public class MaterialValue
 		if(this.pedidos==null)
 			setPedidos(pedidos);
 		else
-		this.pedidos+= pedidos + ", ";
+		this.pedidos+= ", "+pedidos;
 	}
 
 	public ProductoValue getProduto() {
@@ -92,11 +92,11 @@ public class MaterialValue
 	{
 		if(this.recursoQueLoCompone==null)
 		{
-			setMaterialesQueLoComponen(recurso);
+			setRecursoQueLoCompone(recurso);
 		}
 		else
 		{
-			this.recursoQueLoCompone+= recurso + ", ";
+			this.recursoQueLoCompone+= ", "+recurso ;
 		}
 	}
 	public String getRecursoQueLoCompone() {
