@@ -421,7 +421,7 @@ public class ServletConsultaGeneral extends HttpServlet
 			respuesta.println( "                                    <span>Materiales que lo componen: "+m.getMaterialesQueLoComponen() +"</span>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+m.getMaterialesQueLoComponen()+"</span>");
+			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+m.getPedidos()+"</span>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");
