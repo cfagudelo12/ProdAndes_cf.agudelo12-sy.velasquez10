@@ -976,6 +976,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				proveedor.setCodigoPostal(rs.getString(UsuarioValue.cCodigoPostal));
 				proveedor.setIdRepresentanteLegal(rs.getInt(ProveedorValue.cIdRepresentanteLegal));
 				proveedor.setVolumenMaximo(rs.getInt(ProveedorValue.cVolumenMaximo));
+				proveedor.setNombreEmpresa(rs.getString(ProveedorValue.cNombreEmpresa));
 				proveedores.add(proveedor);
 				proveedor = new ProveedorValue();
 			}
