@@ -1682,8 +1682,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement delStmt2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryDelete = "DELETE FROM "+tCompran+" s WHERE s."+PedidoValue.cIdPedido+"="+idPedido;
-			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido;
+			String queryDelete = "DELETE FROM "+tCompran+" c WHERE c."+PedidoValue.cIdPedido+"="+idPedido+" AND c."+PedidoValue.cEstado+"="+PedidoValue.pendiente;
+			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" AND c."+PedidoValue.cEstado+"="+PedidoValue.pendiente;
 			delStmt = conexion.prepareStatement(queryDelete);
 			delStmt.executeQuery();
 			delStmt2 = conexion.prepareStatement(queryDelete2);
