@@ -162,8 +162,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ConsultaDAO()
 	{
 		try {
-			ArrayList<ProveedorValue> c = consultarProveedores();
-			System.out.println("a");
+			cancelarPedidoCliente(101);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -322,7 +321,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement selStmt = null;
 		try
 		{
-			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
+			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" INNER JOIN "+tClientela+" ON id=idCliente WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
 			establecerConexion(cadenaConexion, usuario, clave);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -1678,12 +1677,19 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	
 	public void cancelarPedidoCliente(int idPedido) throws Exception
 	{
+		PreparedStatement selStmt = null;
 		PreparedStatement delStmt = null;
 		PreparedStatement delStmt2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryDelete = "DELETE FROM "+tCompran+" c WHERE c."+PedidoValue.cIdPedido+"="+idPedido+" AND c."+PedidoValue.cEstado+"="+PedidoValue.pendiente;
-			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" AND c."+PedidoValue.cEstado+"="+PedidoValue.pendiente;
+			String querySelect = "SELECT * FROM COMPRAN NATURAL INNER JOIN PEDIDOS WHERE ESTADO='Pendiente' AND IDPEDIDO="+idPedido;
+			String queryDelete = "DELETE FROM "+tCompran+" c WHERE c."+PedidoValue.cIdPedido+"="+idPedido+"";
+			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" AND p."+PedidoValue.cEstado+"='"+PedidoValue.pendiente+"'";
+			selStmt=conexion.prepareStatement(querySelect);
+			ResultSet rs = selStmt.executeQuery();
+			if(!rs.next()){
+				throw new Exception("No se puede cancelar el pedido, bien porque no existe o porque el pedido ya fue entregado");
+			}
 			delStmt = conexion.prepareStatement(queryDelete);
 			delStmt.executeQuery();
 			delStmt2 = conexion.prepareStatement(queryDelete2);
