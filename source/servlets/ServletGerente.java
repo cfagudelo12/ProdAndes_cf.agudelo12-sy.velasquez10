@@ -99,7 +99,6 @@ public class ServletGerente extends HttpServlet
 		String registrarMaterial = request.getParameter( "registrarMaterial" );
 		String reportarEstadoEstacionProduccion = request.getParameter( "reportarEstadoEstacionProduccion" );
 		
-		
 		if(gerente!=null)
 		{
 			try
@@ -314,6 +313,8 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "                        </div>");
 				respuesta.println( "                </div>");
 				respuesta.println( "                <!-- /.row -->");
+				respuesta.println( "    		</div>");
+				respuesta.println( "    		</div>");
 				respuesta.println( "				</form>");
 				respuesta.println( "        <div id=\"page-wrapper\">");
 				respuesta.println( "");
@@ -362,6 +363,8 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "                            </div>");
 				respuesta.println( "                        </div>");
 				respuesta.println( "                </div>");
+				respuesta.println( "    			</div>");
+				respuesta.println( "    		</div>");
 				respuesta.println( "                </form>");
 				respuesta.println( "        <div id=\"page-wrapper\">");
 				respuesta.println( "");
@@ -426,6 +429,7 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "		</div>");
 				respuesta.println( "    </div>");
 				respuesta.println( "    <!-- /#wrapper -->");
+
 				respuesta.println( "</body>" );
 				if(seLogroEntregaProducto)
 				{
@@ -435,18 +439,20 @@ public class ServletGerente extends HttpServlet
 				if(seRegistroMaterial)
 				{
 					seRegistroMaterial=false;
-					respuesta.println( "<srcipt>alert(\"Se registro el material de forma exitosa\")</srcipt>");
+					respuesta.println( "<srcipt>alert(\"Se registro el material de forma exitosa\");</srcipt>");
 				}
 				if(seReportoEstadoEstacionProduccion)
 				{
 					seReportoEstadoEstacionProduccion=false;
-					respuesta.println( "<srcipt>alert(\"Se reporto el estado de forma exitosa\")</srcipt>");
+					respuesta.println( "<srcipt>alert(\"Se reporto el estado de forma exitosa\");</srcipt>");
 				}
 				if(seRegistroElCambioDeEstado)
 				{
 					seRegistroElCambioDeEstado=false;
-					respuesta.println( "<srcipt>alert(\"Se reporto el cambio de estado de la estación de producción\")</srcipt>");
+					respuesta.println( "<script> alert(\"Se reporto el cambio de estado de la estación de producción\"); </script>");
+
 				}
+				
 	}
 
 	/**

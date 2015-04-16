@@ -2013,7 +2013,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		//Se crean los statement que serán utilizados en el método
 		PreparedStatement updStmt=null;
 		PreparedStatement selStmt=null;
-		try{
+		try
+		{
 			//Se establece la conexión a la base de datos
 			establecerConexion(cadenaConexion, usuario, clave);
 			//Se selecciona la estación de producción a la que se le cambiará el estado, si esta tiene el mismo estado se lanza una excepción dado que no tiene sentido
@@ -2025,7 +2026,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				throw new Exception("La estación de producción ya se encuentra en ese estado");
 			}
 			//Si la estación no tenía el estado se puede cambiar este atributo. El query a continuación se encarga de ello.
-			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"="+estado;
+			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"= '"+estado+"' WHERE idEstacionProduccion="+idEstacionProduccion;
 			updStmt = conexion.prepareStatement(queryUpdate);
 			updStmt.executeQuery();
 			//Una vez se cambia el estado de la estación de producción se realiza la operación de balanceo de carga.
@@ -2069,7 +2070,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @param duracion es la duracion de la etapa
 	 * @throws Exception Si hay un error en alguna parte del proceso
 	 */
-	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, String fechaEjecucion, int duracion) throws Exception{
+	public void registrarEjecucionEtapaProduccion(int idEtapaProduccion, int idOperario, String fechaEjecucion, int duracion) throws Exception
+	{
 		PreparedStatement insStmt=null;
 		PreparedStatement selStmt=null;
 		PreparedStatement selEStmt=null;
@@ -2197,7 +2199,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				//Se seleccionan todas las etapas de producción que estaban asignadas a la estación de producción 
 				String querySelect = "SELECT idEtapaProduccion FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
 				//Se seleccionan todas las estaciones de producción que se encuentran disponibles
-				String querySelect2 = "SELECT idEstacionProduccion FROM "+tEstacionesProduccion+" e WHERE e."+EstacionProduccionValue.cEstado+"="+EstacionProduccionValue.activa+"";
+				String querySelect2 = "SELECT idEstacionProduccion FROM "+tEstacionesProduccion+" e WHERE e."+EstacionProduccionValue.cEstado+"='"+EstacionProduccionValue.activa+"'";
 				//Se eliminan todas las ejecuciones pendientes a la estación de producción que se va a desactivar
 				String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
 				delStmt = conexion.prepareStatement(queryDelete);
