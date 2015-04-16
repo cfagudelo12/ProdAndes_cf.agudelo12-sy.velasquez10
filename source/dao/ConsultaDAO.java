@@ -1677,30 +1677,40 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	
 	public void cancelarPedidoCliente(int idPedido) throws Exception
 	{
+		//Se declaran los statement a utilizar en el método
 		PreparedStatement selStmt = null;
 		PreparedStatement delStmt = null;
 		PreparedStatement delStmt2 = null;
 		try{
+			//Se establece la conexion a la base de datos
 			establecerConexion(cadenaConexion, usuario, clave);
+			//Se selecciona el pedido con el id específicado por parámetro si este se encuentra pendiente
 			String querySelect = "SELECT * FROM COMPRAN NATURAL INNER JOIN PEDIDOS WHERE ESTADO='Pendiente' AND IDPEDIDO="+idPedido;
+			//Se prepara el query para eliminar el pedido de la tabla Compran
 			String queryDelete = "DELETE FROM "+tCompran+" c WHERE c."+PedidoValue.cIdPedido+"="+idPedido+"";
-			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" AND p."+PedidoValue.cEstado+"='"+PedidoValue.pendiente+"'";
+			//Se prepara el query para eliminar el pedido de la tabla Pedidos
+			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"";
 			selStmt=conexion.prepareStatement(querySelect);
 			ResultSet rs = selStmt.executeQuery();
+			//Si el pedido que se desea cancelar no está pendiente se notifica error
 			if(!rs.next()){
 				throw new Exception("No se puede cancelar el pedido, bien porque no existe o porque el pedido ya fue entregado");
 			}
+			//Se ejecutan los cambios a las tablas
 			delStmt = conexion.prepareStatement(queryDelete);
 			delStmt.executeQuery();
 			delStmt2 = conexion.prepareStatement(queryDelete2);
 			delStmt2.executeQuery();
+			//Se consolidan los cambios
 			conexion.commit();
 		}
+		//Si ocurre algún problema se hace rollback de la transacción
 		catch (SQLException e){
 			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
+		//Se cierran los statement y finalmente la conexión
 		finally{
 			if (delStmt != null){
 				try{
@@ -1718,6 +1728,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			closeConnection(conexion);
 		}
 	}
 
@@ -1748,6 +1759,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			updStmt.executeQuery();
 			//Una vez se cambia el estado de la estación de producción se realiza la operación de balanceo de carga.
 			balancearCarga(idEstacionProduccion, estado);
+			//Se consolidan los cambios
+			conexion.commit();
 		}
 		catch (SQLException e){
 			//Si ocurre algún error durante la ejecución de los querys del presente método, o algún error en el balanceo de carga se realiza rollback
