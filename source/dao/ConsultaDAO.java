@@ -1947,30 +1947,40 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	
 	public void cancelarPedidoCliente(int idPedido) throws Exception
 	{
+		//Se declaran los statement a utilizar en el método
 		PreparedStatement selStmt = null;
 		PreparedStatement delStmt = null;
 		PreparedStatement delStmt2 = null;
 		try{
+			//Se establece la conexion a la base de datos
 			establecerConexion(cadenaConexion, usuario, clave);
+			//Se selecciona el pedido con el id específicado por parámetro si este se encuentra pendiente
 			String querySelect = "SELECT * FROM COMPRAN NATURAL INNER JOIN PEDIDOS WHERE ESTADO='Pendiente' AND IDPEDIDO="+idPedido;
+			//Se prepara el query para eliminar el pedido de la tabla Compran
 			String queryDelete = "DELETE FROM "+tCompran+" c WHERE c."+PedidoValue.cIdPedido+"="+idPedido+"";
-			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+" AND p."+PedidoValue.cEstado+"='"+PedidoValue.pendiente+"'";
+			//Se prepara el query para eliminar el pedido de la tabla Pedidos
+			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"";
 			selStmt=conexion.prepareStatement(querySelect);
 			ResultSet rs = selStmt.executeQuery();
+			//Si el pedido que se desea cancelar no está pendiente se notifica error
 			if(!rs.next()){
 				throw new Exception("No se puede cancelar el pedido, bien porque no existe o porque el pedido ya fue entregado");
 			}
+			//Se ejecutan los cambios a las tablas
 			delStmt = conexion.prepareStatement(queryDelete);
 			delStmt.executeQuery();
 			delStmt2 = conexion.prepareStatement(queryDelete2);
 			delStmt2.executeQuery();
+			//Se consolidan los cambios
 			conexion.commit();
 		}
+		//Si ocurre algún problema se hace rollback de la transacción
 		catch (SQLException e){
 			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
+		//Se cierran los statement y finalmente la conexión
 		finally{
 			if (delStmt != null){
 				try{
@@ -1988,31 +1998,58 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			closeConnection(conexion);
 		}
 	}
+
 
 	@SuppressWarnings("deprecation")
 	private String darFechaActualFormato(){
 		Date hoy = new Date();
 		return (hoy.getYear()+1900)+"-"+(hoy.getMonth()+1)+"-"+hoy.getDate();
 	}
-	
+
 	public void reportarCambioEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception{
+		//Se crean los statement que serán utilizados en el método
 		PreparedStatement updStmt=null;
+		PreparedStatement selStmt=null;
 		try{
+			//Se establece la conexión a la base de datos
 			establecerConexion(cadenaConexion, usuario, clave);
-			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"='"+estado+"'";
+			//Se selecciona la estación de producción a la que se le cambiará el estado, si esta tiene el mismo estado se lanza una excepción dado que no tiene sentido
+			//cambiar el estado de la estación al mismo que tiene al momento de la ejecución del presente método.
+			String querySelect="SELECT * FROM ESTACIONESPRODUCCION WHERE idEstacionProduccion="+idEstacionProduccion+" AND ESTADO='"+estado+"'";
+			selStmt = conexion.prepareStatement(querySelect);
+			ResultSet rs = selStmt.executeQuery();
+			if(rs.next()){
+				throw new Exception("La estación de producción ya se encuentra en ese estado");
+			}
+			//Si la estación no tenía el estado se puede cambiar este atributo. El query a continuación se encarga de ello.
+			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"="+estado;
 			updStmt = conexion.prepareStatement(queryUpdate);
 			updStmt.executeQuery();
+			//Una vez se cambia el estado de la estación de producción se realiza la operación de balanceo de carga.
 			balancearCarga(idEstacionProduccion, estado);
+			//Se consolidan los cambios
+			conexion.commit();
 		}
 		catch (SQLException e){
+			//Si ocurre algún error durante la ejecución de los querys del presente método, o algún error en el balanceo de carga se realiza rollback
 			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 		finally{
-			if (updStmt != null) {
+			//Se cierran los statement y finalmente se cierra la conexión
+			if (selStmt != null){
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (updStmt != null){
 				try{
 					updStmt.close();
 				} 
@@ -2023,7 +2060,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			closeConnection(conexion);
 		}
 	}
-	
+
 	/**
 	 * Metodo encargado de registrar la ejecucion en la base de datos.
 	 * @param idEtapaProduccion la etapa de produccion.
@@ -2103,39 +2140,43 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 
 	private void balancearCarga(int idEstacionProduccion, String estado) throws Exception
 	{
+		//Se declaran los statement utilizados en el método
 		PreparedStatement delStmt = null;
 		PreparedStatement selStmt = null;
 		PreparedStatement selStmt2 = null;
 		PreparedStatement insStmt = null;
 		try
 		{
-			establecerConexion(cadenaConexion, usuario, clave);
+			//Si la estación fue activada se distribuye la carga para asignarle etapas para ejecutar
 			if(estado.equals(EstacionProduccionValue.activa))
 			{
+				//Se seleccionan todas las etapas de producción a ejecutar y todas las estaciones de producción disponibles
 				int j=0;
 				ArrayList<Integer> etapasProduccion = new ArrayList<Integer>();
 				ArrayList<Integer> estacionesProduccion = new ArrayList<Integer>();
-				
-				String querySelect = "Select  idEtapaProduccion FROM "+tEjecutan+" order by idEtapaProduccion";
+				String querySelect = "Select idEtapaProduccion FROM "+tEjecutan+" order by idEtapaProduccion";
 				selStmt = conexion.prepareStatement(querySelect);
 				ResultSet rs = selStmt.executeQuery();
+				//Se agregan todas las etapas de producción pendientes y asignadas a una estación de producción a un arreglo
 				while(rs.next())
 				{
 					etapasProduccion.add(rs.getInt("idEtapaProduccion"));
-				}
-				
+				}	
+				//Se eliminan todas las ejecuciones pendientes
 				String queryDelete = "TRUNCATE TABLE "+tEjecutan;
 				delStmt = conexion.prepareStatement(queryDelete);
 				delStmt.executeQuery();
-				
-				
-				querySelect = "Select IDESTACIONPRODUCCION FROM "+tEstacionesProduccion;
+				//Se seleccionan todas las estaciones de producción disponibles 
+				querySelect = "Select IDESTACIONPRODUCCION FROM "+tEstacionesProduccion+" WHERE estado='"+EstacionProduccionValue.activa+"'";
 				selStmt2 = conexion.prepareStatement(querySelect);
 				ResultSet rs2 = selStmt2.executeQuery();
 				while(rs2.next())
 				{
 					estacionesProduccion.add(rs2.getInt("idEstacionProduccion"));
 				}
+				//Se agrega la estación de producción que se volvió disponible al arreglo
+				estacionesProduccion.add(idEstacionProduccion);
+				//En el siguiente ciclo se le asigna a cada estación una etapa de producción hasta que todas las etapas de producción sean asignadas equitativamente
 				for(int i=0;i<estacionesProduccion.size() && j<etapasProduccion.size();i++)
 				{
 					String queryInsert = "INSERT INTO "+tEjecutan+"(idEstacionProduccion, idEtapaProduccion) VALUES ("+estacionesProduccion.get(i)+","+etapasProduccion.get(j)+")";
@@ -2147,14 +2188,17 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 						i=0;
 					}
 				}
-				
 			}
+			//Si la estación fue desactivada se distribuyen todas las etapas de producción que le estaban asignadas a las otras estaciones disponibles
 			else if(estado.equals(EstacionProduccionValue.inactiva))
 			{
 				ArrayList<Integer> estacionesProduccion = new ArrayList<Integer>();
 				int i = 0;
+				//Se seleccionan todas las etapas de producción que estaban asignadas a la estación de producción 
 				String querySelect = "SELECT idEtapaProduccion FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
+				//Se seleccionan todas las estaciones de producción que se encuentran disponibles
 				String querySelect2 = "SELECT idEstacionProduccion FROM "+tEstacionesProduccion+" e WHERE e."+EstacionProduccionValue.cEstado+"="+EstacionProduccionValue.activa+"";
+				//Se eliminan todas las ejecuciones pendientes a la estación de producción que se va a desactivar
 				String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
 				delStmt = conexion.prepareStatement(queryDelete);
 				delStmt.executeQuery();
@@ -2162,9 +2206,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				ResultSet rs = selStmt.executeQuery();
 				selStmt2 = conexion.prepareStatement(querySelect2);
 				ResultSet rs2 = selStmt2.executeQuery();
+				//Se agregan las estaciones de producciones disponibles a un arreglo
 				while(rs2.next()){
 					estacionesProduccion.add(rs2.getInt("idEstacionProduccion"));
 				}
+				//A todas las estaciones disponibles se les asignan las etapas de producción que le estaban asignada a estación de producción desactivada en un ciclo
 				while(rs.next()){
 					String queryInsert = "INSERT INTO "+tEjecutan+"(idEstacionProduccion, idEtapaProduccion) VALUES ("+estacionesProduccion.get(i)+","+rs.getInt("idEtapaProduccion")+")";
 					insStmt = conexion.prepareStatement(queryInsert);
@@ -2176,9 +2222,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				}
 			}
 		}
+		//Si ocurre algún error se lanza la excepción, que es atrapada por el método registrar cambio de estado y éste último realiza el rollback de la transacción
 		catch (SQLException e)
 		{
-			conexion.rollback();
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
