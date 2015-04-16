@@ -1663,6 +1663,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
@@ -1682,6 +1683,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement stmt2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
 			String query="INSERT INTO "+tUsuarios+"("+UsuarioValue.cId+","+UsuarioValue.cTipoUsuario+","+UsuarioValue.cClave+","+UsuarioValue.cCedula+","+UsuarioValue.cNombre+","+
 			UsuarioValue.cNacionalidad+","+UsuarioValue.cDireccionFisica+","+UsuarioValue.cTelefono+","+UsuarioValue.cEmail+","+
 			UsuarioValue.cDepartamento+","+UsuarioValue.cCiudad+","+UsuarioValue.cCodigoPostal+") VALUES ("+id+",'"+tipoUsuario+"','"+clave+"','"+cedula+"','"+nombre+
@@ -1730,6 +1732,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
@@ -1748,6 +1751,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement stmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
 			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"";
 			String queryConsulta = "SELECT * FROM "+tTienen+" t WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso;
 			String queryTienen = null;
@@ -1799,6 +1803,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
@@ -1817,6 +1822,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement updProdStmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
 			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido;
 			updPedStmt = conexion.prepareStatement(queryPedido);
 			updPedStmt.executeQuery();
@@ -1849,6 +1855,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
@@ -1859,6 +1866,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement insStmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
 			String queryConsulta = "SELECT * FROM "+tRecursos+" r WHERE r."+RecursoValue.cIdRecurso+"=="+idRecurso+"";
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
@@ -1907,6 +1915,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
@@ -1926,6 +1935,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement selStmt2 = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
 			String queryConsulta = "SELECT p."+ProductoValue.cCosto+" FROM "+tProductos+" p WHERE p."+ProductoValue.cIdProducto+"="+idProducto;
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
@@ -1981,6 +1991,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
@@ -1994,6 +2005,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			//Se establece la conexion a la base de datos
 			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
 			//Se selecciona el pedido con el id específicado por parámetro si este se encuentra pendiente
 			String querySelect = "SELECT * FROM COMPRAN NATURAL INNER JOIN PEDIDOS WHERE ESTADO='Pendiente' AND IDPEDIDO="+idPedido;
 			//Se prepara el query para eliminar el pedido de la tabla Compran
@@ -2038,6 +2050,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
@@ -2057,6 +2070,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			//Se establece la conexión a la base de datos
 			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
 			//Se selecciona la estación de producción a la que se le cambiará el estado, si esta tiene el mismo estado se lanza una excepción dado que no tiene sentido
 			//cambiar el estado de la estación al mismo que tiene al momento de la ejecución del presente método.
 			String querySelect="SELECT * FROM ESTACIONESPRODUCCION WHERE idEstacionProduccion="+idEstacionProduccion+" AND ESTADO='"+estado+"'";
@@ -2118,6 +2132,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		PreparedStatement updStmt=null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
 			String queryInsert="INSERT INTO "+tOperan+"(idOperario,"+EtapaProduccionValue.cIdEtapaProduccion+",fechaEjecucion,duracion) VALUES("+idEtapaProduccion+","+idOperario+",TO_DATE('"+fechaEjecucion+"','YYYY-MM-DD'),"+duracion+")";
 			String querySelectE="SELECT * FROM "+tEtapasProduccionPedido+" e WHERE e."+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+" AND e.idAnteriorEtapa IS NULL";
 			String querySelect="SELECT * FROM "+tEtapasProduccionPedido+" e WHERE e."+EtapaProduccionValue.cIdEtapaProduccion+"=(SELECT idAnteriorEtapa FROM "+tEtapasProduccionPedido+" et WHERE et."+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+") AND e."+PedidoValue.cEstado+"='Terminado'";
@@ -2176,6 +2191,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
+			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
