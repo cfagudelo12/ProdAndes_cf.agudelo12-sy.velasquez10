@@ -161,6 +161,18 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO()
 	{
+		try 
+		{
+			reportarCambioEstadoEstacionProduccion(1, "inactivo");;
+		}
+		catch (SQLException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	//-------------------------------------------------
@@ -1728,37 +1740,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		Date hoy = new Date();
 		return (hoy.getYear()+1900)+"-"+(hoy.getMonth()+1)+"-"+hoy.getDate();
 	}
-<<<<<<< HEAD
 
-=======
-	
-	public void registrarCambioEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception{
-		PreparedStatement updStmt=null;
-		try{
-			establecerConexion(cadenaConexion, usuario, clave);
-			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"="+estado;
-			updStmt = conexion.prepareStatement(queryUpdate);
-			updStmt.executeQuery();
-			balancearCarga(idEstacionProduccion, estado);
-		}
-		catch (SQLException e){
-			conexion.rollback();
-			e.printStackTrace();
-			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
-		}
-		finally{
-			if (updStmt != null) {
-				try{
-					updStmt.close();
-				} 
-				catch (SQLException exception){
-					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
-				}
-			}
-			closeConnection(conexion);
-		}
-	}
->>>>>>> parent of 0664ffc... Se corrigen ciertos elementos
 	
 	/**
 	 * Metodo encargado de registrar la ejecucion en la base de datos.
@@ -1837,91 +1819,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 
-<<<<<<< HEAD
 	
 	
-=======
-	private void balancearCarga(int idEstacionProduccion, String estado) throws Exception
-	{
-		PreparedStatement delStmt = null;
-		PreparedStatement selStmt = null;
-		PreparedStatement selStmt2 = null;
-		PreparedStatement insStmt = null;
-		try
-		{
-			establecerConexion(cadenaConexion, usuario, clave);
-			if(estado.equals(EstacionProduccionValue.activa))
-			{
-				int j=0;
-				ArrayList<Integer> etapasProduccion = new ArrayList<Integer>();
-				ArrayList<Integer> estacionesProduccion = new ArrayList<Integer>();
-				
-				String querySelect = "Select  idEtapaProduccion FROM "+tEjecutan+" order by idEtapaProduccion";
-				selStmt = conexion.prepareStatement(querySelect);
-				ResultSet rs = selStmt.executeQuery();
-				while(rs.next())
-				{
-					etapasProduccion.add(rs.getInt("idEtapaProduccion"));
-				}
-				
-				String queryDelete = "TRUNCATE TABLE "+tEjecutan;
-				delStmt = conexion.prepareStatement(queryDelete);
-				delStmt.executeQuery();
-				
-				
-				querySelect = "Select IDESTACIONPRODUCCION FROM "+tEstacionesProduccion;
-				selStmt2 = conexion.prepareStatement(querySelect);
-				ResultSet rs2 = selStmt2.executeQuery();
-				while(rs2.next())
-				{
-					estacionesProduccion.add(rs2.getInt("idEstacionProduccion"));
-				}
-				for(int i=0;i<estacionesProduccion.size() && j<etapasProduccion.size();i++)
-				{
-					String queryInsert = "INSERT INTO "+tEjecutan+"(idEstacionProduccion, idEtapaProduccion) VALUES ("+estacionesProduccion.get(i)+","+etapasProduccion.get(j)+")";
-					insStmt = conexion.prepareStatement(queryInsert);
-					insStmt.executeQuery();
-					j++;
-					if(i==estacionesProduccion.size() && j<etapasProduccion.size())
-					{
-						i=0;
-					}
-				}
-				
-			}
-			else if(estado.equals(EstacionProduccionValue.inactiva))
-			{
-				ArrayList<Integer> estacionesProduccion = new ArrayList<Integer>();
-				int i = 0;
-				String querySelect = "SELECT idEtapaProduccion FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
-				String querySelect2 = "SELECT idEstacionProduccion FROM "+tEstacionesProduccion+" e WHERE e."+EstacionProduccionValue.cEstado+"="+EstacionProduccionValue.activa+"";
-				String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
-				delStmt = conexion.prepareStatement(queryDelete);
-				delStmt.executeQuery();
-				selStmt = conexion.prepareStatement(querySelect);
-				ResultSet rs = selStmt.executeQuery();
-				selStmt2 = conexion.prepareStatement(querySelect2);
-				ResultSet rs2 = selStmt2.executeQuery();
-				while(rs2.next()){
-					estacionesProduccion.add(rs2.getInt("idEstacionProduccion"));
-				}
-				while(rs.next()){
-					String queryInsert = "INSERT INTO "+tEjecutan+"(idEstacionProduccion, idEtapaProduccion) VALUES ("+estacionesProduccion.get(i)+","+rs.getInt("idEtapaProduccion")+")";
-					insStmt = conexion.prepareStatement(queryInsert);
-					insStmt.executeQuery();
-					i++;
-					if(i==estacionesProduccion.size()){
-						i=0;
-					}
-				}
-			}
-		}
-		catch (SQLException e)
-		{
-			conexion.rollback();
-			e.printStackTrace();
-			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
-		}
-	}
->>>>>>> parent of 0664ffc... Se corrigen ciertos elementos
 }
