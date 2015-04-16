@@ -141,7 +141,7 @@ public class ProdAndes
 	public ArrayList<PedidoValue> consultarPedidoPorId(int idPedido) throws Exception 
 	{
 		ArrayList<PedidoValue> a= new ArrayList<PedidoValue>();
-		a.add(dao.consultarPedidosPorId(idPedido));
+		a.add(dao.consultarPedidoPorId(idPedido));
 		return a;
 	}
 
@@ -174,7 +174,6 @@ public class ProdAndes
 	{
 		return dao.darEstacionesProduccion();
 	}
-
 	public ArrayList<PedidoValue> consultarPedidosPorMonto(int monto) throws Exception
 	{
 		return dao.consultarPedidosPorMonto(monto);
@@ -206,5 +205,4 @@ public class ProdAndes
 	{
 		dao.reportarCambioEstadoEstacionProduccion(idEstacionProduccion, estado);
 	}
-
 }
