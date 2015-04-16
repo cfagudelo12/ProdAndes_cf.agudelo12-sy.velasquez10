@@ -163,7 +163,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	{
 		try 
 		{
-			reportarCambioEstadoEstacionProduccion(1, "inactivo");;
+			reportarCambioEstadoEstacionProduccion(1, "Activa");
+//			reportarCambioEstadoEstacionProduccion(1, "Inactiva");
 		}
 		catch (SQLException e) 
 		{
@@ -2176,8 +2177,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				{
 					estacionesProduccion.add(rs2.getInt("idEstacionProduccion"));
 				}
-				//Se agrega la estación de producción que se volvió disponible al arreglo
-				estacionesProduccion.add(idEstacionProduccion);
 				//En el siguiente ciclo se le asigna a cada estación una etapa de producción hasta que todas las etapas de producción sean asignadas equitativamente
 				for(int i=0;i<estacionesProduccion.size() && j<etapasProduccion.size();i++)
 				{
@@ -2185,9 +2184,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					insStmt = conexion.prepareStatement(queryInsert);
 					insStmt.executeQuery();
 					j++;
-					if(i==estacionesProduccion.size() && j<etapasProduccion.size())
+					if(i==estacionesProduccion.size()-1 && j<etapasProduccion.size())
 					{
-						i=0;
+						i=-1;
 					}
 				}
 			}
@@ -2202,10 +2201,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				String querySelect2 = "SELECT idEstacionProduccion FROM "+tEstacionesProduccion+" e WHERE e."+EstacionProduccionValue.cEstado+"='"+EstacionProduccionValue.activa+"'";
 				//Se eliminan todas las ejecuciones pendientes a la estación de producción que se va a desactivar
 				String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
-				delStmt = conexion.prepareStatement(queryDelete);
-				delStmt.executeQuery();
 				selStmt = conexion.prepareStatement(querySelect);
 				ResultSet rs = selStmt.executeQuery();
+				delStmt = conexion.prepareStatement(queryDelete);
+				delStmt.executeQuery();
 				selStmt2 = conexion.prepareStatement(querySelect2);
 				ResultSet rs2 = selStmt2.executeQuery();
 				//Se agregan las estaciones de producciones disponibles a un arreglo
