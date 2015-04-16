@@ -161,16 +161,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO()
 	{
-
-		try {
-			cancelarPedidoCliente(101);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	//-------------------------------------------------
@@ -1738,7 +1728,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		Date hoy = new Date();
 		return (hoy.getYear()+1900)+"-"+(hoy.getMonth()+1)+"-"+hoy.getDate();
 	}
+<<<<<<< HEAD
 
+=======
 	
 	public void registrarCambioEstadoEstacionProduccion(int idEstacionProduccion, String estado) throws Exception{
 		PreparedStatement updStmt=null;
@@ -1766,7 +1758,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			closeConnection(conexion);
 		}
 	}
-
+>>>>>>> parent of 0664ffc... Se corrigen ciertos elementos
 	
 	/**
 	 * Metodo encargado de registrar la ejecucion en la base de datos.
@@ -1845,7 +1837,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 
-
+<<<<<<< HEAD
+	
+	
+=======
 	private void balancearCarga(int idEstacionProduccion, String estado) throws Exception
 	{
 		PreparedStatement delStmt = null;
@@ -1928,4 +1923,5 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 	}
+>>>>>>> parent of 0664ffc... Se corrigen ciertos elementos
 }
