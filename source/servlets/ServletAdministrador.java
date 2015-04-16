@@ -507,7 +507,7 @@ public class ServletAdministrador extends HttpServlet
 				respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 				respuesta.println( "                             	<div class=\"col-lg-4\">");
 				respuesta.println( "                             	<div class=\"col-lg-12\">");
-				respuesta.println( "                                    <p><b>Mostrar todos</b></p>");
+				respuesta.println( "                                    <p><b>Mostrar todos los clientes</b></p>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-12\">");
 				respuesta.println( "                                	<INPUT type=\"submit\" value=\"Consultar\" name=\"consultarClientes\">");

@@ -320,6 +320,45 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		return proveedores;
 	}
 	
+	public ArrayList<RecursoValue> darRecursos() throws Exception 
+	{
+		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
+		PreparedStatement selStmt = null;
+		try
+		{
+			String consulta = "SELECT * FROM "+tRecursos;
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(consulta);
+			ResultSet rs = selStmt.executeQuery();		
+			while(rs.next())
+			{
+				RecursoValue recurso= new RecursoValue();
+				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
+				recurso.setNombre(rs.getString(RecursoValue.cNombre));
+				recursos.add(recurso);
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+		return recursos;
+	}
+	
 	public ArrayList<ClienteValue> darClientes() throws Exception 
 	{
 		ArrayList<ClienteValue> clientes = new ArrayList<ClienteValue>();

@@ -352,10 +352,23 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "                                    <INPUT type=\"number\" name=\"idPedido\"/>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-4\">");
-				respuesta.println( "                                    <span>Indique el id del recurso: </span>");
+				respuesta.println( "                                    <span>Indique el recurso: </span>");
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                    <br/>");
-				respuesta.println( "                                    <INPUT type=\"number\" name=\"idRecurso\"/>");
+				respuesta.println( " 									<select name=\"idRecurso\">");
+																		try
+																		{
+																			ArrayList<RecursoValue> recursos=ProdAndes.darInstancia().darRecursos();
+																			for(int i=0; i<recursos.size();i++)
+																			{
+																				respuesta.println( "<option value=\""+recursos.get(i).getIdRecurso()+"\">"+recursos.get(i).getNombre()+"</option>");
+																			}
+																		}
+																		catch (Exception e)
+																		{
+																			imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+																		}
+				respuesta.println( "                                    </select>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-12\">");
 				respuesta.println( "                                    <INPUT type=\"submit\" value=\"Registrar\" name=\"registrarMaterial\"/>");

@@ -207,4 +207,9 @@ public class ProdAndes
 		dao.reportarCambioEstadoEstacionProduccion(idEstacionProduccion, estado);
 	}
 
+	public ArrayList<RecursoValue> darRecursos() throws Exception
+	{
+		return dao.darRecursos();
+	}
+
 }
