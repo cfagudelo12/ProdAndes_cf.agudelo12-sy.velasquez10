@@ -1779,7 +1779,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			conexion.setAutoCommit(false);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"";
-			String queryConsulta = "SELECT * FROM "+tTienen+" t WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso;
+			String queryConsulta = "SELECT * FROM "+tTienen+" t WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso+" FOR UPDATE";
 			String queryTienen = null;
 			updStmt = conexion.prepareStatement(queryPedido);
 			updStmt.executeQuery();
@@ -1895,7 +1895,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setAutoCommit(false);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
-			String queryConsulta = "SELECT * FROM "+tRecursos+" r WHERE r."+RecursoValue.cIdRecurso+"=="+idRecurso+"";
+			String queryConsulta = "SELECT * FROM "+tRecursos+" r WHERE r."+RecursoValue.cIdRecurso+"="+idRecurso+"";
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			if(rs.next()){
@@ -2037,12 +2037,13 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			conexion.setAutoCommit(false);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			//Se selecciona el pedido con el id específicado por parámetro si este se encuentra pendiente
-			String querySelect = "SELECT * FROM COMPRAN NATURAL INNER JOIN PEDIDOS WHERE ESTADO='Pendiente' AND IDPEDIDO="+idPedido;
+			String querySelect = "SELECT * FROM COMPRAN NATURAL INNER JOIN PEDIDOS WHERE ESTADO='Pendiente' AND IDPEDIDO="+idPedido+"";
 			//Se prepara el query para eliminar el pedido de la tabla Compran
 			String queryDelete = "DELETE FROM "+tCompran+" c WHERE c."+PedidoValue.cIdPedido+"="+idPedido+"";
 			//Se prepara el query para eliminar el pedido de la tabla Pedidos
 			String queryDelete2 = "DELETE FROM "+tPedidos+" p WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"";
 			selStmt=conexion.prepareStatement(querySelect);
+			selStmt.setQueryTimeout(5);
 			ResultSet rs = selStmt.executeQuery();
 			//Si el pedido que se desea cancelar no está pendiente se notifica error
 			if(!rs.next()){
@@ -2050,8 +2051,10 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			}
 			//Se ejecutan los cambios a las tablas
 			delStmt = conexion.prepareStatement(queryDelete);
+			delStmt.setQueryTimeout(5);
 			delStmt.executeQuery();
 			delStmt2 = conexion.prepareStatement(queryDelete2);
+			delStmt2.setQueryTimeout(5);
 			delStmt2.executeQuery();
 			//Se consolidan los cambios
 			conexion.commit();
@@ -2104,8 +2107,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			//Se selecciona la estación de producción a la que se le cambiará el estado, si esta tiene el mismo estado se lanza una excepción dado que no tiene sentido
 			//cambiar el estado de la estación al mismo que tiene al momento de la ejecución del presente método.
-			String querySelect="SELECT * FROM ESTACIONESPRODUCCION WHERE idEstacionProduccion="+idEstacionProduccion+" AND ESTADO='"+estado+"'";
+			String querySelect="SELECT * FROM ESTACIONESPRODUCCION WHERE idEstacionProduccion="+idEstacionProduccion+" AND ESTADO='"+estado+"' FOR UPDATE";
 			selStmt = conexion.prepareStatement(querySelect);
+			selStmt.setQueryTimeout(5);
 			ResultSet rs = selStmt.executeQuery();
 			if(rs.next()){
 				throw new Exception("La estación de producción ya se encuentra en ese estado");
@@ -2113,6 +2117,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			//Si la estación no tenía el estado se puede cambiar este atributo. El query a continuación se encarga de ello.
 			String queryUpdate="UPDATE "+tEstacionesProduccion+" e SET e."+EstacionProduccionValue.cEstado+"= '"+estado+"' WHERE idEstacionProduccion="+idEstacionProduccion;
 			updStmt = conexion.prepareStatement(queryUpdate);
+			updStmt.setQueryTimeout(5);
 			updStmt.executeQuery();
 			//Una vez se cambia el estado de la estación de producción se realiza la operación de balanceo de carga.
 			balancearCarga(idEstacionProduccion, estado);
@@ -2246,7 +2251,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				ArrayList<Integer> estacionesProduccion = new ArrayList<Integer>();
 				String querySelect = "Select idEtapaProduccion FROM "+tEjecutan+" order by idEtapaProduccion";
 				selStmt = conexion.prepareStatement(querySelect);
-				conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+				selStmt.setQueryTimeout(5);
 				ResultSet rs = selStmt.executeQuery();
 				//Se agregan todas las etapas de producción pendientes y asignadas a una estación de producción a un arreglo
 				while(rs.next())
@@ -2256,10 +2261,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				//Se eliminan todas las ejecuciones pendientes
 				String queryDelete = "TRUNCATE TABLE "+tEjecutan;
 				delStmt = conexion.prepareStatement(queryDelete);
+				delStmt.setQueryTimeout(5);
 				delStmt.executeQuery();
 				//Se seleccionan todas las estaciones de producción disponibles 
 				querySelect = "Select IDESTACIONPRODUCCION FROM "+tEstacionesProduccion+" WHERE estado='"+EstacionProduccionValue.activa+"'";
 				selStmt2 = conexion.prepareStatement(querySelect);
+				selStmt2.setQueryTimeout(5);
 				ResultSet rs2 = selStmt2.executeQuery();
 				while(rs2.next())
 				{
@@ -2270,6 +2277,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				{
 					String queryInsert = "INSERT INTO "+tEjecutan+"(idEstacionProduccion, idEtapaProduccion) VALUES ("+estacionesProduccion.get(i)+","+etapasProduccion.get(j)+")";
 					insStmt = conexion.prepareStatement(queryInsert);
+					insStmt.setQueryTimeout(5);
 					insStmt.executeQuery();
 					j++;
 					if(i==estacionesProduccion.size()-1 && j<etapasProduccion.size())
@@ -2291,10 +2299,13 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
 				conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 				selStmt = conexion.prepareStatement(querySelect);
+				selStmt.setQueryTimeout(5);
 				ResultSet rs = selStmt.executeQuery();
 				delStmt = conexion.prepareStatement(queryDelete);
+				delStmt.setQueryTimeout(5);
 				delStmt.executeQuery();
 				selStmt2 = conexion.prepareStatement(querySelect2);
+				selStmt2.setQueryTimeout(5);
 				ResultSet rs2 = selStmt2.executeQuery();
 				//Se agregan las estaciones de producciones disponibles a un arreglo
 				while(rs2.next()){
@@ -2304,6 +2315,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				while(rs.next()){
 					String queryInsert = "INSERT INTO "+tEjecutan+"(idEstacionProduccion, idEtapaProduccion) VALUES ("+estacionesProduccion.get(i)+","+rs.getInt("idEtapaProduccion")+")";
 					insStmt = conexion.prepareStatement(queryInsert);
+					insStmt.setQueryTimeout(5);
 					insStmt.executeQuery();
 					i++;
 					if(i==estacionesProduccion.size()){
