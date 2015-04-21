@@ -724,6 +724,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta = "SELECT * FROM "+tCompran+" NATURAL INNER JOIN "+tPedidos;
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next()){
@@ -813,6 +814,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta = "SELECT * FROM "+tCompran+" c NATURAL INNER JOIN "+tPedidos+" p WHERE p.monto="+monto;
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next()){
@@ -903,6 +905,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND "+ClienteValue.cId+"="+idCliente;
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -982,6 +985,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND "+ClienteValue.cEmail+"='"+email+"'";
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -1060,6 +1064,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			establecerConexion(cadenaConexion, usuario, clave);
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" INNER JOIN "+tClientela+" ON id=idCliente WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next()){
@@ -1130,6 +1135,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tProveedores+" WHERE id="+idProveedor;
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -1193,6 +1199,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tProveedores;
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next()){
@@ -1242,6 +1249,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta = "SELECT * FROM "+tUsuarios+" u NATURAL INNER JOIN "+tProveedores+" p WHERE p.NOMBREEMPRESA='"+nombre+"'";
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next()){
