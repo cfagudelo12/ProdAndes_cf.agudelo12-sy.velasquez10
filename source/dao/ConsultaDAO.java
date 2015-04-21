@@ -247,7 +247,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta = "SELECT * FROM "+tEstacionesProduccion;
 			establecerConexion(cadenaConexion, usuario, clave);
 			selStmt = conexion.prepareStatement(consulta);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
 			{
@@ -286,7 +286,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tProveedores;
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -326,7 +326,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tRecursos;
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -366,7 +366,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" INNER JOIN "+tClientela+" ON id=idCliente WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -418,7 +418,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tProductos+" NATURAL JOIN "+tCompran+" NATURAL JOIN "+tPedidos+" WHERE idEmpresa=1 order by idPedido";
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -466,7 +466,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tProductos+" NATURAL JOIN "+tCompran+" NATURAL JOIN "+tPedidos+" WHERE idEmpresa=1 AND estado='Pendiente' order by idPedido";
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -513,7 +513,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			String consulta = "SELECT * FROM "+tProcesosProduccion+" WHERE idEmpresa=1";
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -548,7 +548,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tProductos+" NATURAL JOIN "+tCompran+" NATURAL JOIN "+tPedidos+" WHERE idEmpresa=1 order by idPedido";
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -595,7 +595,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT DISTINCT * FROM "+tProductos+" WHERE idEmpresa=1";
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -641,7 +641,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tCompran+" NATURAL INNER JOIN "+tProductos+" WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"AND "+PedidoValue.cIdPedido+"="+idPedido;
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next())
@@ -723,7 +723,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			String consulta = "SELECT * FROM "+tCompran+" NATURAL INNER JOIN "+tPedidos;
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -813,7 +813,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			String consulta = "SELECT * FROM "+tCompran+" c NATURAL INNER JOIN "+tPedidos+" p WHERE p.monto="+monto;
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -904,7 +904,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND "+ClienteValue.cId+"="+idCliente;
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -984,7 +984,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" NATURAL INNER JOIN "+tClientela+" c WHERE c."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND "+ClienteValue.cEmail+"='"+email+"'";
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -1063,7 +1063,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tClientes+" INNER JOIN "+tClientela+" ON id=idCliente WHERE "+EmpresaValue.cIdEmpresa+"="+idEmpresaF+"";
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -1134,7 +1134,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		{
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tProveedores+" WHERE id="+idProveedor;
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -1145,7 +1145,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				proveedor.setTipoUsuario(rs.getString(UsuarioValue.cTipoUsuario));
 				proveedor.setCedula(rs.getString(UsuarioValue.cCedula));
 				proveedor.setNombre(rs.getString(UsuarioValue.cNombre));
-				proveedor.setNombreEmpresa(rs.getString(ProveedorValue.cNombre));
+				proveedor.setNombreEmpresa(rs.getString(ProveedorValue.cNombreEmpresa));
 				proveedor.setNacionalidad(rs.getString(UsuarioValue.cNacionalidad));
 				proveedor.setDireccionFisica(rs.getString(UsuarioValue.cDireccionFisica));
 				proveedor.setTelefono(rs.getString(UsuarioValue.cTelefono));
@@ -1198,7 +1198,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			String consulta = "SELECT * FROM "+tUsuarios+" NATURAL INNER JOIN "+tProveedores;
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -1248,7 +1248,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			String consulta = "SELECT * FROM "+tUsuarios+" u NATURAL INNER JOIN "+tProveedores+" p WHERE p.NOMBREEMPRESA='"+nombre+"'";
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			conexion.setReadOnly(true);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
@@ -1309,7 +1309,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			String consulta	= generarConsultaExistenciaRecurso(tipoMaterial, rInferior, rSuperior, idEtapaProduccion, fechaSolicitud, fechaEntrega);
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();
 			while(rs.next()){
@@ -1394,7 +1394,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String consulta	= generarConsultaExistenciasProductos(rInferior, rSuperior, idProcesoProduccion, fechaSolicitud, fechaEntrega);
 			establecerConexion(cadenaConexion, usuario, clave);
 			selStmt = conexion.prepareStatement(consulta);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			ResultSet rs = selStmt.executeQuery();
 			
 			while(rs.next())
@@ -1475,7 +1475,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try
 		{
 			establecerConexion(cadenaConexion, usuario, clave);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryConsulta = "SELECT distinct * FROM "+tTienen+" t NATURAL JOIN "+tRecursos+" r NATURAL JOIN "+tPedidos+" p WHERE t.IDEMPRESA="+idEmpresaF;
 			if(volumen>0)
 			{
@@ -1594,7 +1594,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			{
 				queryConsulta+=" AND "+ProductoValue.cCosto+"="+costo;
 			}
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			while(rs.next())
@@ -1777,7 +1777,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setAutoCommit(false);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido+"";
 			String queryConsulta = "SELECT * FROM "+tTienen+" t WHERE t."+EmpresaValue.cIdEmpresa+"="+idEmpresaF+" AND t."+RecursoValue.cIdRecurso+"="+idRecurso+" FOR UPDATE";
 			String queryTienen = null;
@@ -1849,7 +1849,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setAutoCommit(false);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryPedido = "UPDATE "+tPedidos+" p SET p."+PedidoValue.cFechaLlegada+"=TO_DATE('"+fechaLlegada+"','YYYY-MM-DD'), p."+PedidoValue.cEstado+"='Terminado' WHERE p."+PedidoValue.cIdPedido+"="+idPedido;
 			updPedStmt = conexion.prepareStatement(queryPedido);
 			updPedStmt.executeQuery();
@@ -1894,7 +1894,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setAutoCommit(false);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryConsulta = "SELECT * FROM "+tRecursos+" r WHERE r."+RecursoValue.cIdRecurso+"="+idRecurso+"";
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
@@ -1964,7 +1964,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setAutoCommit(false);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryConsulta = "SELECT p."+ProductoValue.cCosto+" FROM "+tProductos+" p WHERE p."+ProductoValue.cIdProducto+"="+idProducto;
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
@@ -2035,7 +2035,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			//Se establece la conexion a la base de datos
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setAutoCommit(false);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			//Se selecciona el pedido con el id específicado por parámetro si este se encuentra pendiente
 			String querySelect = "SELECT * FROM COMPRAN NATURAL INNER JOIN PEDIDOS WHERE ESTADO='Pendiente' AND IDPEDIDO="+idPedido+"";
 			//Se prepara el query para eliminar el pedido de la tabla Compran
@@ -2104,7 +2104,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			//Se establece la conexión a la base de datos
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setAutoCommit(false);
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			//Se selecciona la estación de producción a la que se le cambiará el estado, si esta tiene el mismo estado se lanza una excepción dado que no tiene sentido
 			//cambiar el estado de la estación al mismo que tiene al momento de la ejecución del presente método.
 			String querySelect="SELECT * FROM ESTACIONESPRODUCCION WHERE idEstacionProduccion="+idEstacionProduccion+" AND ESTADO='"+estado+"' FOR UPDATE";
@@ -2173,7 +2173,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String querySelectE="SELECT * FROM "+tEtapasProduccionPedido+" e WHERE e."+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+" AND e.idAnteriorEtapa IS NULL";
 			String querySelect="SELECT * FROM "+tEtapasProduccionPedido+" e WHERE e."+EtapaProduccionValue.cIdEtapaProduccion+"=(SELECT idAnteriorEtapa FROM "+tEtapasProduccionPedido+" et WHERE et."+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+") AND e."+PedidoValue.cEstado+"='Terminado'";
 			String queryUpdate="UPDATE "+tTienen+" t SET t.cantidad=t.cantidad-(SELECT req.cantidad FROM "+tRequieren+" req WHERE req."+EtapaProduccionValue.cIdEtapaProduccion+"="+idEtapaProduccion+")";
-			conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selEStmt = conexion.prepareStatement(querySelectE);
 			ResultSet rs = selEStmt.executeQuery();
 			if(rs.next()){
@@ -2297,7 +2297,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				String querySelect2 = "SELECT idEstacionProduccion FROM "+tEstacionesProduccion+" e WHERE e."+EstacionProduccionValue.cEstado+"='"+EstacionProduccionValue.activa+"'";
 				//Se eliminan todas las ejecuciones pendientes a la estación de producción que se va a desactivar
 				String queryDelete = "DELETE FROM "+tEjecutan+" e WHERE e.idEstacionProduccion="+idEstacionProduccion;
-				conexion.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+				conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 				selStmt = conexion.prepareStatement(querySelect);
 				selStmt.setQueryTimeout(5);
 				ResultSet rs = selStmt.executeQuery();
