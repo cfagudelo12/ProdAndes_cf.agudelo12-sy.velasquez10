@@ -725,7 +725,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
 				pedido.setCantidad(rs.getInt(PedidoValue.cCantidad));
 				pedido.setEstado(rs.getString(PedidoValue.cEstado));
-				
 				ProductoValue producto = new ProductoValue();
 				producto.setCantidadEnBodega(rs.getInt(ProductoValue.cCantidadEnBodega));
 				producto.setCosto(rs.getFloat(ProductoValue.cCosto));
@@ -737,7 +736,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				producto.setUnidadesProducidas(rs.getInt(ProductoValue.cUnidadesProducidas));
 				producto.setUnidadesVendidas(rs.getInt(ProductoValue.cUnidadesVendidas));
 				pedido.agregarProducto(producto);
-				
 				String consulta2 = "SELECT * FROM "+tProcesosProduccion+" p, "+tEtapasProduccion+" s NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN "+tRecursos+" WHERE p."+ProcesoProduccionValue.cIdProcesoProduccion+"= s."+ProcesoProduccionValue.cIdProcesoProduccion+" AND "+ProductoValue.cIdProducto+"="+producto.getIdProducto()+"";
 				selStmt2 = conexion.prepareStatement(consulta2);
 				ResultSet rs2 = selStmt2.executeQuery();	
@@ -1760,11 +1758,41 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
-			conexion.setAutoCommit(true);
 			closeConnection(conexion);
 		}
 	}
-	
+	Dado el identificador de un material, mostrar la información de los pedidos en los que ha estado involucrado, incluyendo
+	los que están en etapa de producción. Para los pedidos no activos actualmente debe especificarse el rango de fechas en
+	los que estuvo activo.
+	public ArrayList<PedidoValue> consultarPedidosPorRecurso(int idRecurso){
+		ArrayList<PedidoValue> pedidos= new ArrayList<PedidoValue>();
+		PreparedStatement selStmt = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			String queryConsulta = "SELECT * FROM "++"";
+			return null;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try
+				{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
 	//---------------------------------------------------
 	// Metodos asociados a los casos de uso: Modificacion
 	//---------------------------------------------------

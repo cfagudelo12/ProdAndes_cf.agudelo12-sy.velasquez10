@@ -24,6 +24,8 @@ public class RecursoValue
 	
 	public final static String cTiempoEntrega = "tiempoEntrega";
 	
+	public final static String cCosto = "costo";
+	
 	public final static String cfCantidadEnBodega = "cantidadEnBodega";
 	
 	//----------------------------------------------------
@@ -43,6 +45,8 @@ public class RecursoValue
 	private int cantidadMDistribucion;
 	
 	private int tiempoEntrega;
+	
+	private int costo;
 	
 	private ProveedorValue proveedor;
 	
