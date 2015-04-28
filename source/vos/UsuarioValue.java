@@ -12,7 +12,7 @@ public class UsuarioValue
 	
 	public final static String empleado="Empleado";
 	
-	public final static String cId="id";
+	public final static String cId="ID";
 	
 	public final static String cClave="clave";
 	
