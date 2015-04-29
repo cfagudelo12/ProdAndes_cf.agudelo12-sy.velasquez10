@@ -1169,9 +1169,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
-		finally
-		{
-			if (selStmt != null) {
+		finally{
+			if (selStmt != null){
 				try{
 					selStmt.close();
 				} 
@@ -1220,7 +1219,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 		finally{
-			if (selStmt != null) {
+			if (selStmt != null){
 				try{
 					selStmt.close();
 				} 
@@ -1268,7 +1267,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 		finally{
-			if (selStmt != null) {
+			if (selStmt != null){
 				try{
 					selStmt.close();
 				} 
@@ -1540,8 +1539,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * @return Una lista con materiales.
 	 * @throws Exception Si hay un error en alguna parte del proceso
 	 */
-	public ArrayList<MaterialValue> consultarProducto(int cantidad, float costo) throws Exception 
-	{
+	public ArrayList<MaterialValue> consultarProducto(int cantidad, float costo) throws Exception{
 		ArrayList<MaterialValue> materiales= new ArrayList<MaterialValue>();
 		PreparedStatement selStmt = null;
 		PreparedStatement selStmt2 = null;
@@ -1581,7 +1579,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
 		finally{
-			if (selStmt != null) {
+			if (selStmt != null){
 				try{
 					selStmt.close();
 				} 
@@ -1715,11 +1713,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 	
-	/*Mostrar las etapas de producción ejecutadas en un rango de tiempo 
-	 * (dado por el usuario), que correspondan a un criterio de búsqueda 
-	 * asociado con la ejecución de dicha etapa (material, tipo de material, 
-	 * pedido, cantidades, …), también dado por el usuario.*/
-
 	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaLimInf, String fechaLimSup) throws Exception{
 		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
 		PreparedStatement selStmt = null;
@@ -1729,6 +1722,69 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			String queryConsulta = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
 					+ "NATURAL INNER JOIN "+tEtapasProduccion+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			while(rs.next()){
+				EjecucionValue ejecucion=new EjecucionValue();
+				EstacionProduccionValue estacion=new EstacionProduccionValue();
+				estacion.setCapacidadProduccion(rs.getInt(EstacionProduccionValue.cCapacidadProduccion));
+				estacion.setEstado(rs.getString(EstacionProduccionValue.cEstado));
+				estacion.setIdEmpresa(rs.getInt(EstacionProduccionValue.cIdEmpresa));
+				estacion.setIdEstacionProduccion(rs.getInt(EstacionProduccionValue.cIdEstacionProduccion));
+				estacion.setNombre(rs.getString(EstacionProduccionValue.cNombre));
+				ejecucion.setEstacionProduccion(estacion);
+				EtapaProduccionValue etapa=new EtapaProduccionValue();
+				etapa.setDescripcion(rs.getString(EtapaProduccionValue.cDescripcion));
+				etapa.setIdEtapaProduccion(rs.getInt(EtapaProduccionValue.cIdEtapaProduccion));
+				ejecucion.setEtapaProduccion(etapa);
+				ejecucion.setFechaEjecucion(rs.getString(EjecucionValue.cFechaEjecucion));
+				ejecucion.setTiempoEjecucion(rs.getInt(EjecucionValue.cTiempoEjecucion));
+				EmpleadoValue operario = new EmpleadoValue();
+				operario.setId(rs.getInt(EmpleadoValue.cfIdOperario));
+				ejecucion.setOperario(operario);
+				PedidoValue pedido = new PedidoValue();
+				pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
+				pedido.setMonto(rs.getFloat(PedidoValue.cMonto));
+				pedido.setFechaPedido(rs.getDate(PedidoValue.cFechaPedido));
+				pedido.setFechaEsperada(rs.getDate(PedidoValue.cFechaEsperada));
+				pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
+				pedido.setCantidad(rs.getInt(PedidoValue.cCantidad));
+				ejecucion.setPedido(pedido);
+				ejecuciones.add(ejecucion);
+			}
+			return ejecuciones;
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (selStmt != null) {
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
+	/*Mostrar las etapas de producción ejecutadas en un rango de tiempo 
+	 * (dado por el usuario), que correspondan a un criterio de búsqueda 
+	 * asociado con la ejecución de dicha etapa (material, tipo de material, 
+	 * pedido, cantidades, …), también dado por el usuario.*/
+
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionPorPedido(String fechaLimInf, String fechaLimSup, int idPedido) throws Exception{
+		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
+		PreparedStatement selStmt = null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			String queryConsulta = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
+					+ "NATURAL INNER JOIN "+tEtapasProduccion+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+PedidoValue.cIdPedido+"";
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			while(rs.next()){
