@@ -68,7 +68,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	/**
 	 * Constante que representa el nombre de la tabla Clientes
 	 */
-	private static final String tClientes="Clientes";
+	private static final String tClientes="CLIENTES";
 	
 	/**
 	 * Constante que representa el nombre de la tabla Empleados
@@ -160,6 +160,16 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	private static final String tRequieren="Requieren";
 	
+	/**
+	 * Constante que representa el orden ascendente de un indice
+	 */
+	private static final String ASC="ASC";
+	
+	/**
+	 * Constante que representa el orden descendente de un indice
+	 */
+	private static final String DESC="DESC";
+	
 	//----------------------------------------------------
 	// Atributos
 	//----------------------------------------------------
@@ -174,11 +184,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO(){
 		try {
-//			reportarCambioEstadoEstacionProduccion(1, "Activa");
-//			reportarCambioEstadoEstacionProduccion(1, "Inactiva");
+			eliminarIndice(tClientes,ClienteValue.cId);
 		}
 		catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -240,6 +248,69 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	} 
    
+   public void crearIndice(String tabla, String columna, String orden) throws Exception
+	{
+		PreparedStatement selStmt= null;
+		try
+		{
+			String query =("CREATE INDEX CLIENTES_INDEX_"+columna+" ON "+tabla+" ("+columna+" "+orden+")");
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(query);
+			selStmt.execute();	
+		}
+		catch (SQLException e)
+		{
+			String a=e.getMessage();
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					conexion.rollback();
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	public void eliminarIndice(String tabla, String columna) throws Exception
+	{
+		PreparedStatement selStmt= null;
+		try
+		{
+			
+			String query =("DROP INDEX \"ISIS2304481510\".\""+tabla+"_INDEX_"+columna+"\"");
+			establecerConexion(cadenaConexion, usuario, clave);
+			selStmt = conexion.prepareStatement(query);
+			selStmt.execute();		
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			if (selStmt != null) 
+			{
+				try{
+					conexion.rollback();
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
    //---------------------------------------------------
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
