@@ -10,11 +10,6 @@ public class EtapaProduccionValue
 	
 	public final static String cNumeroEtapa = "numeroEtapa";
 	
-	public final static String cIdAnteriorEtapa = "idAnteriorEtapa";
-	
-	public final static String cIdProcesoProduccion = "idProcesoProduccion";
-	
-	
 	public final static String cDescripcion = "descripcion";
 	
 	//----------------------------------------------------
@@ -24,10 +19,6 @@ public class EtapaProduccionValue
 	private int idEtapaProduccion;
 	
 	private int numeroEtapa;
-	
-	private int idEtapaAnterior;
-	
-	private int idProcesoProduccion;
 	
 	private String descripcion;
 	
@@ -51,22 +42,6 @@ public class EtapaProduccionValue
 
 	public void setNumeroEtapa(int numeroEtapa) {
 		this.numeroEtapa = numeroEtapa;
-	}
-
-	public int getIdEtapaAnterior() {
-		return idEtapaAnterior;
-	}
-
-	public void setIdEtapaAnterior(int idEtapaAnterior) {
-		this.idEtapaAnterior = idEtapaAnterior;
-	}
-
-	public int getIdProcesoProduccion() {
-		return idProcesoProduccion;
-	}
-
-	public void setIdProcesoProduccion(int idProcesoProduccion) {
-		this.idProcesoProduccion = idProcesoProduccion;
 	}
 
 	public String getDescripcion() {

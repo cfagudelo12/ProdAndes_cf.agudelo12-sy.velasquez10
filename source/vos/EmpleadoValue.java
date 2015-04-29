@@ -14,6 +14,8 @@ public class EmpleadoValue extends UsuarioValue
 	
 	public final static String cfIdEmpresa="idEmpresa";
 	
+	public final static String cfIdOperario="idOperario";
+	
 	//----------------------------------------------------
 	// Atributos
 	//----------------------------------------------------

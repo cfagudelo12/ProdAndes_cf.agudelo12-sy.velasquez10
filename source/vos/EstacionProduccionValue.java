@@ -19,8 +19,6 @@ public class EstacionProduccionValue
 	public final static String cEstado="estado";
 
 	public final static String cIdEmpresa="idEmpresa";
-	
-	public final static String cTiempoEjecucion="tiempoEjecucion";
 
 	//----------------------------------------------------
 	// Atributos
@@ -35,8 +33,6 @@ public class EstacionProduccionValue
 	private String estado;
 
 	private int idEmpresa;
-
-	private int tiempoEjecucion;
 
 	//----------------------------------------------------
 	// Métodos
@@ -82,13 +78,5 @@ public class EstacionProduccionValue
 
 	public void setIdEmpresa(int idEmpresa) {
 		this.idEmpresa = idEmpresa;
-	}
-
-	public int getTiempoEjecucion(){
-		return tiempoEjecucion;
-	}
-
-	public void setTiempoEjecucion(int tiempoEjecucion) {
-		this.tiempoEjecucion = tiempoEjecucion;
 	}
 }

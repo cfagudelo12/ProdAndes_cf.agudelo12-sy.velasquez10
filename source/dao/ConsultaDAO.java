@@ -330,7 +330,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				estacion.setEstado(rs.getString(EstacionProduccionValue.cEstado));
 				estacion.setIdEmpresa(rs.getInt(EstacionProduccionValue.cIdEmpresa));
 				estacion.setNombre(rs.getString(EstacionProduccionValue.cNombre));
-				estacion.setTiempoEjecucion(rs.getInt(EstacionProduccionValue.cTiempoEjecucion));
 				estaciones.add(estacion);
 			}
 		}
@@ -1639,8 +1638,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ArrayList<PedidoValue> consultarPedidosPorCostoRecurso(int limInf, int limSup) throws Exception{
 		ArrayList<PedidoValue> pedidos= new ArrayList<PedidoValue>();
 		PreparedStatement selStmt = null;
-		try
-		{
+		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryConsulta = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tCompran+" NATURAL INNER JOIN "+tProductos+" NATURAL INNER JOIN "
@@ -1680,8 +1678,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	public ArrayList<PedidoValue> consultarPedidosPorRecurso(int idRecurso) throws Exception{
 		ArrayList<PedidoValue> pedidos= new ArrayList<PedidoValue>();
 		PreparedStatement selStmt = null;
-		try
-		{
+		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryConsulta = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tCompran+" NATURAL INNER JOIN "+tProductos+" NATURAL INNER JOIN "
@@ -1718,7 +1715,125 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 	
-	public Arra
+	/*Mostrar las etapas de producción ejecutadas en un rango de tiempo 
+	 * (dado por el usuario), que correspondan a un criterio de búsqueda 
+	 * asociado con la ejecución de dicha etapa (material, tipo de material, 
+	 * pedido, cantidades, …), también dado por el usuario.*/
+
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaLimInf, String fechaLimSup) throws Exception{
+		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
+		PreparedStatement selStmt = null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			String queryConsulta = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
+					+ "NATURAL INNER JOIN "+tEtapasProduccion+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			while(rs.next()){
+				EjecucionValue ejecucion=new EjecucionValue();
+				EstacionProduccionValue estacion=new EstacionProduccionValue();
+				estacion.setCapacidadProduccion(rs.getInt(EstacionProduccionValue.cCapacidadProduccion));
+				estacion.setEstado(rs.getString(EstacionProduccionValue.cEstado));
+				estacion.setIdEmpresa(rs.getInt(EstacionProduccionValue.cIdEmpresa));
+				estacion.setIdEstacionProduccion(rs.getInt(EstacionProduccionValue.cIdEstacionProduccion));
+				estacion.setNombre(rs.getString(EstacionProduccionValue.cNombre));
+				ejecucion.setEstacionProduccion(estacion);
+				EtapaProduccionValue etapa=new EtapaProduccionValue();
+				etapa.setDescripcion(rs.getString(EtapaProduccionValue.cDescripcion));
+				etapa.setIdEtapaProduccion(rs.getInt(EtapaProduccionValue.cIdEtapaProduccion));
+				ejecucion.setEtapaProduccion(etapa);
+				ejecucion.setFechaEjecucion(rs.getString(EjecucionValue.cFechaEjecucion));
+				ejecucion.setTiempoEjecucion(rs.getInt(EjecucionValue.cTiempoEjecucion));
+				EmpleadoValue operario = new EmpleadoValue();
+				operario.setId(rs.getInt(EmpleadoValue.cfIdOperario));
+				ejecucion.setOperario(operario);
+				PedidoValue pedido = new PedidoValue();
+				pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
+				pedido.setMonto(rs.getFloat(PedidoValue.cMonto));
+				pedido.setFechaPedido(rs.getDate(PedidoValue.cFechaPedido));
+				pedido.setFechaEsperada(rs.getDate(PedidoValue.cFechaEsperada));
+				pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
+				pedido.setCantidad(rs.getInt(PedidoValue.cCantidad));
+				ejecucion.setPedido(pedido);
+				ejecuciones.add(ejecucion);
+			}
+			return ejecuciones;
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (selStmt != null) {
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado() throws Exception{
+		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
+		PreparedStatement selStmt = null;
+		try{
+			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			String queryConsulta = "";
+			selStmt = conexion.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			while(rs.next()){
+				EjecucionValue ejecucion=new EjecucionValue();
+				EstacionProduccionValue estacion=new EstacionProduccionValue();
+				estacion.setCapacidadProduccion(rs.getInt(EstacionProduccionValue.cCapacidadProduccion));
+				estacion.setEstado(rs.getString(EstacionProduccionValue.cEstado));
+				estacion.setIdEmpresa(rs.getInt(EstacionProduccionValue.cIdEmpresa));
+				estacion.setIdEstacionProduccion(rs.getInt(EstacionProduccionValue.cIdEstacionProduccion));
+				estacion.setNombre(rs.getString(EstacionProduccionValue.cNombre));
+				ejecucion.setEstacionProduccion(estacion);
+				EtapaProduccionValue etapa=new EtapaProduccionValue();
+				etapa.setDescripcion(rs.getString(EtapaProduccionValue.cDescripcion));
+				etapa.setIdEtapaProduccion(rs.getInt(EtapaProduccionValue.cIdEtapaProduccion));
+				ejecucion.setEtapaProduccion(etapa);
+				ejecucion.setFechaEjecucion(rs.getString(EjecucionValue.cFechaEjecucion));
+				ejecucion.setTiempoEjecucion(rs.getInt(EjecucionValue.cTiempoEjecucion));
+				EmpleadoValue operario = new EmpleadoValue();
+				operario.setId(rs.getInt(EmpleadoValue.cfIdOperario));
+				ejecucion.setOperario(operario);
+				PedidoValue pedido = new PedidoValue();
+				pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
+				pedido.setMonto(rs.getFloat(PedidoValue.cMonto));
+				pedido.setFechaPedido(rs.getDate(PedidoValue.cFechaPedido));
+				pedido.setFechaEsperada(rs.getDate(PedidoValue.cFechaEsperada));
+				pedido.setFechaLlegada(rs.getDate(PedidoValue.cFechaLlegada));
+				pedido.setCantidad(rs.getInt(PedidoValue.cCantidad));
+				ejecucion.setPedido(pedido);
+				ejecuciones.add(ejecucion);
+			}
+			return ejecuciones;
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (selStmt != null) {
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			closeConnection(conexion);
+		}
+	}
+	
 	//---------------------------------------------------
 	// Metodos asociados a los casos de uso: Modificacion
 	//---------------------------------------------------
