@@ -11,7 +11,6 @@ import vos.*;
 */
 public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 {
-
 	//----------------------------------------------------
 	// Constantes
 	//----------------------------------------------------
@@ -1645,7 +1644,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryConsulta = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tCompran+" NATURAL INNER JOIN "+tProductos+" NATURAL INNER JOIN "
-					+ ""+tEtapasProduccionProducto+" NATURAL INNER JOIN "+tRequieren+" WHERE "+RecursoValue.cCost+"="+idRecurso;
+					+ ""+tEtapasProduccionProducto+" NATURAL INNER JOIN "+tRequieren+" WHERE "+RecursoValue.cCosto+" BETWEEN "+limInf+" AND "+limSup;
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			while(rs.next()){
@@ -1719,6 +1718,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 	
+	public Arra
 	//---------------------------------------------------
 	// Metodos asociados a los casos de uso: Modificacion
 	//---------------------------------------------------

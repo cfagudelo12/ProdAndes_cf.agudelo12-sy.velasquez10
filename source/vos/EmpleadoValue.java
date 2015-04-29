@@ -18,6 +18,8 @@ public class EmpleadoValue extends UsuarioValue
 	// Atributos
 	//----------------------------------------------------
 	
+	private UsuarioValue usuario;
+	
 	private long sueldo;
 	
 	private String tipoEmpleado;
@@ -27,6 +29,16 @@ public class EmpleadoValue extends UsuarioValue
 	//----------------------------------------------------
 	// Métodos
 	//----------------------------------------------------
+	
+	public EmpleadoValue(){}
+	
+	public UsuarioValue getUsuario(){
+		return usuario;
+	}
+	
+	public void setUsuario(UsuarioValue usuario){
+		this.usuario=usuario;
+	}
 	
 	public long getSueldo(){
 		return sueldo;
