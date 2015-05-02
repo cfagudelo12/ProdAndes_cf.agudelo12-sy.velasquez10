@@ -3,6 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Random;
 
 import vos.*;
 
@@ -183,7 +184,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO(){
 		try {
-			eliminarIndice(tClientes,ClienteValue.cId);
+			generarDatosProductos();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2527,5 +2528,181 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
+	}
+	
+	private int generateRandomNumber(int min, int max){
+		Random random = new Random();
+		return random.nextInt(max - min + 1) + min;
+	}
+	
+	private int generateRandomCedula(){
+		return generateRandomNumber(100000000, 999999999);
+	}
+	
+	private int generateRandomTel(){
+		return generateRandomNumber(1000000, 9999999);
+	}
+	private int generateCapacidadProduccion(){
+		return generateRandomNumber(1, 20);
+	}
+	private int generateCosto(){
+		return generateRandomNumber(10, 200);
+	}
+	private String generateRandomEstado(){
+		if(generateRandomNumber(0, 10)%2==0){
+			return "'Activa'";
+		}
+		else{
+			return "'Inactiva'";
+		}
+	}
+	private int generateRandomEtapa(){
+		return generateRandomNumber(1,10000);
+	}
+	private void generarDatosProductos()throws Exception{
+		RandomString rName = new RandomString(10);
+		PreparedStatement insStmt = null;
+		PreparedStatement insStmt2 = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
+			for(int i = 1; i <= 1000; i++){
+				String query="INSERT INTO productos(idproducto,nombre,costo,unidadesproducidas,idempresa,cantidadenbodega,unidadesvendidas)"
+						+ "VALUES ("+i+",'"+rName.nextString()+"',"+generateCosto()+",0,1,0,0)";
+				insStmt = conexion.prepareStatement(query);
+				insStmt.executeQuery();
+				insStmt.close();
+				for(int j=1;j<=10;j++){
+					String query2="INSERT INTO etapasProduccionProducto(idEtapaProduccion,idProducto,numeroEtapa)"
+							+ "VALUES ("+generateRandomEtapa()+","+i+","+j+")";
+					insStmt2 = conexion.prepareStatement(query2);
+					insStmt2.executeQuery();
+					insStmt2.close();
+				}
+				if(i%1000==0){
+					System.out.println(i+"");
+				}
+			}
+			conexion.commit();
+		}
+		catch (SQLException e)
+		{
+			conexion.rollback();
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (insStmt != null){
+				try{
+					insStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (insStmt2 != null){
+				try{
+					insStmt2.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+		}
+		conexion.setAutoCommit(true);
+		closeConnection(conexion);
+	}
+	private String generateRandomFechaEjecucion(){
+		return "TO_DATE('2015-6-"+generateRandomNumber(1,30)+"', 'YYYY-MM-DD')";
+	}
+	private String generateRandomFechaPedido(){
+		return "TO_DATE('2015-"+generateRandomNumber(1,5)+"-"+generateRandomNumber(1,30)+"', 'YYYY-MM-DD')";
+	}
+	private String generateRandomFechaLlegada(){
+		return "TO_DATE('2015-"+generateRandomNumber(7,12)+"-"+generateRandomNumber(1,30)+"', 'YYYY-MM-DD')";
+	}
+	private String generateRandomEstadoPedido(){
+		if(generateRandomNumber(0, 10)%2==0){
+			return "'Terminado'";
+		}
+		else{
+			return "'Pendiente'";
+		}
+	}
+	private void generarDatosPedidos()throws Exception{
+		PreparedStatement insStmt = null;
+		PreparedStatement selStmt = null;
+		PreparedStatement selStmt2 = null;
+		PreparedStatement insStmt2 = null;
+		try
+		{
+			establecerConexion(cadenaConexion, usuario, clave);
+			conexion.setAutoCommit(false);
+			for(int i = 1; i <= 1000; i++){
+				String estado=generateRandomEstadoPedido();
+				int idProducto = generateRandomNumber(1,1000);
+				int idcliente = generateRandomNumber(1,100000);
+				int cantidad = generateRandomNumber(1,10);
+				String fechaEspLleg=generateRandomFechaLlegada();
+				String select="SELECT costo from productos where idproducto="+idProducto;
+				selStmt = conexion.prepareStatement(select);
+				ResultSet rs = selStmt.executeQuery();
+				int costo = rs.getInt("costo");
+				if(estado.equals("'Terminado'")){
+					String query="INSERT INTO pedidos(idPedido,costo,fechaEsperada,cantidad,fechaPedido,"
+							+ "fechaLlegada,estado) values ("+i+","+costo*cantidad+","+fechaEspLleg+","
+									+ ""+cantidad+","+generateRandomFechaPedido()+","+fechaEspLleg+","+estado+")";
+					String query2="Insert into compran(idpedido,idcliente,idProducto) values ("+i+","+idcliente+","+idProducto+")";
+					String query3="I";
+					insStmt = conexion.prepareStatement(query);
+					insStmt.executeQuery();
+					insStmt2 = conexion.prepareStatement(query2);
+					insStmt2.executeQuery();
+					insStmt.close();
+				}
+				else{
+					String query="INSERT INTO pedidos(idPedido,costo,fechaEsperada,cantidad,fechaPedido,"
+							+ "estado) values ("+i+","+costo*cantidad+","+fechaEspLleg+","
+									+ ""+cantidad+","+generateRandomFechaPedido()+","+estado+")";
+					String query2="Insert into compran(idpedido,idcliente,idProducto) values ("+i+","+idcliente+","+idProducto+")";
+					insStmt = conexion.prepareStatement(query);
+					insStmt.executeQuery();
+					insStmt2 = conexion.prepareStatement(query2);
+					insStmt2.executeQuery();
+					insStmt.close();
+				}
+				if(i%1000==0){
+					System.out.println(i+"");
+				}
+			}
+			conexion.commit();
+		}
+		catch (SQLException e)
+		{
+			conexion.rollback();
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (insStmt != null){
+				try{
+					insStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+			if (insStmt2 != null){
+				try{
+					insStmt2.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
+				}
+			}
+		}
+		conexion.setAutoCommit(true);
+		closeConnection(conexion);
 	}
 }
