@@ -4,7 +4,9 @@ import java.sql.Date;
 import java.util.ArrayList;
 
 import vos.ClienteValue;
+import vos.EjecucionValue;
 import vos.EstacionProduccionValue;
+import vos.EtapaProduccionValue;
 import vos.MaterialValue;
 import vos.PedidoValue;
 import vos.ProductoValue;
@@ -212,4 +214,22 @@ public class ProdAndes
 		return dao.darRecursos();
 	}
 
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaDesde, String fechaHasta, int pedido, String material, String tipoMaterial) throws Exception
+	{
+		return dao.consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, pedido, material, tipoMaterial);
+	}
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado(String fechaDesde, String fechaHasta, int pedido, String material, String tipoMaterial) throws Exception
+	{
+		return dao.consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, pedido, material, tipoMaterial);
+	}
+
+	public ArrayList<PedidoValue> consultarPedidosPorCostoRecursoX(String tipoRecurso, int costoMenor) throws Exception
+	{
+		return dao.consultarPedidosPorCostoRecursoX(tipoRecurso, costoMenor);
+	}
+
+	public MaterialValue consultaRecursoPorId(int idRecurso) throws Exception
+	{
+		return dao.consultaRecursoPorId(idRecurso);
+	}
 }
