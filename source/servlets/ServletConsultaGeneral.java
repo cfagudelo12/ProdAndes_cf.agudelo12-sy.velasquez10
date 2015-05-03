@@ -17,7 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
 
+import vos.EjecucionValue;
+import vos.EtapaProduccionValue;
 import vos.MaterialValue;
+import vos.PedidoValue;
 import vos.ProductoValue;
 import vos.RecursoValue;
 import fachada.ProdAndes;
@@ -38,6 +41,9 @@ public class ServletConsultaGeneral extends HttpServlet
 	private ArrayList<RecursoValue> listaRecursos;
 	private boolean listaVacia;
 	private boolean escribioNada;
+	private ArrayList<EjecucionValue> listaEjecucionEtapasProduccion;
+	private ArrayList<PedidoValue> listaPedidos;
+	private MaterialValue material;
 
 	// -----------------------------------------------------------------
 	// Métodos
@@ -52,6 +58,9 @@ public class ServletConsultaGeneral extends HttpServlet
 		listaBuscarProductos= new ArrayList<MaterialValue>();
 		listaMateriales= new ArrayList<MaterialValue>();
 		listaRecursos=new ArrayList<RecursoValue>();
+		listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
+		listaPedidos= new ArrayList<PedidoValue>();
+		material= new MaterialValue();
 		listaVacia=false;
 		escribioNada=false;
 	}
@@ -101,6 +110,9 @@ public class ServletConsultaGeneral extends HttpServlet
 		String buscarProducto = request.getParameter( "buscarProducto" );
 		String consultarExistenciasMaterial = request.getParameter( "consultarExistenciasMaterial" );
 		String buscarMaterial = request.getParameter( "buscarMaterial" );
+		String consultarEjecucionEtapaProduccion = request.getParameter( "consultarEjecucionEtapaProduccion" );
+		String consultarPedidos = request.getParameter( "consultarPedidos" );
+		String consultarRecursosId = request.getParameter( "consultarRecursosId" );
 
 		if(consultarExistencias!=null)
 		{
@@ -112,6 +124,13 @@ public class ServletConsultaGeneral extends HttpServlet
 				String fechaSolicitud = request.getParameter( "fechaSolicitud" );
 				String fechaEntrega = request.getParameter( "fechaEntrega" );
 				
+				listaBuscarProductos= new ArrayList<MaterialValue>();
+				listaMateriales= new ArrayList<MaterialValue>();
+				listaRecursos=new ArrayList<RecursoValue>();
+				listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
+				listaPedidos= new ArrayList<PedidoValue>();
+				material= new MaterialValue();
+
 				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(procesoProduccion),fechaSolicitud,fechaEntrega);
 				if(listaProductos.size()==0)
 				{
@@ -137,6 +156,13 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
+					listaProductos= new ArrayList<ProductoValue>();
+					listaMateriales= new ArrayList<MaterialValue>();
+					listaRecursos=new ArrayList<RecursoValue>();
+					listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
+					listaPedidos= new ArrayList<PedidoValue>();
+					material= new MaterialValue();
+
 					listaBuscarProductos= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
 					if(listaBuscarProductos.size()==0)
 					{
@@ -166,6 +192,13 @@ public class ServletConsultaGeneral extends HttpServlet
 					escribioNada=true;
 					imprimirPaginaGeneral(response);
 				}
+				listaProductos= new ArrayList<ProductoValue>();
+				listaBuscarProductos= new ArrayList<MaterialValue>();
+				listaMateriales= new ArrayList<MaterialValue>();
+				listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
+				listaPedidos= new ArrayList<PedidoValue>();
+				material= new MaterialValue();
+
 				listaRecursos= ProdAndes.darInstancia().consultarExistenciasRecurso(tipo,Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				if(listaRecursos.size()==0)
 				{
@@ -193,8 +226,129 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
+					listaProductos= new ArrayList<ProductoValue>();
+					listaBuscarProductos= new ArrayList<MaterialValue>();
+					listaRecursos=new ArrayList<RecursoValue>();
+					listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
+					listaPedidos= new ArrayList<PedidoValue>();
+					material= new MaterialValue();
+
 					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(cantidadEnBodega), fechaDesde, fechaHasta, Float.parseFloat(costo));
 					if(listaMateriales.size()==0)
+					{
+						listaVacia=true;
+					}
+					imprimirPaginaGeneral(response);
+				}
+			}
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			}
+		}
+		else if(consultarEjecucionEtapaProduccion!=null)
+		{
+			try
+			{
+				String fechaDesde = request.getParameter( "desde" );
+				String fechaHasta = request.getParameter( "hasta" );
+				String correspondencia = request.getParameter( "correspondencia" );
+				String material1 = request.getParameter( "material" );
+				String tipoMaterial = request.getParameter( "tipoMaterial" );
+				String pedido = request.getParameter( "pedido" );
+				
+				if(fechaDesde.equals("")&&fechaHasta.equals("")&& (material.equals("")||tipoMaterial.equals("")||pedido.equals("")))
+				{
+					escribioNada=true;
+					imprimirPaginaGeneral(response);
+				}
+				else
+				{
+					listaProductos= new ArrayList<ProductoValue>();
+					listaBuscarProductos= new ArrayList<MaterialValue>();
+					listaRecursos=new ArrayList<RecursoValue>();
+					listaPedidos= new ArrayList<PedidoValue>();
+					listaMateriales= new ArrayList<MaterialValue>();
+					material= new MaterialValue();
+
+					if(correspondencia!=null)
+					{
+						listaEjecucionEtapasProduccion= ProdAndes.darInstancia().consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, Integer.parseInt(pedido), material1, tipoMaterial);
+					}
+					else
+					{
+						listaEjecucionEtapasProduccion= ProdAndes.darInstancia().consultarEjecucionEtapasProduccionNegado(fechaDesde, fechaHasta, Integer.parseInt(pedido), material1, tipoMaterial);
+
+					}
+					if(listaEjecucionEtapasProduccion.size()==0)
+					{
+						listaVacia=true;
+					}
+					imprimirPaginaGeneral(response);
+				}
+			}
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			}
+		}
+		else if(consultarPedidos!=null)
+		{
+			try
+			{
+				String tipoRecurso = request.getParameter( "tipoRecurso" );
+				String valor = request.getParameter( "valor" );
+				
+				if(tipoRecurso.equals("")&&valor.equals(""))
+				{
+					escribioNada=true;
+					imprimirPaginaGeneral(response);
+				}
+				else
+				{
+					listaProductos= new ArrayList<ProductoValue>();
+					listaBuscarProductos= new ArrayList<MaterialValue>();
+					listaRecursos=new ArrayList<RecursoValue>();
+					listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
+					listaMateriales= new ArrayList<MaterialValue>();
+					material= new MaterialValue();
+
+					listaPedidos= ProdAndes.darInstancia().consultarPedidosPorCostoRecursoX(tipoRecurso, Integer.parseInt(valor));
+					if(listaRecursos.size()==0)
+					{
+						listaVacia=true;
+					}
+					imprimirPaginaGeneral(response);
+				}
+			}
+			catch (Exception e) 
+			{
+				imprimirMensajeError(response.getWriter(), "Error", e.getMessage());
+			}
+		}
+		
+		else if(consultarRecursosId!=null)
+		{
+			try
+			{
+				String idRecurso = request.getParameter( "idRecurso" );
+				
+				if(idRecurso.equals(""))
+				{
+					escribioNada=true;
+					imprimirPaginaGeneral(response);
+				}
+				else
+				{
+					listaProductos= new ArrayList<ProductoValue>();
+					listaBuscarProductos= new ArrayList<MaterialValue>();
+					listaRecursos=new ArrayList<RecursoValue>();
+					listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
+					listaMateriales= new ArrayList<MaterialValue>();
+					listaPedidos= new ArrayList<PedidoValue>();
+
+					material= ProdAndes.darInstancia().consultaRecursoPorId(Integer.parseInt(idRecurso));
+					if(material==null)
 					{
 						listaVacia=true;
 					}
@@ -577,6 +731,211 @@ public class ServletConsultaGeneral extends HttpServlet
 			respuesta.println( "                </div>");
 		}
 
+		
+		respuesta.println( "                 <!--Consultar ejecucion etapa de produccion-->");
+		respuesta.println( "                 <form method=\"GET\" action=\"consultaGeneral.htm\">");
+		respuesta.println( "                <div class=\"row\">");
+		respuesta.println( "                        <div class=\"panel panel-default\" >");
+		respuesta.println( "                            <div class=\"panel-heading\">");
+		respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Consultar ejecucion etapa de produccion</h3>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                            <br/>");
+		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+		respuesta.println( "								<div class=\"row\">");
+		respuesta.println( "								<div class=\"col-lg-8\">");
+		respuesta.println( "                                    <span>Indique el rango de fechas de ejecucion: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                     <span>Desde: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"date\" name=\"desde\"/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <span>Hasta: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"date\" name=\"hasta\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Buscar correspondiendo al criterio: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"checkbox\" name=\"correspondencia\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el material asociado: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"text\" name=\"material\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el tipo de material asociado: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"text\" name=\"tipoMaterial\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Indique el pedido asociado: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"text\" name=\"pedido\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-12\">");
+		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Buscar\" name=\"consultarEjecucionEtapaProduccion\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                        </div>");
+		respuesta.println( "                </div>");
+		respuesta.println( "                <!-- /.row -->");
+		respuesta.println( "            </form>");
+		for(int i=0;i<listaEjecucionEtapasProduccion.size();i++)
+		{
+			EjecucionValue e= (EjecucionValue) listaEjecucionEtapasProduccion.get(i);
+			respuesta.println( "             <div class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n de la etapa de producci&#243n consultada</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <p><b>Id:</b> "+ e.getEtapaProduccion().getIdEtapaProduccion() +"</p>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Descripci&#243n: "+ e.getEtapaProduccion().getDescripcion() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Fecha ejecucion: "+ e.getFechaEjecucion()+"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Operario: "+ e.getOperario()+"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
+		}
+		
+		respuesta.println( "                 <!--Consultar pedidos-->");
+		respuesta.println( "                 <form method=\"GET\" action=\"consultaGeneral.htm\">");
+		respuesta.println( "                <div class=\"row\">");
+		respuesta.println( "                        <div class=\"panel panel-default\" >");
+		respuesta.println( "                            <div class=\"panel-heading\">");
+		respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Consultar pedidos</h3>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                            <br/>");
+		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+		respuesta.println( "								<div class=\"row\">");
+		respuesta.println( "								<div class=\"col-lg-6\">");
+		respuesta.println( "                                    <span>Indique el tipo del recurso: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"text\" name=\"tipoRecurso\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-6\">");
+		respuesta.println( "                                    <span>Ingrese un valor menor al minimo deseado: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"number\" name=\"valor\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-12\">");
+		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Buscar\" name=\"consultarPedidos\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                        </div>");
+		respuesta.println( "                </div>");
+		respuesta.println( "                <!-- /.row -->");
+		respuesta.println( "            </form>");
+		for(int i=0;i<listaPedidos.size();i++)
+		{
+			PedidoValue p= (PedidoValue) listaPedidos.get(i);
+			respuesta.println( "             <div class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n de la etapa de producci&#243n consultada</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <p><b>Id:</b> "+ p.getIdPedido()+"</p>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Monto: "+ p.getMonto() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Estado: "+ p.getEstado()+"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Recrusos: </span>");
+
+			ArrayList<RecursoValue> recursos=  p.getRecursosRequeridos();
+			for(int j=0;j<recursos.size();j++)
+			{
+				RecursoValue recurso= (RecursoValue) recursos.get(j);
+				respuesta.println( "                                <div>");
+				respuesta.println( "                                    <p>Nombre: "+ recurso.getNombre()+"</p>");
+				respuesta.println( "                                    <p>Tipo: "+ recurso.getTipoRecurso()+"</p>");
+				respuesta.println( "                                </div>");
+			}
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
+		}
+		
+		respuesta.println( "                 <!--Consultar Recursos por Id-->");
+		respuesta.println( "                 <form method=\"GET\" action=\"consultaGeneral.htm\">");
+		respuesta.println( "                <div class=\"row\">");
+		respuesta.println( "                        <div class=\"panel panel-default\" >");
+		respuesta.println( "                            <div class=\"panel-heading\">");
+		respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> Consultar recursos por Id</h3>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                            <br/>");
+		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+		respuesta.println( "								<div class=\"row\">");
+		respuesta.println( "								<div class=\"col-lg-6\">");
+		respuesta.println( "                                    <span>Indique el Id del recurso: </span>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                    <INPUT type=\"text\" name=\"idRecurso\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-12\">");
+		respuesta.println( "                                	<INPUT type=\"submit\" value=\"Buscar\" name=\"consultarRecursosId\"/>");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                            </div>");
+		respuesta.println( "                        </div>");
+		respuesta.println( "                </div>");
+		respuesta.println( "                <!-- /.row -->");
+		respuesta.println( "            </form>");
+		if(material!=null)
+		{
+			
+			respuesta.println( "             <div class=\"row\">");
+			respuesta.println( "                        <div class=\"panel panel-default\" >");
+			respuesta.println( "                            <div class=\"panel-heading\">");
+			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n del material consultado</h3>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                            <br/>");
+			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <p><b>Nombre:</b> "+ material.getRecurso().getNombre() +"</p>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Tipo: "+ material.getRecurso().getTipoRecurso() +"</span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Productos que compone: "+material.getProductosQueCompone() +"</span>");
+			respuesta.println( "                                </div>"); 
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Etapas de producci&#243n en las que participa: "+ material.getEtapasProduccion() +" </span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+ material.getPedidos() +" </span>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            </div>");
+			respuesta.println( "                        </div>");
+			respuesta.println( "                </div>");
+		}
 		respuesta.println( "    		</div>");
 		respuesta.println( "		</div>");
 		respuesta.println( "    </body>");

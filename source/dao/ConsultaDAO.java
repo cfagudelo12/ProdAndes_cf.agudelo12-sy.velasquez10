@@ -310,6 +310,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
 	
+	public String rodearParaPaginar(String query,int rowNum1,int rowNum2)
+	{
+		query="select * from ( select a.*, ROWNUM rnum from ("+query+") a  where ROWNUM <="+rowNum2+")where rnum  >= "+rowNum1;
+		return query;
+	}
+	
 	public ArrayList<EstacionProduccionValue> darEstacionesProduccion() throws Exception{
 		ArrayList<EstacionProduccionValue> estaciones = new ArrayList<EstacionProduccionValue>();
 		PreparedStatement selStmt = null;
@@ -1709,15 +1715,31 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 	
-	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaLimInf, String fechaLimSup) throws Exception{
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso) throws Exception{
 		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
 		PreparedStatement selStmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-			String queryConsulta = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tEtapasProduccion+" "
-					+ "WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+			String queryConsulta = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
+					+ "NATURAL INNER JOIN "+tEtapasProduccion+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
+			if(idPedido!=-1)
+			{
+				queryConsulta +=" AND "+PedidoValue.cIdPedido+"="+idPedido;
+			}
+			else if(!recurso.equals(""))
+			{
+				queryConsulta  = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
+						+ "NATURAL INNER JOIN "+tEtapasProduccion+" Natural INNER JOIN "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cNombre+"="+recurso;
+			}
+			else if(!tipoRecurso.equals(""))
+			{
+				queryConsulta  = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
+						+ "NATURAL INNER JOIN "+tEtapasProduccion+" Natural INNER JOIN "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cTipoRecurso+"="+tipoRecurso;
+			}
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			while(rs.next()){
