@@ -172,9 +172,9 @@ public class ProdAndes
 
 	}
 
-	public ArrayList<EstacionProduccionValue> darEstacionesProduccion() throws Exception
+	public ArrayList<Integer> darEstacionesProduccion(int rowNum1,int rowNum2) throws Exception
 	{
-		return dao.darEstacionesProduccion();
+		return dao.darIdEstacionesProduccion(rowNum1,rowNum2);
 	}
 
 	public ArrayList<PedidoValue> consultarPedidosPorMonto(int monto) throws Exception

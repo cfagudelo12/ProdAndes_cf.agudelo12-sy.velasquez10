@@ -350,35 +350,46 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
    // Metodos asociados a los casos de uso: Consulta
    //---------------------------------------------------
 	
-	public ArrayList<EstacionProduccionValue> darEstacionesProduccion() throws Exception{
-		ArrayList<EstacionProduccionValue> estaciones = new ArrayList<EstacionProduccionValue>();
+	public String rodearParaPaginar(String query,int rowNum1,int rowNum2)
+	{
+		query="select * from ( select a.*, ROWNUM rnum from ("+query+") a  where ROWNUM <="+rowNum2+")where rnum  >= "+rowNum1;
+		return query;
+	}
+	
+	public ArrayList<Integer> darIdEstacionesProduccion(int rowNum1,int rowNum2) throws Exception
+	{
+		ArrayList<Integer> estaciones = new ArrayList<Integer>();
 		PreparedStatement selStmt = null;
-		try{
-			String consulta = "SELECT * FROM "+tEstacionesProduccion;
+		try
+		{
+			String consulta = "SELECT "+EstacionProduccionValue.cIdEstacionProduccion+" FROM "+tEstacionesProduccion;
+			consulta=rodearParaPaginar(consulta, rowNum1, rowNum2);
+			System.out.println(consulta);
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
+
 			ResultSet rs = selStmt.executeQuery();		
-			while(rs.next()){
-				EstacionProduccionValue estacion= new EstacionProduccionValue();
-				estacion.setIdEstacionProduccion(rs.getInt(EstacionProduccionValue.cIdEstacionProduccion));
-				estacion.setCapacidadProduccion(rs.getInt(EstacionProduccionValue.cCapacidadProduccion));
-				estacion.setEstado(rs.getString(EstacionProduccionValue.cEstado));
-				estacion.setIdEmpresa(rs.getInt(EstacionProduccionValue.cIdEmpresa));
-				estacion.setNombre(rs.getString(EstacionProduccionValue.cNombre));
-				estaciones.add(estacion);
+			while(rs.next())
+			{
+				estaciones.add(rs.getInt(EstacionProduccionValue.cIdEstacionProduccion));
 			}
 		}
-		catch (SQLException e){
+		catch (SQLException e)
+		{
 			e.printStackTrace();
 			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
 		}
-		finally{
-			if (selStmt != null){
-				try{
+		finally
+		{
+			if (selStmt != null)
+			{
+				try
+				{
 					selStmt.close();
 				} 
-				catch (SQLException exception){
+				catch (SQLException exception)
+				{
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion.");
 				}
 			}
@@ -771,7 +782,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		return pedido;
 	}
 	
-	public ArrayList<PedidoValue> consultarPedidos() throws Exception{
+	public ArrayList<PedidoValue> consultarPedidos() throws Exception
+	{
 		ArrayList<PedidoValue> pedidos = new ArrayList<PedidoValue>();
 		PreparedStatement selStmt = null;
 		PreparedStatement selStmt2 = null;

@@ -773,8 +773,9 @@ public class ServletInicio extends HttpServlet
 		respuesta.println( "                        </div>");
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
+		respuesta.println( "    		</div>");
+		respuesta.println( "    		</div>");
 		respuesta.println( "				</form>");
-		respuesta.println( "        </div>");
 		respuesta.println( "        <div id=\"page-wrapper\">");
 		respuesta.println( "");
 		respuesta.println( "            <div class=\"container-fluid\">");
@@ -811,10 +812,23 @@ public class ServletInicio extends HttpServlet
 		respuesta.println( "                                    <INPUT type=\"number\" name=\"idPedido\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique el id del recurso: </span>");
+		respuesta.println( "                                    <span>Indique el recurso: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"number\" name=\"idRecurso\"/>");
+		respuesta.println( " 									<select name=\"idRecurso\">");
+																try
+																{
+																	ArrayList<RecursoValue> recursos=ProdAndes.darInstancia().darRecursos();
+																	for(int i=0; i<recursos.size();i++)
+																	{
+																		respuesta.println( "<option value=\""+recursos.get(i).getIdRecurso()+"\">"+recursos.get(i).getNombre()+"</option>");
+																	}
+																}
+																catch (Exception e)
+																{
+																	imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+																}
+		respuesta.println( "                                    </select>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-12\">");
 		respuesta.println( "                                    <INPUT type=\"submit\" value=\"Registrar\" name=\"registrarMaterial\"/>");
@@ -822,6 +836,8 @@ public class ServletInicio extends HttpServlet
 		respuesta.println( "                            </div>");
 		respuesta.println( "                        </div>");
 		respuesta.println( "                </div>");
+		respuesta.println( "    			</div>");
+		respuesta.println( "    		</div>");
 		respuesta.println( "                </form>");
 		respuesta.println( "        <div id=\"page-wrapper\">");
 		respuesta.println( "");
@@ -845,17 +861,18 @@ public class ServletInicio extends HttpServlet
 		respuesta.println( "                            </div>");
 		respuesta.println( "                            <br>");
 		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-		respuesta.println( "                             	<div class=\"col-lg-9\">");
+		respuesta.println( "                             	<div class=\"col-lg-6\">");
 		respuesta.println( "                                    <span>Seleccione la estaci&#243n: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
+		respuesta.println( "                                <div class=\"row\">");
 		respuesta.println( " 									<select name=\"idEstacion\">");
 																try
 																{
-																	ArrayList<EstacionProduccionValue> estaciones=ProdAndes.darInstancia().darEstacionesProduccion();
+																	ArrayList<Integer> estaciones=ProdAndes.darInstancia().darEstacionesProduccion(1,50);
 																	for(int i=0; i<estaciones.size();i++)
 																	{
-																		respuesta.println( "<option value=\""+estaciones.get(i).getIdEstacionProduccion()+"\">"+estaciones.get(i).getIdEstacionProduccion()+"</option>");
+																		respuesta.println( "<option value=\""+estaciones.get(i)+"\">"+estaciones.get(i)+"</option>");
 																	}
 																}
 																catch (Exception e)
@@ -864,12 +881,17 @@ public class ServletInicio extends HttpServlet
 																}
 		respuesta.println( "                                    </select>");
 		respuesta.println( "                                </div>");
+		respuesta.println( "                                <div class=\"col-lg-3\">");
+		respuesta.println( "                                	<INPUT type=\"submit\" value=\"siguiente\" name=\"siguiente\">");
+		respuesta.println( "                                </div>");
+		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
 		respuesta.println( "                                    <span>Indique el nuevo estado: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                	<select name=\"estado\">");
-		respuesta.println( "                               		<option>as</option>");
+		respuesta.println( "                               		<option>Activa</option>");
+		respuesta.println( "                               		<option>Inactiva</option>");
 		respuesta.println( "                               		</select>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-12\">");
@@ -885,6 +907,7 @@ public class ServletInicio extends HttpServlet
 		respuesta.println( "		</div>");
 		respuesta.println( "    </div>");
 		respuesta.println( "    <!-- /#wrapper -->");
+
 		respuesta.println( "</body>" );
 	}
 

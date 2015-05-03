@@ -38,6 +38,10 @@ public class ServletGerente extends HttpServlet
 	private boolean seRegistroMaterial;
 	private boolean seReportoEstadoEstacionProduccion;
 	private boolean seRegistroElCambioDeEstado;
+	private int rowNum1;
+	private int rowNum2;
+	private String disable;
+	
 	
 	// -----------------------------------------------------------------
 	// Métodos
@@ -52,6 +56,9 @@ public class ServletGerente extends HttpServlet
 		seLogroEntregaProducto=false;
 		seReportoEstadoEstacionProduccion=false;
 		seRegistroElCambioDeEstado=false;
+		rowNum1=1;
+		rowNum2=50;
+		disable="disabled";
 	}
 
 	public void destroy( )
@@ -98,6 +105,47 @@ public class ServletGerente extends HttpServlet
 		String registrarEntregaProducto = request.getParameter( "registrarEntregaProducto");
 		String registrarMaterial = request.getParameter( "registrarMaterial" );
 		String reportarEstadoEstacionProduccion = request.getParameter( "reportarEstadoEstacionProduccion" );
+		String siguiente = request.getParameter( "siguiente" );
+		String anterior = request.getParameter( "anterior" );
+		
+
+		if(siguiente!=null)
+		{
+			try
+			{
+				disable="";
+				rowNum1+=50;
+				rowNum2+=50;
+				imprimirPaginaGerente(response);
+
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+		}
+
+		if(anterior!=null)
+		{
+			try
+			{
+				if(rowNum1==51)
+				{
+					disable="disabled";
+				}
+				else
+				{
+					rowNum1-=50;
+					rowNum2-=50;
+				}
+				imprimirPaginaGerente(response);
+
+			}
+			catch( NumberFormatException e )
+			{
+				imprimirMensajeError(response.getWriter(), "Error", "Hubo un error cargando la pagina");
+			}
+		}
 		
 		if(gerente!=null)
 		{
@@ -401,17 +449,17 @@ public class ServletGerente extends HttpServlet
 				respuesta.println( "                            </div>");
 				respuesta.println( "                            <br>");
 				respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-				respuesta.println( "                             	<div class=\"col-lg-9\">");
+				respuesta.println( "                             	<div class=\"col-lg-6\">");
 				respuesta.println( "                                    <span>Seleccione la estaci&#243n: </span>");
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                    <br/>");
 				respuesta.println( " 									<select name=\"idEstacion\">");
 																		try
 																		{
-																			ArrayList<EstacionProduccionValue> estaciones=ProdAndes.darInstancia().darEstacionesProduccion();
+																			ArrayList<Integer> estaciones=ProdAndes.darInstancia().darEstacionesProduccion(rowNum1,rowNum2);
 																			for(int i=0; i<estaciones.size();i++)
 																			{
-																				respuesta.println( "<option value=\""+estaciones.get(i).getIdEstacionProduccion()+"\">"+estaciones.get(i).getIdEstacionProduccion()+"</option>");
+																				respuesta.println( "<option value=\""+estaciones.get(i)+"\">"+estaciones.get(i)+"</option>");
 																			}
 																		}
 																		catch (Exception e)
@@ -419,6 +467,13 @@ public class ServletGerente extends HttpServlet
 																			imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
 																		}
 				respuesta.println( "                                    </select>");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                                <div class=\"col-lg-3\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"anterior\" name=\"anterior\""+disable+">");
+				respuesta.println( "                                </div>");
+				respuesta.println( "                                <div class=\"col-lg-3\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"siguiente\" name=\"siguiente\">");
+				respuesta.println( "                                </div>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-4\">");
 				respuesta.println( "                                    <span>Indique el nuevo estado: </span>");
