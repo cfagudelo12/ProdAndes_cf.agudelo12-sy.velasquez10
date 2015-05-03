@@ -244,7 +244,7 @@ public class ServletInicio extends HttpServlet
 				respuesta.println( "                                    <select name=\"procesoProduccion\"		>");
 																		try
 																		{
-																			ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion();
+																			ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion(1,20);
 																			for(int i=0; i<procesos.size();i++)
 																			{
 																				respuesta.println( "                                    <option value=\""+procesos.get(i)+"\">"+procesos.get(i)+"</option>");

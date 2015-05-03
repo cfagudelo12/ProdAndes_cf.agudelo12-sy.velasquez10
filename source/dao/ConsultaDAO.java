@@ -99,11 +99,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * Constante que representa el nombre de la tablaCompran
 	 */
 	private static final String tCompran="Compran";
-
-	/**
-	 * Constante que representa el nombre de la tabla ProcesosProduccion
-	 */
-	private static final String tProcesosProduccion="ProcesosProduccion";
 	
 	/**
 	 * Constante que representa el nombre de la tabla Ejecutan
@@ -184,46 +179,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO(){
 
-		PreparedStatement selStmt= null;
-		try
-		{
-			String query =("Select "+RecursoValue.cTipoRecurso+" FROM "+tRecursos);
-			establecerConexion(cadenaConexion, usuario, clave);
-			selStmt = conexion.prepareStatement(query);
-			ResultSet rs = selStmt.executeQuery();			
-			while(rs.next())
-			{		
-				System.out.println(rs.getInt(RecursoValue.cTipoRecurso));
-			}
-		}
-		catch (SQLException e)
-		{
-			String a=e.getMessage();
-			e.printStackTrace();
-		}
-		finally
-		{
-			if (selStmt != null) 
-			{
-				try{
-					selStmt.close();
-				} 
-				catch (SQLException exception){
-					try {
-						conexion.rollback();
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-			try {
-				closeConnection(conexion);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		
 	}
 	
 	//-------------------------------------------------
@@ -597,17 +553,18 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		return productos;
 	}
 
-	public ArrayList<Integer> darProcesosProduccion() throws Exception{
+	public ArrayList<Integer> darProcesosProduccion (int rowNum1, int rowNum2) throws Exception{
 		ArrayList<Integer> procesos = new ArrayList<Integer>();
 		PreparedStatement selStmt = null;
 		try{
-			String consulta = "SELECT * FROM "+tProcesosProduccion+" WHERE idEmpresa=1";
+			String consulta = "SELECT DIStinct * FROM "+tEtapasProduccionProducto;
 			establecerConexion(cadenaConexion, usuario, clave);
+			consulta=rodearParaPaginar(consulta, rowNum1, rowNum2);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next()){
-				procesos.add(rs.getInt(ProcesoProduccionValue.cIdProcesoProduccion));
+				procesos.add(rs.getInt(EtapaProduccionProductoValue.cIdEtapaProduccion));
 			}
 		}
 		catch (SQLException e){
@@ -740,7 +697,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				producto.setUnidadesProducidas(rs.getInt(ProductoValue.cUnidadesProducidas));
 				producto.setUnidadesVendidas(rs.getInt(ProductoValue.cUnidadesVendidas));
 				pedido.agregarProducto(producto);
-				String consulta2 = "SELECT * FROM "+tProcesosProduccion+" p, "+tEtapasProduccion+" s NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN "+tRecursos+" WHERE p."+ProcesoProduccionValue.cIdProcesoProduccion+"= s."+ProcesoProduccionValue.cIdProcesoProduccion+" AND "+ProductoValue.cIdProducto+"="+producto.getIdProducto()+"";
+				String consulta2 = "SELECT * FROM "+tEtapasProduccionProducto+" p, "+tEtapasProduccion+" s NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN "+tRecursos+" WHERE p."+ProcesoProduccionValue.cIdProcesoProduccion+"= s."+ProcesoProduccionValue.cIdProcesoProduccion+" AND "+ProductoValue.cIdProducto+"="+producto.getIdProducto()+"";
 				selStmt2 = conexion.prepareStatement(consulta2);
 				ResultSet rs2 = selStmt2.executeQuery();	
 				while(rs2.next()){
@@ -1730,13 +1687,13 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 * asociado con la ejecución de dicha etapa (material, tipo de material, 
 	 * pedido, cantidades, …), también dado por el usuario.*/
 
-	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso) throws Exception{
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso, int rowNum1, int rowNum2) throws Exception{
 		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
 		PreparedStatement selStmt = null;
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-			String queryConsulta = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
+			String queryConsulta = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
 					+ "NATURAL INNER JOIN "+tEtapasProduccion+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
 			if(idPedido!=-1)
@@ -1745,17 +1702,20 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			}
 			else if(!recurso.equals(""))
 			{
-				queryConsulta  = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
+				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
 						+ "NATURAL INNER JOIN "+tEtapasProduccion+" Natural INNER JOIN "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cNombre+"="+recurso;
 			}
 			else if(!tipoRecurso.equals(""))
 			{
-				queryConsulta  = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
+				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
 						+ "NATURAL INNER JOIN "+tEtapasProduccion+" Natural INNER JOIN "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cTipoRecurso+"="+tipoRecurso;
 			}
+			System.out.println(queryConsulta);
+			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
 			selStmt = conexion.prepareStatement(queryConsulta);
+			
 			ResultSet rs = selStmt.executeQuery();
 			while(rs.next()){
 				EjecucionValue ejecucion=new EjecucionValue();
@@ -1804,7 +1764,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 	
-	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso) throws Exception
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso, int rowNum1, int rowNum2) throws Exception
 	{
 		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
 		PreparedStatement selStmt = null;
@@ -1830,7 +1790,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cTipoRecurso+"!="+tipoRecurso;
 			}
 			
-			
+			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			while(rs.next())
@@ -1887,7 +1847,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	}
 	
 	
-	public ArrayList<PedidoValue> consultarPedidosPorCostoRecursoX(String tipoRecurso,int costoMenor) throws Exception
+	public ArrayList<PedidoValue> consultarPedidosPorCostoRecursoX(String tipoRecurso,int costoMenor, int rowNum1, int rowNum2) throws Exception
 	{
 		ArrayList<PedidoValue> pedidos= new ArrayList<PedidoValue>();
 		PreparedStatement selStmt = null;
@@ -1896,7 +1856,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryConsulta = "SELECT * FROM "+tPedidos+" NATURAL INNER JOIN "+tSolicitan+" NATURAL INNER JOIN "+tRecursos+" NATURAL INNER JOIN "
-					+ ""+tRequieren+" NATURAL INNER JOIN "+tEtapasProduccionProducto+" WHERE "+RecursoValue.cTipoRecurso+"="+tipoRecurso+" AND "+RecursoValue.cCosto+" > "+costoMenor;
+					+ ""+tRequieren+" NATURAL INNER JOIN "+tEtapasProduccionProducto+" WHERE "+RecursoValue.cTipoRecurso+"='"+tipoRecurso+"' AND "+RecursoValue.cCosto+" > "+costoMenor;
+			
+			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 			while(rs.next())
@@ -1934,7 +1896,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			closeConnection(conexion);
 		}
 	}
-	public MaterialValue consultaRecursoPorId(int idRecurso) throws Exception
+	public MaterialValue consultaRecursoPorId(int idRecurso, int rowNum1, int rowNum2) throws Exception
 	{
 		MaterialValue m= new MaterialValue();
 		PreparedStatement selStmt = null;
@@ -1944,6 +1906,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String queryConsulta = "SELECT * FROM "+tRecursos+" NATURAL INNER JOIN "+tSolicitan+" NATURAL INNER JOIN "+tPedidos+" "
 					+ "WHERE "+RecursoValue.cIdRecurso+"="+idRecurso;
+			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
 			selStmt = conexion.prepareStatement(queryConsulta);
 			ResultSet rs = selStmt.executeQuery();
 

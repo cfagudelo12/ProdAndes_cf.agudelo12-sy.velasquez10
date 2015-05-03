@@ -107,9 +107,9 @@ public class ProdAndes
 	{
 		dao.solicitarPedido(idCliente,idProducto,fechaEntrega, cantidad);
 	}
-	public ArrayList<Integer> darProcesosProduccion() throws Exception 
+	public ArrayList<Integer> darProcesosProduccion(int rowNum1, int rowNum2) throws Exception 
 	{
-		return dao.darProcesosProduccion();
+		return dao.darProcesosProduccion(rowNum1,rowNum2);
 	}
 	public ArrayList<ProductoValue> darProductosParaRegistrarEntrega() throws Exception 
 	{
@@ -214,22 +214,22 @@ public class ProdAndes
 		return dao.darRecursos();
 	}
 
-	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaDesde, String fechaHasta, int pedido, String material, String tipoMaterial) throws Exception
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion(String fechaDesde, String fechaHasta, int pedido, String material, String tipoMaterial,int rowNum1,int rowNum2) throws Exception
 	{
-		return dao.consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, pedido, material, tipoMaterial);
+		return dao.consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, pedido, material, tipoMaterial,rowNum1,rowNum2);
 	}
-	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado(String fechaDesde, String fechaHasta, int pedido, String material, String tipoMaterial) throws Exception
+	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado(String fechaDesde, String fechaHasta, int pedido, String material, String tipoMaterial,int rowNum1,int rowNum2) throws Exception
 	{
-		return dao.consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, pedido, material, tipoMaterial);
-	}
-
-	public ArrayList<PedidoValue> consultarPedidosPorCostoRecursoX(String tipoRecurso, int costoMenor) throws Exception
-	{
-		return dao.consultarPedidosPorCostoRecursoX(tipoRecurso, costoMenor);
+		return dao.consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, pedido, material, tipoMaterial,rowNum1,rowNum2);
 	}
 
-	public MaterialValue consultaRecursoPorId(int idRecurso) throws Exception
+	public ArrayList<PedidoValue> consultarPedidosPorCostoRecursoX(String tipoRecurso, int costoMenor,int rowNum1,int rowNum2) throws Exception
 	{
-		return dao.consultaRecursoPorId(idRecurso);
+		return dao.consultarPedidosPorCostoRecursoX(tipoRecurso, costoMenor,rowNum1,rowNum2);
+	}
+
+	public MaterialValue consultaRecursoPorId(int idRecurso,int rowNum1,int rowNum2) throws Exception
+	{
+		return dao.consultaRecursoPorId(idRecurso,rowNum1,rowNum2);
 	}
 }

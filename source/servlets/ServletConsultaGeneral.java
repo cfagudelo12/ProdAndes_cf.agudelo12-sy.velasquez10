@@ -44,6 +44,8 @@ public class ServletConsultaGeneral extends HttpServlet
 	private ArrayList<EjecucionValue> listaEjecucionEtapasProduccion;
 	private ArrayList<PedidoValue> listaPedidos;
 	private MaterialValue material;
+	private int rowNum1;
+	private int rowNum2;
 
 	// -----------------------------------------------------------------
 	// Métodos
@@ -63,12 +65,28 @@ public class ServletConsultaGeneral extends HttpServlet
 		material= new MaterialValue();
 		listaVacia=false;
 		escribioNada=false;
+		rowNum1=1;
+		rowNum2=100;
 	}
 
 	public void destroy( )
 	{
 		System.out.println("Destruyendo instancia");
 
+	}
+	public void inicializarValores()
+	{
+		listaProductos= new ArrayList<ProductoValue>();
+		listaBuscarProductos= new ArrayList<MaterialValue>();
+		listaMateriales= new ArrayList<MaterialValue>();
+		listaRecursos=new ArrayList<RecursoValue>();
+		listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
+		listaPedidos= new ArrayList<PedidoValue>();
+		material= new MaterialValue();
+		listaVacia=false;
+		escribioNada=false;
+		rowNum1=1;
+		rowNum2=100;
 	}
 
 
@@ -124,13 +142,7 @@ public class ServletConsultaGeneral extends HttpServlet
 				String fechaSolicitud = request.getParameter( "fechaSolicitud" );
 				String fechaEntrega = request.getParameter( "fechaEntrega" );
 				
-				listaBuscarProductos= new ArrayList<MaterialValue>();
-				listaMateriales= new ArrayList<MaterialValue>();
-				listaRecursos=new ArrayList<RecursoValue>();
-				listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
-				listaPedidos= new ArrayList<PedidoValue>();
-				material= new MaterialValue();
-
+				inicializarValores();
 				listaProductos= ProdAndes.darInstancia().consultarExistenciasProductos(Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(procesoProduccion),fechaSolicitud,fechaEntrega);
 				if(listaProductos.size()==0)
 				{
@@ -156,13 +168,7 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					listaProductos= new ArrayList<ProductoValue>();
-					listaMateriales= new ArrayList<MaterialValue>();
-					listaRecursos=new ArrayList<RecursoValue>();
-					listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
-					listaPedidos= new ArrayList<PedidoValue>();
-					material= new MaterialValue();
-
+					inicializarValores();
 					listaBuscarProductos= ProdAndes.darInstancia().consultarProducto(Integer.parseInt(cantidad),Float.parseFloat(costo));
 					if(listaBuscarProductos.size()==0)
 					{
@@ -192,13 +198,7 @@ public class ServletConsultaGeneral extends HttpServlet
 					escribioNada=true;
 					imprimirPaginaGeneral(response);
 				}
-				listaProductos= new ArrayList<ProductoValue>();
-				listaBuscarProductos= new ArrayList<MaterialValue>();
-				listaMateriales= new ArrayList<MaterialValue>();
-				listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
-				listaPedidos= new ArrayList<PedidoValue>();
-				material= new MaterialValue();
-
+				inicializarValores();
 				listaRecursos= ProdAndes.darInstancia().consultarExistenciasRecurso(tipo,Integer.parseInt(desde),Integer.parseInt(hasta),Integer.parseInt(etapaProduccion),fechaEntrega,fechaSolicitud);
 				if(listaRecursos.size()==0)
 				{
@@ -226,12 +226,7 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					listaProductos= new ArrayList<ProductoValue>();
-					listaBuscarProductos= new ArrayList<MaterialValue>();
-					listaRecursos=new ArrayList<RecursoValue>();
-					listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
-					listaPedidos= new ArrayList<PedidoValue>();
-					material= new MaterialValue();
+					inicializarValores();
 
 					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(cantidadEnBodega), fechaDesde, fechaHasta, Float.parseFloat(costo));
 					if(listaMateriales.size()==0)
@@ -256,7 +251,8 @@ public class ServletConsultaGeneral extends HttpServlet
 				String material1 = request.getParameter( "material" );
 				String tipoMaterial = request.getParameter( "tipoMaterial" );
 				String pedido = request.getParameter( "pedido" );
-				
+			
+
 				if(fechaDesde.equals("")&&fechaHasta.equals("")&& (material.equals("")||tipoMaterial.equals("")||pedido.equals("")))
 				{
 					escribioNada=true;
@@ -264,21 +260,29 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					listaProductos= new ArrayList<ProductoValue>();
-					listaBuscarProductos= new ArrayList<MaterialValue>();
-					listaRecursos=new ArrayList<RecursoValue>();
-					listaPedidos= new ArrayList<PedidoValue>();
-					listaMateriales= new ArrayList<MaterialValue>();
-					material= new MaterialValue();
+					inicializarValores();
 
 					if(correspondencia!=null)
 					{
-						listaEjecucionEtapasProduccion= ProdAndes.darInstancia().consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, Integer.parseInt(pedido), material1, tipoMaterial);
-					}
+						if(pedido.equals(""))
+						{
+							listaEjecucionEtapasProduccion= ProdAndes.darInstancia().consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta,-1, material1, tipoMaterial,rowNum1,rowNum2);
+						}
+						else
+						{
+							listaEjecucionEtapasProduccion= ProdAndes.darInstancia().consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta,Integer.parseInt(pedido), material1, tipoMaterial,rowNum1,rowNum2);
+						}
+					}	
 					else
 					{
-						listaEjecucionEtapasProduccion= ProdAndes.darInstancia().consultarEjecucionEtapasProduccionNegado(fechaDesde, fechaHasta, Integer.parseInt(pedido), material1, tipoMaterial);
-
+						if(pedido.equals(""))
+						{
+							listaEjecucionEtapasProduccion= ProdAndes.darInstancia().consultarEjecucionEtapasProduccionNegado(fechaDesde, fechaHasta,-1, material1, tipoMaterial,rowNum1,rowNum2);
+						}
+						else
+						{
+							listaEjecucionEtapasProduccion= ProdAndes.darInstancia().consultarEjecucionEtapasProduccionNegado(fechaDesde, fechaHasta, Integer.parseInt(pedido), material1, tipoMaterial,rowNum1,rowNum2);
+						}
 					}
 					if(listaEjecucionEtapasProduccion.size()==0)
 					{
@@ -306,15 +310,10 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					listaProductos= new ArrayList<ProductoValue>();
-					listaBuscarProductos= new ArrayList<MaterialValue>();
-					listaRecursos=new ArrayList<RecursoValue>();
-					listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
-					listaMateriales= new ArrayList<MaterialValue>();
-					material= new MaterialValue();
+					inicializarValores();
 
-					listaPedidos= ProdAndes.darInstancia().consultarPedidosPorCostoRecursoX(tipoRecurso, Integer.parseInt(valor));
-					if(listaRecursos.size()==0)
+					listaPedidos= ProdAndes.darInstancia().consultarPedidosPorCostoRecursoX(tipoRecurso, Integer.parseInt(valor),rowNum1,rowNum2);
+					if(listaPedidos.size()==0)
 					{
 						listaVacia=true;
 					}
@@ -340,14 +339,9 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					listaProductos= new ArrayList<ProductoValue>();
-					listaBuscarProductos= new ArrayList<MaterialValue>();
-					listaRecursos=new ArrayList<RecursoValue>();
-					listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
-					listaMateriales= new ArrayList<MaterialValue>();
-					listaPedidos= new ArrayList<PedidoValue>();
+					inicializarValores();
 
-					material= ProdAndes.darInstancia().consultaRecursoPorId(Integer.parseInt(idRecurso));
+					material= ProdAndes.darInstancia().consultaRecursoPorId(Integer.parseInt(idRecurso),rowNum1,rowNum2);
 					if(material==null)
 					{
 						listaVacia=true;
@@ -478,7 +472,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                                    <select name=\"procesoProduccion\"		>");
 		try
 		{
-			ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion();
+			ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion(1,20);
 			for(int i=0; i<procesos.size();i++)
 			{
 				respuesta.println( "                                    <option value=\""+procesos.get(i)+"\">"+procesos.get(i)+"</option>");
