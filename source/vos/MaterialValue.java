@@ -75,7 +75,7 @@ public class MaterialValue
 		if(this.pedidos==null)
 			setPedidos(pedidos);
 		else
-		this.pedidos+= ", "+pedidos;
+		this.pedidos+= "</br> "+pedidos;
 	}
 
 	public ProductoValue getProduto() {

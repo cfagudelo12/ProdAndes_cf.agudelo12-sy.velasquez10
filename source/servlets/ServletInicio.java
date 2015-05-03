@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jboss.system.server.ServerConfig;
 import org.jboss.system.server.ServerConfigLocator;
 
+import vos.EjecucionValue;
 import vos.EstacionProduccionValue;
 import vos.MaterialValue;
 import vos.PedidoValue;
@@ -242,18 +243,18 @@ public class ServletInicio extends HttpServlet
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                    <select name=\"procesoProduccion\"		>");
-																		try
-																		{
-																			ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion(1,20);
-																			for(int i=0; i<procesos.size();i++)
-																			{
-																				respuesta.println( "                                    <option value=\""+procesos.get(i)+"\">"+procesos.get(i)+"</option>");
-																			}
-																		}
-																		catch (Exception e)
-																		{
-																			imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
-																		}
+				try
+				{
+					ArrayList<Integer> procesos=ProdAndes.darInstancia().darProcesosProduccion(1,20);
+					for(int i=0; i<procesos.size();i++)
+					{
+						respuesta.println( "                                    <option value=\""+procesos.get(i)+"\">"+procesos.get(i)+"</option>");
+					}
+				}
+				catch (Exception e)
+				{
+					imprimirMensajeError(respuesta,"Error de carga", e.getMessage());
+				}
 				respuesta.println( "                                    </select>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                 <div class=\"col-lg-4\">");
@@ -374,10 +375,10 @@ public class ServletInicio extends HttpServlet
 				respuesta.println( "                            <br/>");
 				respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 				respuesta.println( "								<div class=\"col-lg-4\">");
-				respuesta.println( "	                            	<span>Indique el volumen: </span>");
+				respuesta.println( "	                            	<span>Indique la cantidad en bodega: </span>");
 				respuesta.println( "	                            	<br/>");
 				respuesta.println( "	                            	<br/>");
-				respuesta.println( "	                               	<INPUT type=\"number\" name=\"volumen\"/>");
+				respuesta.println( "	                               	<INPUT type=\"number\" name=\"cantidadEnBodega\"/>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-4\">");
 				respuesta.println( "                                    <span>Indique el costo: </span>");
@@ -405,7 +406,6 @@ public class ServletInicio extends HttpServlet
 				respuesta.println( "                </div>");
 				respuesta.println( "                <!-- /.row -->");
 				respuesta.println( "            </form>");
-
 				respuesta.println( "                 <!--Consultar ejecucion etapa de produccion-->");
 				respuesta.println( "                 <form method=\"GET\" action=\"consultaGeneral.htm\">");
 				respuesta.println( "                <div class=\"row\">");
@@ -442,10 +442,17 @@ public class ServletInicio extends HttpServlet
 				respuesta.println( "                                    <INPUT type=\"text\" name=\"material\"/>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-4\">");
-				respuesta.println( "                                    <span>Indique el tipo de material asociado: </span>");
+				respuesta.println( "                                    <span>Elija el tipo de material asociado: </span>");
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                    <br/>");
-				respuesta.println( "                                    <INPUT type=\"text\" name=\"tipoMaterial\"/>");
+				respuesta.println( "                                    <Select name=\"tipoMaterial\">");
+				respuesta.println( "                                        <option>");
+				respuesta.println( "                                            <i>Materia prima</i>");
+				respuesta.println( "                                        </option>");
+				respuesta.println( "                                        <option>");
+				respuesta.println( "                                            <iu>Componente</i> ");
+				respuesta.println( "                                        </option>");
+				respuesta.println( "                                    </Select>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-4\">");
 				respuesta.println( "                                    <span>Indique el pedido asociado: </span>");
@@ -460,6 +467,9 @@ public class ServletInicio extends HttpServlet
 				respuesta.println( "                        </div>");
 				respuesta.println( "                </div>");
 				respuesta.println( "                <!-- /.row -->");
+				
+				respuesta.println( "             <div class=\"panel-body\" id=\"wrap\">");
+				respuesta.println( "                </div>");
 				respuesta.println( "            </form>");
 				respuesta.println( "                 <!--Consultar pedidos-->");
 				respuesta.println( "                 <form method=\"GET\" action=\"consultaGeneral.htm\">");
@@ -472,10 +482,18 @@ public class ServletInicio extends HttpServlet
 				respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 				respuesta.println( "								<div class=\"row\">");
 				respuesta.println( "								<div class=\"col-lg-6\">");
-				respuesta.println( "                                    <span>Indique el tipo del recurso: </span>");
+				respuesta.println( "                                <div class=\"col-lg-4\">");
+				respuesta.println( "                                    <span>Elija el tipo: </span>");
 				respuesta.println( "                                    <br/>");
 				respuesta.println( "                                    <br/>");
-				respuesta.println( "                                    <INPUT type=\"text\" name=\"tipoRecurso\"/>");
+				respuesta.println( "                                    <Select name=\"tipoRecurso\">");
+				respuesta.println( "                                        <option>");
+				respuesta.println( "                                            <i>Materia prima</i>");
+				respuesta.println( "                                        </option>");
+				respuesta.println( "                                        <option>");
+				respuesta.println( "                                            <iu>Componente</i> ");
+				respuesta.println( "                                        </option>");
+				respuesta.println( "                                    </Select>");
 				respuesta.println( "                                </div>");
 				respuesta.println( "                                <div class=\"col-lg-6\">");
 				respuesta.println( "                                    <span>Ingrese un valor menor al minimo deseado: </span>");

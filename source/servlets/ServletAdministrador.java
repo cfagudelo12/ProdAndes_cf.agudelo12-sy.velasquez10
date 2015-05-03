@@ -462,7 +462,7 @@ public class ServletAdministrador extends HttpServlet
 					respuesta.println( "                                    <br/><p><b>Cantidad: </b> "+m.getCantidad()+"</p>");
 					respuesta.println( "                                </div>");
 					respuesta.println( "                                <div class=\"col-lg-4\">");
-					respuesta.println( "                                    <br/><p><b>Monto: </b> "+m.getMonto()+"</p>");
+					respuesta.println( "                                    <br/><p><b>Monto: </b> "+m.getCosto()+"</p>");
 					respuesta.println( "                                </div>");
 					respuesta.println( "                                <div class=\"col-lg-4\">");
 					respuesta.println( "                                    <br/><p><b>Estado: </b> "+m.getEstado()+"</p>");
@@ -582,7 +582,7 @@ public class ServletAdministrador extends HttpServlet
 																			{
 																				PedidoValue pedidoActual= listaPedidos.get(j);
 																				respuesta.println( "<br/><b> id:</b> "+pedidoActual.getIdPedido());
-																				respuesta.println( "<br/><b> Monto:</b> "+pedidoActual.getMonto());
+																				respuesta.println( "<br/><b> Monto:</b> "+pedidoActual.getCosto());
 																				respuesta.println( "<br/><b> Estado:</b> "+pedidoActual.getEstado());	
 																				for(int k=0;k<pedidoActual.getProductos().size();k++)
 																				{
@@ -697,7 +697,7 @@ public class ServletAdministrador extends HttpServlet
 																			{
 																				PedidoValue pedidoActual= listaPedidos.get(j);
 																				respuesta.println( "<br/><br/><b> id:</b> "+pedidoActual.getIdPedido());
-																				respuesta.println( "<br/><b> Monto: </b>"+pedidoActual.getMonto());
+																				respuesta.println( "<br/><b> Monto: </b>"+pedidoActual.getCosto());
 																				respuesta.println( "<br/><b> Estado: </b>"+pedidoActual.getEstado());
 																			}
 					respuesta.println( "									</p>");

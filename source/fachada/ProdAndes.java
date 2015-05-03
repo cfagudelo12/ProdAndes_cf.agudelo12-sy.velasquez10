@@ -220,7 +220,7 @@ public class ProdAndes
 	}
 	public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado(String fechaDesde, String fechaHasta, int pedido, String material, String tipoMaterial,int rowNum1,int rowNum2) throws Exception
 	{
-		return dao.consultarEjecucionEtapasProduccion(fechaDesde, fechaHasta, pedido, material, tipoMaterial,rowNum1,rowNum2);
+		return dao.consultarEjecucionEtapasProduccionNegado(fechaDesde, fechaHasta, pedido, material, tipoMaterial,rowNum1,rowNum2);
 	}
 
 	public ArrayList<PedidoValue> consultarPedidosPorCostoRecursoX(String tipoRecurso, int costoMenor,int rowNum1,int rowNum2) throws Exception

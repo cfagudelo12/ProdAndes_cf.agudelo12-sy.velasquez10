@@ -13,7 +13,7 @@ public class PedidoValue {
 	
 	public final static String cCantidad= "cantidad";
 	
-	public final static String cMonto = "monto";
+	public final static String cCosto = "costo";
 	
 	public final static String cFechaPedido = "fechaPedido"; 
 	
@@ -33,7 +33,7 @@ public class PedidoValue {
 	
 	private int idPedido;
 	
-	private float monto;
+	private float costo;
 	
 	private int cantidad;
 	
@@ -65,14 +65,6 @@ public class PedidoValue {
 
 	public void setIdPedido(int idPedido) {
 		this.idPedido = idPedido;
-	}
-
-	public float getMonto() {
-		return monto;
-	}
-
-	public void setMonto(float monto) {
-		this.monto = monto;
 	}
 	
 	public Date getFechaPedido() {
@@ -129,5 +121,13 @@ public class PedidoValue {
 
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
+	}
+
+	public float getCosto() {
+		return costo;
+	}
+
+	public void setCosto(float costo) {
+		this.costo = costo;
 	}	
 }

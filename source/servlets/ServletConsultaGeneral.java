@@ -46,6 +46,8 @@ public class ServletConsultaGeneral extends HttpServlet
 	private MaterialValue material;
 	private int rowNum1;
 	private int rowNum2;
+	private String datosConsultarEjecucionEtapaProduccion;
+	private String datosConsultarPedidos;
 
 	// -----------------------------------------------------------------
 	// Métodos
@@ -62,11 +64,13 @@ public class ServletConsultaGeneral extends HttpServlet
 		listaRecursos=new ArrayList<RecursoValue>();
 		listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
 		listaPedidos= new ArrayList<PedidoValue>();
-		material= new MaterialValue();
+		material= null;
 		listaVacia=false;
 		escribioNada=false;
 		rowNum1=1;
-		rowNum2=100;
+		rowNum2=5;
+		datosConsultarEjecucionEtapaProduccion="";
+		datosConsultarPedidos="";
 	}
 
 	public void destroy( )
@@ -82,11 +86,11 @@ public class ServletConsultaGeneral extends HttpServlet
 		listaRecursos=new ArrayList<RecursoValue>();
 		listaEjecucionEtapasProduccion= new ArrayList<EjecucionValue>();
 		listaPedidos= new ArrayList<PedidoValue>();
-		material= new MaterialValue();
+		material= null;
 		listaVacia=false;
 		escribioNada=false;
-		rowNum1=1;
-		rowNum2=100;
+		datosConsultarEjecucionEtapaProduccion="";
+		datosConsultarPedidos="";
 	}
 
 
@@ -131,7 +135,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		String consultarEjecucionEtapaProduccion = request.getParameter( "consultarEjecucionEtapaProduccion" );
 		String consultarPedidos = request.getParameter( "consultarPedidos" );
 		String consultarRecursosId = request.getParameter( "consultarRecursosId" );
-
+	
 		if(consultarExistencias!=null)
 		{
 			try
@@ -251,8 +255,29 @@ public class ServletConsultaGeneral extends HttpServlet
 				String material1 = request.getParameter( "material" );
 				String tipoMaterial = request.getParameter( "tipoMaterial" );
 				String pedido = request.getParameter( "pedido" );
-			
-
+				
+				if(consultarEjecucionEtapaProduccion.equals("siguiente"))
+				{
+					rowNum1+=5;
+					rowNum2+=5;
+				}
+				else if(consultarEjecucionEtapaProduccion.equals("anterior"))
+				{
+					rowNum1-=5;
+					rowNum2-=5;
+				}
+				if(!consultarEjecucionEtapaProduccion.equals("Buscar"))
+				{
+					String[]datos=datosConsultarEjecucionEtapaProduccion.split("/");
+					fechaDesde=datos[0];
+					fechaHasta=datos[1];
+					pedido=datos[2];
+					pedido = pedido.replaceAll(" ", "");
+					material1=datos[3];
+					material1 = material1.replaceAll(" ", "");
+					tipoMaterial=datos[4];
+					tipoMaterial = tipoMaterial.replaceAll(" ", "");
+				}
 				if(fechaDesde.equals("")&&fechaHasta.equals("")&& (material.equals("")||tipoMaterial.equals("")||pedido.equals("")))
 				{
 					escribioNada=true;
@@ -260,8 +285,8 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
+					
 					inicializarValores();
-
 					if(correspondencia!=null)
 					{
 						if(pedido.equals(""))
@@ -288,6 +313,10 @@ public class ServletConsultaGeneral extends HttpServlet
 					{
 						listaVacia=true;
 					}
+					else
+					{
+						datosConsultarEjecucionEtapaProduccion=fechaDesde+"/"+fechaHasta+"/"+pedido+" /"+material1+" / "+tipoMaterial;
+					}
 					imprimirPaginaGeneral(response);
 				}
 			}
@@ -302,7 +331,22 @@ public class ServletConsultaGeneral extends HttpServlet
 			{
 				String tipoRecurso = request.getParameter( "tipoRecurso" );
 				String valor = request.getParameter( "valor" );
-				
+				if(consultarPedidos.equals("siguiente"))
+				{
+					rowNum1+=5;
+					rowNum2+=5;
+				}
+				else if(consultarPedidos.equals("anterior"))
+				{
+					rowNum1-=5;
+					rowNum2-=5;
+				}
+				if(!consultarPedidos.equals("Buscar"))
+				{
+					String[]datos=datosConsultarPedidos.split("/");
+					tipoRecurso=datos[0];
+					valor=datos[1];
+				}
 				if(tipoRecurso.equals("")&&valor.equals(""))
 				{
 					escribioNada=true;
@@ -316,6 +360,10 @@ public class ServletConsultaGeneral extends HttpServlet
 					if(listaPedidos.size()==0)
 					{
 						listaVacia=true;
+					}
+					else
+					{
+						datosConsultarPedidos=tipoRecurso+"/"+valor;
 					}
 					imprimirPaginaGeneral(response);
 				}
@@ -762,10 +810,17 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                                    <INPUT type=\"text\" name=\"material\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Indique el tipo de material asociado: </span>");
+		respuesta.println( "                                    <span>Elija el tipo de material asociado: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"text\" name=\"tipoMaterial\"/>");
+		respuesta.println( "                                    <Select name=\"tipoMaterial\">");
+		respuesta.println( "                                        <option>");
+		respuesta.println( "                                            <i>Materia prima</i>");
+		respuesta.println( "                                        </option>");
+		respuesta.println( "                                        <option>");
+		respuesta.println( "                                            <iu>Componente</i> ");
+		respuesta.println( "                                        </option>");
+		respuesta.println( "                                    </Select>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
 		respuesta.println( "                                    <span>Indique el pedido asociado: </span>");
@@ -780,34 +835,52 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                        </div>");
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
-		respuesta.println( "            </form>");
+		
+		respuesta.println( "             <div class=\"panel-body\" id=\"wrap\">");
 		for(int i=0;i<listaEjecucionEtapasProduccion.size();i++)
 		{
 			EjecucionValue e= (EjecucionValue) listaEjecucionEtapasProduccion.get(i);
 			respuesta.println( "             <div class=\"row\">");
 			respuesta.println( "                        <div class=\"panel panel-default\" >");
 			respuesta.println( "                            <div class=\"panel-heading\">");
-			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n de la etapa de producci&#243n consultada</h3>");
+			respuesta.println( "                                <h3 class=\"panel-title\">"+(i+rowNum1)+". La informaci&#243n de la etapa de producci&#243n consultada</h3>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                            <br/>");
 			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
+			respuesta.println( "                            <div class=\"row\">");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
 			respuesta.println( "                                    <p><b>Id:</b> "+ e.getEtapaProduccion().getIdEtapaProduccion() +"</p>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Descripci&#243n: "+ e.getEtapaProduccion().getDescripcion() +"</span>");
+			respuesta.println( "                                    <p><b>Descripci&#243n: </b> "+ e.getEtapaProduccion().getDescripcion() +"</p>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                                </div>");
+			respuesta.println( "                            <div class=\"row\">");
+			respuesta.println( "                                <div class=\"col-lg-4\">");
+			respuesta.println( "                                    <p><b>Fecha ejecucion: </b> "+ e.getFechaEjecucion()+"</p>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Fecha ejecucion: "+ e.getFechaEjecucion()+"</span>");
+			respuesta.println( "                                    <p><b>Operario: </b>"+ e.getOperario().getId()+"</p>");
 			respuesta.println( "                                </div>");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Operario: "+ e.getOperario()+"</span>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");
 			respuesta.println( "                </div>");
 		}
-		
+		if(listaEjecucionEtapasProduccion.size()>0)
+		{
+			if(rowNum1>5)
+			{
+				respuesta.println( "                                <div class=\"col-lg-3\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"anterior\" name=\"consultarEjecucionEtapaProduccion\">");
+				respuesta.println( "                                </div>");
+			}
+			respuesta.println( "                                <div class=\"col-lg-3\">");
+			respuesta.println( "                                	<INPUT type=\"submit\" value=\"siguiente\" name=\"consultarEjecucionEtapaProduccion\">");
+			respuesta.println( "                                </div>");
+		}
+		respuesta.println( "                </div>");
+		respuesta.println( "            </form>");
 		respuesta.println( "                 <!--Consultar pedidos-->");
 		respuesta.println( "                 <form method=\"GET\" action=\"consultaGeneral.htm\">");
 		respuesta.println( "                <div class=\"row\">");
@@ -819,10 +892,18 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
 		respuesta.println( "								<div class=\"row\">");
 		respuesta.println( "								<div class=\"col-lg-6\">");
-		respuesta.println( "                                    <span>Indique el tipo del recurso: </span>");
+		respuesta.println( "                                <div class=\"col-lg-4\">");
+		respuesta.println( "                                    <span>Elija el tipo: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
-		respuesta.println( "                                    <INPUT type=\"text\" name=\"tipoRecurso\"/>");
+		respuesta.println( "                                    <Select name=\"tipoRecurso\">");
+		respuesta.println( "                                        <option>");
+		respuesta.println( "                                            <i>Materia prima</i>");
+		respuesta.println( "                                        </option>");
+		respuesta.println( "                                        <option>");
+		respuesta.println( "                                            <iu>Componente</i> ");
+		respuesta.println( "                                        </option>");
+		respuesta.println( "                                    </Select>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-6\">");
 		respuesta.println( "                                    <span>Ingrese un valor menor al minimo deseado: </span>");
@@ -838,14 +919,15 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                        </div>");
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
-		respuesta.println( "            </form>");
+		
+		respuesta.println( "             <div class=\"panel-body\" id=\"wrap\">");
 		for(int i=0;i<listaPedidos.size();i++)
 		{
 			PedidoValue p= (PedidoValue) listaPedidos.get(i);
 			respuesta.println( "             <div class=\"row\">");
 			respuesta.println( "                        <div class=\"panel panel-default\" >");
 			respuesta.println( "                            <div class=\"panel-heading\">");
-			respuesta.println( "                                <h3 class=\"panel-title\"><i class=\"fa fa-check-square-o fa-fw\"></i> La informaci&#243n de la etapa de producci&#243n consultada</h3>");
+			respuesta.println( "                                <h3 class=\"panel-title\">"+(i+rowNum1)+" La informaci&#243n de la etapa de producci&#243n consultada</h3>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                            <br/>");
 			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
@@ -853,29 +935,29 @@ public class ServletConsultaGeneral extends HttpServlet
 			respuesta.println( "                                    <p><b>Id:</b> "+ p.getIdPedido()+"</p>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Monto: "+ p.getMonto() +"</span>");
+			respuesta.println( "                                    <span>Monto: "+ p.getCosto() +"</span>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                                <div class=\"col-lg-4\">");
 			respuesta.println( "                                    <span>Estado: "+ p.getEstado()+"</span>");
-			respuesta.println( "                                </div>");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Recrusos: </span>");
-
-			ArrayList<RecursoValue> recursos=  p.getRecursosRequeridos();
-			for(int j=0;j<recursos.size();j++)
-			{
-				RecursoValue recurso= (RecursoValue) recursos.get(j);
-				respuesta.println( "                                <div>");
-				respuesta.println( "                                    <p>Nombre: "+ recurso.getNombre()+"</p>");
-				respuesta.println( "                                    <p>Tipo: "+ recurso.getTipoRecurso()+"</p>");
-				respuesta.println( "                                </div>");
-			}
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");
 			respuesta.println( "                </div>");
 		}
-		
+		if(listaPedidos.size()>0)
+		{
+			if(rowNum1>5)
+			{
+				respuesta.println( "                                <div class=\"col-lg-3\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"anterior\" name=\"consultarPedidos\">");
+				respuesta.println( "                                </div>");
+			}
+			respuesta.println( "                                <div class=\"col-lg-3\">");
+			respuesta.println( "                                	<INPUT type=\"submit\" value=\"siguiente\" name=\"consultarPedidos\">");
+			respuesta.println( "                                </div>");
+		}
+		respuesta.println( "                </div>");
+		respuesta.println( "            </form>");
 		respuesta.println( "                 <!--Consultar Recursos por Id-->");
 		respuesta.println( "                 <form method=\"GET\" action=\"consultaGeneral.htm\">");
 		respuesta.println( "                <div class=\"row\">");
@@ -911,20 +993,8 @@ public class ServletConsultaGeneral extends HttpServlet
 			respuesta.println( "                            </div>");
 			respuesta.println( "                            <br/>");
 			respuesta.println( "                            <div class=\"panel-body\" id=\"wrap\">");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <p><b>Nombre:</b> "+ material.getRecurso().getNombre() +"</p>");
-			respuesta.println( "                                </div>");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Tipo: "+ material.getRecurso().getTipoRecurso() +"</span>");
-			respuesta.println( "                                </div>");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Productos que compone: "+material.getProductosQueCompone() +"</span>");
-			respuesta.println( "                                </div>"); 
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Etapas de producci&#243n en las que participa: "+ material.getEtapasProduccion() +" </span>");
-			respuesta.println( "                                </div>");
-			respuesta.println( "                                <div class=\"col-lg-4\">");
-			respuesta.println( "                                    <span>Pedidos de compra en los que esta involucrado: "+ material.getPedidos() +" </span>");
+			respuesta.println( "                                <div class=\"col-lg-12\">");
+			respuesta.println( "                                    <p><b>Pedidos de compra en los que esta involucrado:</b> </br> "+ material.getPedidos() +" </p>");
 			respuesta.println( "                                </div>");
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");
@@ -933,6 +1003,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "    		</div>");
 		respuesta.println( "		</div>");
 		respuesta.println( "    </body>");
+		
 		if(listaVacia)
 		{
 			listaVacia=false;
@@ -943,6 +1014,7 @@ public class ServletConsultaGeneral extends HttpServlet
 			escribioNada=false;
 			respuesta.println( "<script> alert(\"Por favor llene los campos paran realizar la busqueda\"); </script>");
 		}
+		
 	}
 
 	/**
