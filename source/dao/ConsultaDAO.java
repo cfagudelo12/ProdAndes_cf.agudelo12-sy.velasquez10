@@ -1751,8 +1751,9 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 						+ "NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN  "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cTipoRecurso+"='"+tipoRecurso+"'";
 			}
-			System.out.println(queryConsulta);
 			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
+			System.out.println(queryConsulta);
+
 			selStmt = conexion.prepareStatement(queryConsulta);
 			
 			ResultSet rs = selStmt.executeQuery();

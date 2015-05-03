@@ -48,6 +48,7 @@ public class ServletConsultaGeneral extends HttpServlet
 	private int rowNum2;
 	private String datosConsultarEjecucionEtapaProduccion;
 	private String datosConsultarPedidos;
+	private String datosConsultarRecursosId;
 
 	// -----------------------------------------------------------------
 	// Métodos
@@ -71,6 +72,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		rowNum2=5;
 		datosConsultarEjecucionEtapaProduccion="";
 		datosConsultarPedidos="";
+		datosConsultarRecursosId="";
 	}
 
 	public void destroy( )
@@ -89,8 +91,11 @@ public class ServletConsultaGeneral extends HttpServlet
 		material= null;
 		listaVacia=false;
 		escribioNada=false;
+		rowNum1=1;
+		rowNum2=5;
 		datosConsultarEjecucionEtapaProduccion="";
 		datosConsultarPedidos="";
+		datosConsultarRecursosId="";
 	}
 
 
@@ -230,8 +235,6 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					inicializarValores();
-
 					listaMateriales= ProdAndes.darInstancia().consultarRecurso(Integer.parseInt(cantidadEnBodega), fechaDesde, fechaHasta, Float.parseFloat(costo));
 					if(listaMateriales.size()==0)
 					{
@@ -276,8 +279,13 @@ public class ServletConsultaGeneral extends HttpServlet
 					material1=datos[3];
 					material1 = material1.replaceAll(" ", "");
 					tipoMaterial=datos[4];
-					tipoMaterial = tipoMaterial.replaceAll(" ", "");
 				}
+				else
+				{
+					inicializarValores();
+				}
+				
+
 				if(fechaDesde.equals("")&&fechaHasta.equals("")&& (material.equals("")||tipoMaterial.equals("")||pedido.equals("")))
 				{
 					escribioNada=true;
@@ -285,9 +293,7 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					
-					inicializarValores();
-					if(correspondencia!=null)
+					if(correspondencia==null)
 					{
 						if(pedido.equals(""))
 						{
@@ -315,7 +321,7 @@ public class ServletConsultaGeneral extends HttpServlet
 					}
 					else
 					{
-						datosConsultarEjecucionEtapaProduccion=fechaDesde+"/"+fechaHasta+"/"+pedido+" /"+material1+" / "+tipoMaterial;
+						datosConsultarEjecucionEtapaProduccion=fechaDesde+"/"+fechaHasta+"/"+pedido+" /"+material1+" /"+tipoMaterial;
 					}
 					imprimirPaginaGeneral(response);
 				}
@@ -347,6 +353,10 @@ public class ServletConsultaGeneral extends HttpServlet
 					tipoRecurso=datos[0];
 					valor=datos[1];
 				}
+				else
+				{
+					inicializarValores();
+				}
 				if(tipoRecurso.equals("")&&valor.equals(""))
 				{
 					escribioNada=true;
@@ -354,8 +364,6 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					inicializarValores();
-
 					listaPedidos= ProdAndes.darInstancia().consultarPedidosPorCostoRecursoX(tipoRecurso, Integer.parseInt(valor),rowNum1,rowNum2);
 					if(listaPedidos.size()==0)
 					{
@@ -379,7 +387,24 @@ public class ServletConsultaGeneral extends HttpServlet
 			try
 			{
 				String idRecurso = request.getParameter( "idRecurso" );
-				
+				if(consultarRecursosId.equals("siguiente"))
+				{
+					rowNum1+=5;
+					rowNum2+=5;
+				}
+				else if(consultarRecursosId.equals("anterior"))
+				{
+					rowNum1-=5;
+					rowNum2-=5;
+				}
+				if(!consultarRecursosId.equals("Buscar"))
+				{
+					idRecurso=datosConsultarRecursosId;
+				}
+				else
+				{
+					inicializarValores();
+				}
 				if(idRecurso.equals(""))
 				{
 					escribioNada=true;
@@ -387,12 +412,15 @@ public class ServletConsultaGeneral extends HttpServlet
 				}
 				else
 				{
-					inicializarValores();
-
+					
 					material= ProdAndes.darInstancia().consultaRecursoPorId(Integer.parseInt(idRecurso),rowNum1,rowNum2);
 					if(material==null)
 					{
 						listaVacia=true;
+					}
+					else
+					{
+						datosConsultarRecursosId=idRecurso;
 					}
 					imprimirPaginaGeneral(response);
 				}
@@ -797,7 +825,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                                    <INPUT type=\"date\" name=\"hasta\"/>");
 		respuesta.println( "                                </div>");
 		respuesta.println( "                                <div class=\"col-lg-4\">");
-		respuesta.println( "                                    <span>Buscar correspondiendo al criterio: </span>");
+		respuesta.println( "                                    <span>Buscar NO correspondiendo al criterio: </span>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <br/>");
 		respuesta.println( "                                    <INPUT type=\"checkbox\" name=\"correspondencia\"/>");
@@ -982,7 +1010,7 @@ public class ServletConsultaGeneral extends HttpServlet
 		respuesta.println( "                        </div>");
 		respuesta.println( "                </div>");
 		respuesta.println( "                <!-- /.row -->");
-		respuesta.println( "            </form>");
+
 		if(material!=null)
 		{
 			
@@ -999,7 +1027,17 @@ public class ServletConsultaGeneral extends HttpServlet
 			respuesta.println( "                            </div>");
 			respuesta.println( "                        </div>");
 			respuesta.println( "                </div>");
+			if(rowNum1>5)
+			{
+				respuesta.println( "                                <div class=\"col-lg-3\">");
+				respuesta.println( "                                	<INPUT type=\"submit\" value=\"anterior\" name=\"consultarRecursosId\">");
+				respuesta.println( "                                </div>");
+			}
+			respuesta.println( "                                <div class=\"col-lg-3\">");
+			respuesta.println( "                                	<INPUT type=\"submit\" value=\"siguiente\" name=\"consultarRecursosId\">");
+			respuesta.println( "                                </div>");
 		}
+		respuesta.println( "            </form>");
 		respuesta.println( "    		</div>");
 		respuesta.println( "		</div>");
 		respuesta.println( "    </body>");
