@@ -1721,8 +1721,8 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		try{
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-			String queryConsulta = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
-					+ "NATURAL INNER JOIN "+tEtapasProduccion+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+			String queryConsulta = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+					+ "WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
 			if(idPedido!=-1)
 			{
@@ -1730,14 +1730,14 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			}
 			else if(!recurso.equals(""))
 			{
-				queryConsulta  = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
-						+ "NATURAL INNER JOIN "+tEtapasProduccion+" Natural INNER JOIN "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+						+ "NATURAL INNER JOIN "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cNombre+"="+recurso;
 			}
 			else if(!tipoRecurso.equals(""))
 			{
-				queryConsulta  = "SELECT * FROM "+tOperan+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tPedidos+" "
-						+ "NATURAL INNER JOIN "+tEtapasProduccion+" Natural INNER JOIN "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEstacionesProduccion+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+						+ "Natural INNER JOIN "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cTipoRecurso+"="+tipoRecurso;
 			}
 			selStmt = conexion.prepareStatement(queryConsulta);
