@@ -312,23 +312,20 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		return query;
 	}
 	
-	public ArrayList<EstacionProduccionValue> darEstacionesProduccion() throws Exception{
-		ArrayList<EstacionProduccionValue> estaciones = new ArrayList<EstacionProduccionValue>();
+	public ArrayList<Integer> darIdEstacionesProduccion(int rowNum1,int rowNum2) throws Exception
+	{
+		ArrayList<Integer> estaciones = new ArrayList<Integer>();
 		PreparedStatement selStmt = null;
 		try{
 			String consulta = "SELECT * FROM "+tEstacionesProduccion;
 			establecerConexion(cadenaConexion, usuario, clave);
 			conexion.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			consulta= rodearParaPaginar(consulta, rowNum1, rowNum2);
 			selStmt = conexion.prepareStatement(consulta);
 			ResultSet rs = selStmt.executeQuery();		
 			while(rs.next()){
-				EstacionProduccionValue estacion= new EstacionProduccionValue();
-				estacion.setIdEstacionProduccion(rs.getInt(EstacionProduccionValue.cIdEstacionProduccion));
-				estacion.setCapacidadProduccion(rs.getInt(EstacionProduccionValue.cCapacidadProduccion));
-				estacion.setEstado(rs.getString(EstacionProduccionValue.cEstado));
-				estacion.setIdEmpresa(rs.getInt(EstacionProduccionValue.cIdEmpresa));
-				estacion.setNombre(rs.getString(EstacionProduccionValue.cNombre));
-				estaciones.add(estacion);
+			
+				estaciones.add(rs.getInt(EstacionProduccionValue.cIdEstacionProduccion));
 			}
 		}
 		catch (SQLException e){
