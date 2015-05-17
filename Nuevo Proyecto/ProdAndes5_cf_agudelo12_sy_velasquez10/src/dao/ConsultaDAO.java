@@ -6,9 +6,17 @@ import java.util.ArrayList;
 import java.util.Queue;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import javax.transaction.UserTransaction;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Text;
 
 import vos.*;
 
@@ -179,7 +187,6 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	private DataSource ds2;
 	
 	private Queue cola;
-	private InitialContext context;
 	
 	/**
 	 * Constructor de la clase. No inicializa ningun atributo.
@@ -188,7 +195,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	{
 		try 
 		{
-
+			cola= (Queue) contexto.lookup("queue/WebApp2");
 		}
 		catch (Exception e) 
 		{
@@ -229,6 +236,25 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 		}
 	}
 	
+	/**
+	 * Metodo que se encarga de crear la conexion1 con el Driver Manager a partir de los parametros recibidos.
+	 * @param url Direccion url de la base de datos a la cual se desea conectar
+	 * @param usuario Nombre del usuario que se va a conectar a la base de datos
+	 * @param clave Clave de acceso a la base de datos
+	 * @throws SQLException si ocurre un error generando la conexion1 con la base de datos.
+	 */
+	private void establecerconexion2(String u,String p,String a) throws SQLException
+	{
+		try
+		{
+			conexion2 = DriverManager.getConnection("jdbc:oracle:thin:@prod.oracle.virtual.uniandes.edu.co:1531:prod","ISIS2304291510","fexerthail");
+		}
+		catch(SQLException exception)
+		{
+			throw new SQLException("ERROR: ConsultaDAO obteniendo una conexion2.");
+		}
+	}
+	
 	 /**
      * Este método ejecuta la aplicación, creando una nueva interfaz
      * @param args
@@ -249,16 +275,19 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
   	// Iteracion 5
   	//-------------------------------------------------
     
-    public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion5(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso, int rowNum1, int rowNum2) throws Exception{
+    public ArrayList<EjecucionValue> wA1ConsultarEjecucionEtapasProduccion(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso, int rowNum1, int rowNum2) throws Exception
+    {
 
 		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
-		PreparedStatement selStmt = null;
-		UserTransaction utx= (UserTransaction) context.lookup("/UserTransaction");
+		UserTransaction utx= (UserTransaction) contexto.lookup("/UserTransaction");
 		try
 		{
+			
 			establecerconexion1(cadenaconexion1, usuario, clave);
 			conexion1.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 
+			utx.begin();
+			
 			String queryConsulta = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
 					+ "WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
@@ -282,9 +311,53 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
 			System.out.println(queryConsulta);
 
-			selStmt = conexion1.prepareStatement(queryConsulta);
+
+			//Inicia una sesion utilizando la conexion
+			Session session = conm.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			MessageProducer producer = session.createProducer((Destination) cola);
+			TextMessage msg = session.createTextMessage();
+			msg.setText(queryConsulta);
+			producer.send(msg);
+			utx.commit();
+			return ejecuciones;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			closeConnection(conexion1);
+		}
+	}
+    
+    public ArrayList<EjecucionValue> wA2ConsultarEjecucionEtapasProduccion() throws Exception
+    {
+
+		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
+		PreparedStatement selStmt = null;
+		UserTransaction utx= (UserTransaction) contexto.lookup("/UserTransaction");
+		try
+		{
 			
-			ResultSet rs = selStmt.executeQuery();
+			establecerconexion2(cadenaconexion1, usuario, clave);
+			conexion2.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+
+			utx.begin();
+	
+		
+			//Inicia una sesion utilizando la conexion
+			Session session = conm.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			MessageConsumer consumer = session.createConsumer((Destination) cola);
+			Message msn = consumer.receive();
+			TextMessage txt = (TextMessage) msn;
+			String porInsertar = txt.getText();
+			
+			//Ejecutamos la transaccion en la base de datos
+			Statement st = conexion2.createStatement();
+			
+			ResultSet rs = st.executeQuery(porInsertar);
 			while(rs.next())
 			{
 				EjecucionValue ejecucion=new EjecucionValue();
@@ -302,6 +375,11 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				ejecucion.setPedido(pedido);
 				ejecuciones.add(ejecucion);
 			}
+			
+			
+			st.close();
+			session.close();
+			utx.commit();
 			return ejecuciones;
 		}
 		catch (SQLException e){
@@ -317,60 +395,88 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion1.");
 				}
 			}
-			closeConnection(conexion1);
+			closeConnection(conexion2);
 		}
 	}
     
-    public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado5(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso, int rowNum1, int rowNum2) throws Exception
-	{
-		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
-		PreparedStatement selStmt = null;
+    public ArrayList<RecursoValue> wA1ConsultarRecursosMasUtilizados(String fechaLimInf, String fechaLimSup) throws Exception
+    {
+
+		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
+		UserTransaction utx= (UserTransaction) contexto.lookup("/UserTransaction");
 		try
 		{
+			
 			establecerconexion1(cadenaconexion1, usuario, clave);
 			conexion1.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
-			String queryConsulta = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+
+			utx.begin();
+			
+			String queryConsulta = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" NATURAL INNER JOIN "+ tRequieren+" NATURAL INNER JOIN "+ tRecursos
 					+ "WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
 					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
-			if(idPedido!=-1)
-			{
-				queryConsulta +=" AND "+PedidoValue.cIdPedido+"="+idPedido;
-			}
-			if(!recurso.equals(""))
-			{
-				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
-						+ "NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN  "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
-						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cNombre+"!='"+recurso+"'";
-			}
-			if(!tipoRecurso.equals(""))
-			{
-
-				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
-						+ "NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN  "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
-						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cTipoRecurso+"!='"+tipoRecurso+"'";
-			}
 			System.out.println(queryConsulta);
-			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
 
-			selStmt = conexion1.prepareStatement(queryConsulta);
-			ResultSet rs = selStmt.executeQuery();
-			while(rs.next()){
-				EjecucionValue ejecucion=new EjecucionValue();
-				EtapaProduccionValue etapa=new EtapaProduccionValue();
-				etapa.setDescripcion(rs.getString(EtapaProduccionValue.cDescripcion));
-				etapa.setIdEtapaProduccion(rs.getInt(EtapaProduccionValue.cIdEtapaProduccion));
-				ejecucion.setEtapaProduccion(etapa);
-				ejecucion.setFechaEjecucion(rs.getString(EjecucionValue.cFechaEjecucion));
-				ejecucion.setTiempoEjecucion(rs.getInt(EjecucionValue.cTiempoEjecucion));
-				EmpleadoValue operario = new EmpleadoValue();
-				operario.setId(rs.getInt(EmpleadoValue.cfIdOperario));
-				ejecucion.setOperario(operario);
-				PedidoValue pedido = new PedidoValue();
-				pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
-				ejecucion.setPedido(pedido);
-				ejecuciones.add(ejecucion);
+
+			//Inicia una sesion utilizando la conexion
+			Session session = conm.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			MessageProducer producer = session.createProducer((Destination) cola);
+			TextMessage msg = session.createTextMessage();
+			msg.setText(queryConsulta);
+			producer.send(msg);
+			utx.commit();
+			return recursos;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			closeConnection(conexion1);
+		}
+	}
+    public ArrayList<RecursoValue> wA2ConsultarRecursosMasUtilizados() throws Exception
+    {
+
+		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
+		PreparedStatement selStmt = null;
+		UserTransaction utx= (UserTransaction) contexto.lookup("/UserTransaction");
+		try
+		{
+			
+			establecerconexion2(cadenaconexion1, usuario, clave);
+			conexion2.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+
+			utx.begin();
+	
+		
+			//Inicia una sesion utilizando la conexion
+			Session session = conm.createSession(false, Session.AUTO_ACKNOWLEDGE);
+			MessageConsumer consumer = session.createConsumer((Destination) cola);
+			Message msn = consumer.receive();
+			TextMessage txt = (TextMessage) msn;
+			String porInsertar = txt.getText();
+			
+			//Ejecutamos la transaccion en la base de datos
+			Statement st = conexion2.createStatement();
+			
+			ResultSet rs = st.executeQuery(porInsertar);
+			while(rs.next())
+			{
+				RecursoValue recurso = new RecursoValue();
+				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
+				recurso.setNombre(rs.getString(RecursoValue.cNombre));
+				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
+				recursos.add(recurso);
 			}
-			return ejecuciones;
+			
+			
+			st.close();
+			session.close();
+			utx.commit();
+			return recursos;
 		}
 		catch (SQLException e){
 			e.printStackTrace();
@@ -385,7 +491,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion1.");
 				}
 			}
-			closeConnection(conexion1);
+			closeConnection(conexion2);
 		}
 	}
     
