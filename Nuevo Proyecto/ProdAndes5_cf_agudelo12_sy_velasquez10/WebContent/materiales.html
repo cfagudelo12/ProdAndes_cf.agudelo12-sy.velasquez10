@@ -1,0 +1,272 @@
+<html>
+	<head>
+		<title>ProdAndes Sistemas Transaccionales</title>
+		<meta charset"UTF-8">
+		<meta name="description"></meta>
+		<link rel="stylesheet" type="text/css" href="css/estilo.css"/>
+		<meta name"viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	
+		<!-- Bootstrap Core CSS -->
+		    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+		    <!-- Custom CSS -->
+		    <link href="css/sb-admin.css" rel="stylesheet">
+                      
+              <!-- Custom Fonts -->
+            <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+             <!-- Morris Charts CSS -->
+            <link href="css/plugins/morris.css" rel="stylesheet">
+	</head>
+	<body>
+	<div id="wrapper">
+        <!-- Navbar -->
+        <nav id="fondoAzul" class="navbar navbar-fixed-top navbar-fixed-top" role="navigation">
+            <!-- Para navegación en celulare	s-->
+            <div  id="fondoAzul" class="navbar-header">
+                <a id="fondoAzul" class="navbar-brand" href="index.html">Administrador</a>
+            </div>
+            <!-- elementos de la parte de arriba del navbar-->
+            <ul id="fondoAzul" class="nav navbar-right top-nav">
+                <li id="fondoAzul"  class="dropdown">
+                    <a id="fondoAzul"  href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> Carlos y Sergio <b class="caret"></b></a>
+                    <ul id="fondoAzul" class="dropdown-menu">
+                        <li>
+                            <a href="productos.html"><i class="fa fa-fw fa-dashboard"></i> <div id="letraBlanca" > Productos</div></a>
+                        </li>
+
+                        <li>
+                            <a href="procesoDeProduccion.html"><i class="fa fa-fw fa-bar-chart-o"></i> <div id="letraBlanca" >Proceso de producci&#243n</div></a>
+                        </li>
+
+                        <li class="active">
+                            <a href="materiales.html"><i class="fa fa-fw fa-table"></i> <div id="letraBlanca" >materiales</div></a>
+                        </li>
+
+                        <li>
+                            <a href="empleados.html"><i class="fa fa-fw fa-edit"></i> <div id="letraBlanca" >Empleados</div></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- elementos de la parte de arriba del navbar- para pantallas pequeñas -->
+            <div  class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav side-nav">
+                    <form method="GET" action="producto.htm">
+                        <li>
+                            <a><i class="fa fa-fw fa-dashboard"></i> <Input id="BotonNegro" type="submit" value="Productos" id="letraBlanca" name="producto" > </a>
+                        </li>
+                    </form>
+                     <form method="GET" action="procesoDeProduccion.htm">
+                        <li>
+                              <a><i class="fa fa-fw fa-bar-chart-o"></i> <Input id="BotonNegro" type="submit" value="Proceso de producci&#243n" id="letraBlanca" name="procesoProduccion" > </a>
+                        </li>
+                    </form>
+                    <form method="GET" action="materiales.htm">
+                        <li  class="active">
+                              <a><i class="fa fa-fw fa-bar-chart-o"></i> <Input id="BotonNegro" type="submit" value="Materiales" id="letraBlanca" name="procesoProduccion" > </a>
+                        </li>
+                    </form>
+                    <form method="GET" action="empleados.htm">
+                        <li>
+                             <a><i class="fa fa-fw fa-bar-chart-o"></i> <Input id="BotonNegro" type="submit" value="Empleados" id="letraBlanca" name="procesoProduccion" > </a>
+                        </li>
+                    </form>
+                </ul>
+            </div>
+        </nav>
+		
+        <div id="page-wrapper">
+
+            <div class="container-fluid">
+
+                <!-- titulo de la pagina -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">
+                            Materiales <small>Informaci&#243n sobre los materiales con los que cuenta la empresa</small>
+                        </h1>
+                        
+                    </div>
+                </div>
+
+                 <!--Registrar llegada de un material-->
+                <form method="GET" action="materiales.htm">
+                <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Registrar llegada de un Material</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Indique la fecha de llegada: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="date" name="fechaLlegada"/>
+                                </div>
+                                 <div class="col-lg-4">
+                                    <span>Indique el id del pedido: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="idPedido"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el id del recurso: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="idRecurso"/>
+                                </div>
+                                <div class="col-lg-12">
+                                    <INPUT type="submit" value="Registrar" name="registrarMaterial"/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </form>
+
+                 <!--consultar existencias de materiales-->
+                 <form method="GET" action="materiales.htm">
+                <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Consultar existencias de un Material</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Elija el tipo: </span>
+                                    <br/>
+                                    <br/>
+                                    <Select name="tipo">
+                                        <option>
+                                            <i>Materia prima</i>
+                                        </option>
+                                        <option>
+                                            <iu>Componente</i> 
+                                        </option>
+                                    </Select>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el rango de existencias: </span>
+                                    <br/>
+                                    <br/>
+                                    <span>Desde: </span>
+                                    <br/>
+                                    <INPUT type="number" name="desde"/>
+                                    <br/>
+                                    <span>Hasta: </span>
+                                    <br/>
+                                    <INPUT type="number" name="hasta"/>
+                                </div>
+                                 <div class="col-lg-4">
+                                    <span>Indique el id de la etapa de producci&#243n: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="etapaProduccion"/>
+                                </div>
+                                 <div class="col-lg-4">
+                                    <span>Indique la fecha de solicitud: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="date" name="fechaSolicitud"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique la fecha de entrega: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="date" name="fechaEntrega"/>
+                                </div>
+                                <div class="col-lg-12">
+                                    <INPUT type="submit" value="Consultar" name="consultarExistencias"/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </form>
+
+                 <!--Buscar un material-->
+                 <form method="GET" action="materiales.htm">
+                <div class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> Consultar un Material</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+								<div class="col-lg-4">
+	                            	<span>Indique el volumen: </span>
+	                            	<br/>
+	                            	<br/>
+	                               	<INPUT type="number" name="volumen"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el costo: </span>
+                                    <br/>
+                                    <br/>
+                                    <INPUT type="number" name="costo"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Indique el rango de fechas: </span>
+                                    <br/>
+                                    <br/>
+                                     <span>Desde: </span>
+                                    <br/>
+                                    <INPUT type="date" name="desde"/>
+                                    <br/>
+                                    <span>Hasta: </span>
+                                    <br/>
+                                    <INPUT type="date" name="hasta"/>
+                                </div>
+                                <div class="col-lg-12">
+                                	<INPUT type="submit" value="Buscar" name="buscarMaterial"/>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <!-- /.row -->
+            </form>
+             <div id="littleWrap" class="row">
+                        <div class="panel panel-default" >
+                            <div class="panel-heading">
+                                <h3 class="panel-title"><i class="fa fa-check-square-o fa-fw"></i> La informaci&#243n del material consultado</h3>
+                            </div>
+                            <br/>
+                            <div class="panel-body" id="wrap">
+                                <div class="col-lg-4">
+                                    <span>Tipo: </span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Materiales que lo componen: </span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Materiales que compone: </span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Etapas de producci&#243n en las que participa: </span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Pedidos de clientes en los que esta involucrado: </span>
+                                </div>
+                                <div class="col-lg-4">
+                                    <span>Pedidos de compra en los que esta involucrado: </span>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                <!-- /.row -->
+            </div>
+
+              
+            </div>   <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+              
+    </div>
+        </div>
+        <!-- /#page-wrapper -->
+    </div>
+    </form>
+    <!-- /#wrapper -->
+	</body>
+</html>
+	

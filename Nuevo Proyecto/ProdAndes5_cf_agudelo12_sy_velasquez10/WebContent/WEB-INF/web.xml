@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+                         "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+ <description>Servlet ProdAndes Web</description>
+ <!-- SERVLETS --><servlet>
+ 	<servlet-name>Administrador</servlet-name>
+ 	<servlet-class>servlets.ServletAdministrador</servlet-class>
+</servlet>
+ <servlet>
+ 	<servlet-name>Inicio</servlet-name>
+ 	<servlet-class>servlets.ServletInicio</servlet-class>
+</servlet>
+ <servlet>
+ 	<servlet-name>Gerente</servlet-name>
+ 	<servlet-class>servlets.ServletGerente</servlet-class>
+</servlet>
+	<servlet>
+  <servlet-name>Cliente</servlet-name>
+  <servlet-class>servlets.ServletCliente</servlet-class>
+ </servlet>
+	<servlet>
+		<servlet-name>ConsultaGeneral</servlet-name>
+		<servlet-class>servlets.ServletConsultaGeneral</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>Operario</servlet-name>
+		<servlet-class>servlets.ServletOperario</servlet-class>
+	</servlet>
+	<!-- MAPPING --><servlet-mapping>
+		<servlet-name>Administrador</servlet-name>
+		<url-pattern>/administrador.htm</url-pattern>
+</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Inicio</servlet-name>
+		<url-pattern>/paginaInicio.htm</url-pattern>
+</servlet-mapping>
+	<servlet-mapping>
+ 	<servlet-name>Gerente</servlet-name>
+ 	<url-pattern>/gerente.htm</url-pattern>
+</servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>Cliente</servlet-name>
+ 	<url-pattern>/cliente.htm</url-pattern>
+</servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>ConsultaGeneral</servlet-name>
+ 	<url-pattern>/consultaGeneral.htm</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+ 	<servlet-name>Operario</servlet-name>
+ 	<url-pattern>/operario.htm</url-pattern>
+ </servlet-mapping>
+ <login-config>
+  <auth-method>BASIC</auth-method>
+ </login-config>
+</web-app>
