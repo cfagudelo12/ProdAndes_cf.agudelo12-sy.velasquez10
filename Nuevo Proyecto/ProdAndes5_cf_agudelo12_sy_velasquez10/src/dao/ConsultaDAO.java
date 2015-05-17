@@ -8,6 +8,7 @@ import java.util.Queue;
 import javax.jms.ConnectionFactory;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
+import javax.transaction.UserTransaction;
 
 import vos.*;
 
@@ -178,6 +179,7 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	private DataSource ds2;
 	
 	private Queue cola;
+	private InitialContext context;
 	
 	/**
 	 * Constructor de la clase. No inicializa ningun atributo.
@@ -242,7 +244,155 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 			e.printStackTrace();
 		}
     }
+    
+    //-------------------------------------------------
+  	// Iteracion 5
+  	//-------------------------------------------------
+    
+    public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccion5(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso, int rowNum1, int rowNum2) throws Exception{
 
+		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
+		PreparedStatement selStmt = null;
+		UserTransaction utx= (UserTransaction) context.lookup("/UserTransaction");
+		try
+		{
+			establecerconexion1(cadenaconexion1, usuario, clave);
+			conexion1.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+
+			String queryConsulta = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+					+ "WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
+			if(idPedido!=-1)
+			{
+				queryConsulta +=" AND "+PedidoValue.cIdPedido+"="+idPedido;
+			}
+			else if(!recurso.equals(""))
+			{
+				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+						+ "NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN  "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cNombre+"='"+recurso+"'";
+			}
+			else if(!tipoRecurso.equals(""))
+			{
+
+				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+						+ "NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN  "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cTipoRecurso+"='"+tipoRecurso+"'";
+			}
+			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
+			System.out.println(queryConsulta);
+
+			selStmt = conexion1.prepareStatement(queryConsulta);
+			
+			ResultSet rs = selStmt.executeQuery();
+			while(rs.next())
+			{
+				EjecucionValue ejecucion=new EjecucionValue();
+				EtapaProduccionValue etapa=new EtapaProduccionValue();
+				etapa.setDescripcion(rs.getString(EtapaProduccionValue.cDescripcion));
+				etapa.setIdEtapaProduccion(rs.getInt(EtapaProduccionValue.cIdEtapaProduccion));
+				ejecucion.setEtapaProduccion(etapa);
+				ejecucion.setFechaEjecucion(rs.getString(EjecucionValue.cFechaEjecucion));
+				ejecucion.setTiempoEjecucion(rs.getInt(EjecucionValue.cTiempoEjecucion));
+				EmpleadoValue operario = new EmpleadoValue();
+				operario.setId(rs.getInt(EmpleadoValue.cfIdOperario));
+				ejecucion.setOperario(operario);
+				PedidoValue pedido = new PedidoValue();
+				pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
+				ejecucion.setPedido(pedido);
+				ejecuciones.add(ejecucion);
+			}
+			return ejecuciones;
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (selStmt != null) {
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion1.");
+				}
+			}
+			closeConnection(conexion1);
+		}
+	}
+    
+    public ArrayList<EjecucionValue> consultarEjecucionEtapasProduccionNegado5(String fechaLimInf, String fechaLimSup, int idPedido, String recurso, String tipoRecurso, int rowNum1, int rowNum2) throws Exception
+	{
+		ArrayList<EjecucionValue> ejecuciones = new ArrayList<EjecucionValue>();
+		PreparedStatement selStmt = null;
+		try
+		{
+			establecerconexion1(cadenaconexion1, usuario, clave);
+			conexion1.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			String queryConsulta = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+					+ "WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')";
+			if(idPedido!=-1)
+			{
+				queryConsulta +=" AND "+PedidoValue.cIdPedido+"="+idPedido;
+			}
+			if(!recurso.equals(""))
+			{
+				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+						+ "NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN  "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cNombre+"!='"+recurso+"'";
+			}
+			if(!tipoRecurso.equals(""))
+			{
+
+				queryConsulta  = "SELECT * FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" "
+						+ "NATURAL INNER JOIN "+tRequieren+" NATURAL INNER JOIN  "+tRecursos+" WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+						+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') AND "+RecursoValue.cTipoRecurso+"!='"+tipoRecurso+"'";
+			}
+			System.out.println(queryConsulta);
+			queryConsulta=rodearParaPaginar(queryConsulta, rowNum1, rowNum2);
+
+			selStmt = conexion1.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			while(rs.next()){
+				EjecucionValue ejecucion=new EjecucionValue();
+				EtapaProduccionValue etapa=new EtapaProduccionValue();
+				etapa.setDescripcion(rs.getString(EtapaProduccionValue.cDescripcion));
+				etapa.setIdEtapaProduccion(rs.getInt(EtapaProduccionValue.cIdEtapaProduccion));
+				ejecucion.setEtapaProduccion(etapa);
+				ejecucion.setFechaEjecucion(rs.getString(EjecucionValue.cFechaEjecucion));
+				ejecucion.setTiempoEjecucion(rs.getInt(EjecucionValue.cTiempoEjecucion));
+				EmpleadoValue operario = new EmpleadoValue();
+				operario.setId(rs.getInt(EmpleadoValue.cfIdOperario));
+				ejecucion.setOperario(operario);
+				PedidoValue pedido = new PedidoValue();
+				pedido.setIdPedido(rs.getInt(PedidoValue.cIdPedido));
+				ejecucion.setPedido(pedido);
+				ejecuciones.add(ejecucion);
+			}
+			return ejecuciones;
+		}
+		catch (SQLException e){
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally{
+			if (selStmt != null) {
+				try{
+					selStmt.close();
+				} 
+				catch (SQLException exception){
+					throw new Exception("ERROR: ConsultaDAO: loadRow() =  cerrando una conexion1.");
+				}
+			}
+			closeConnection(conexion1);
+		}
+	}
+    
+    //-------------------------------------------------
+  	// Termina Iteracion 5
+  	//-------------------------------------------------
+    
 	/**
 	 * Cierra la conexion1 activa a la base de datos.
 	 * @param connection conexion1 a la base de datos.
