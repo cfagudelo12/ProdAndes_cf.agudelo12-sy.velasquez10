@@ -16,8 +16,11 @@
 	<classpathentry kind="con" path="org.jboss.ide.eclipse.as.classpath.core.javaee-5.0"/>
 	<classpathentry kind="con" path="org.jboss.ide.eclipse.as.classpath.core.ejb3.classpathContainer/JBoss AS 7.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-remote-naming-1.0.5.Final.jar" sourcepath="C:/Users/Sergio/.m2/repository/org/jboss/jboss-remote-naming/1.0.5.Final/jboss-remote-naming-1.0.5.Final-sources.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-client.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-ejb3-common-client.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-remote-naming-1.0.5.Final.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xnio-api-3.0.0.GA.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-remoting-3.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-ejb-client-1.0.8.Final.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
