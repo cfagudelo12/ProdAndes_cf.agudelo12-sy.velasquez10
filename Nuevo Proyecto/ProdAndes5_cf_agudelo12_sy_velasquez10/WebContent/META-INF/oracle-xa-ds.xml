@@ -21,8 +21,8 @@
 		<xa-datasource-property name="URL">
 			jdbc:oracle:thin:@prod.oracle.virtual.uniandes.edu.co:1531:prod
 		</xa-datasource-property>
-		<xa-datasource-property name="User">ISIS2304481510</xa-datasource-property>
-		<xa-datasource-property name="Password">fberrapius</xa-datasource-property>
+		<xa-datasource-property name="User">ISIS2304291510</xa-datasource-property>
+		<xa-datasource-property name="Password">fexerthail</xa-datasource-property>
 		<exception-sorter-class-name>
 			org.jboss.resource.adapter.jdbc.vendor.OracleExceptionSorter
 		</exception-sorter-class-name>

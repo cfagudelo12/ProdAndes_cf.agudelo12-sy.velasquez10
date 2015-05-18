@@ -3,6 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Queue;
 
 import javax.jms.ConnectionFactory;
@@ -12,11 +13,12 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.TextMessage;
+import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import javax.transaction.UserTransaction;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Text;
+
 
 import vos.*;
 
@@ -195,6 +197,13 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	{
 		try 
 		{
+			Hashtable<String,String> env=new Hashtable<String,String>();
+			env.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
+			env.put(Context.PROVIDER_URL, "jnp://localhost:1099");
+			env.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
+			contexto=new InitialContext(env);
+			ds2=(DataSource)contexto.lookup("java:XAChie2");
+			cf=(ConnectionFactory)contexto.lookup("java:JmsXA");
 			cola= (Queue) contexto.lookup("queue/WebApp2");
 		}
 		catch (Exception e) 
