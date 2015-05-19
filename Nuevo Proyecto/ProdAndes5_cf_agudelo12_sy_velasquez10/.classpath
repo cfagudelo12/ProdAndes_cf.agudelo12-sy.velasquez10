@@ -8,19 +8,19 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.jms.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/javax.servlet.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-system.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jms.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ojdbc14.jar"/>
 	<classpathentry kind="con" path="org.jboss.ide.eclipse.as.classpath.core.javaee-5.0"/>
 	<classpathentry kind="con" path="org.jboss.ide.eclipse.as.classpath.core.ejb3.classpathContainer/JBoss AS 7.0"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-client.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-ejb-client-1.0.8.Final.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-ejb3-common-client.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-remote-naming-1.0.5.Final.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xnio-api-3.0.0.GA.jar"/>
 	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-remoting-3.jar"/>
-	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/jboss-ejb-client-1.0.8.Final.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ojdbc14.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/ojdbc6.jar"/>
+	<classpathentry kind="lib" path="WebContent/WEB-INF/lib/xnio-api-3.0.0.GA.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
