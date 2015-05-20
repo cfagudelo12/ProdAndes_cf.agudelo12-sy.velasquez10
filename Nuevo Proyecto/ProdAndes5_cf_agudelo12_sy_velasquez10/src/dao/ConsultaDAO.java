@@ -34,6 +34,8 @@ import javax.transaction.UserTransaction;
 
 
 
+
+import oracle.net.aso.d;
 import vos.*;
 
 /**
@@ -194,6 +196,12 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	
 	private javax.jms.Connection conm;
 	
+	private Session s;
+	
+	private Destination d;
+	
+	private MessageProducer mp;
+	
 	private Connection conexion1;
 	
 	private Connection conexion2;
@@ -211,14 +219,16 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	{
 		try 
 		{
-			Hashtable<String,String> env=new Hashtable<String,String>();
-			env.put(Context.INITIAL_CONTEXT_FACTORY, "org.jboss.naming.remote.client.InitialContextFactory");
-			env.put(Context.PROVIDER_URL, "jnp://localhost:1099");
-			env.put(Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces");
-			contexto=  new InitialContext(env);
-			ds2=(DataSource)contexto.lookup("java:XAChie2");
-			cf=(ConnectionFactory)contexto.lookup("java:JmsXA");
-			cola= (Queue) contexto.lookup("queue/WebApp2");
+			contexto= new InitialContext();
+			cf = (ConnectionFactory) contexto.lookup("RemoteConnectionFactory");
+			d = (Destination) contexto.lookup("queue/testCola");
+			conm = (javax.jms.Connection) cf.createConnection("sistrans","test");
+			((javax.jms.Connection) conm).start();
+			s = ((javax.jms.Connection) conm).createSession(false, Session.AUTO_ACKNOWLEDGE);
+			mp = s.createProducer(d);
+			
+			Class.forName("oracle.jdbc.driver.OracleDriver");
+
 		}
 		catch (Exception e) 
 		{
