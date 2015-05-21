@@ -232,4 +232,9 @@ public class ProdAndes
 	{
 		return dao.consultaRecursoPorId(idRecurso,rowNum1,rowNum2);
 	}
+	
+	public ArrayList<RecursoValue>  consultarRecursosMasUtilizados(String fechaLimInf, String fechaLimSup,int rowNum1,int rowNum2) throws Exception
+	{
+		return dao.consultarRecursosMasUtilizados(fechaLimInf, fechaLimSup,rowNum1,rowNum2);
+	}
 }

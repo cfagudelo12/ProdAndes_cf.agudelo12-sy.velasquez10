@@ -217,23 +217,23 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 	 */
 	public ConsultaDAO()
 	{
-		try 
-		{
-			contexto= new InitialContext();
-			cf = (ConnectionFactory) contexto.lookup("RemoteConnectionFactory");
-			d = (Destination) contexto.lookup("queue/testCola");
-			conm = (javax.jms.Connection) cf.createConnection("sistrans","test");
-			((javax.jms.Connection) conm).start();
-			s = ((javax.jms.Connection) conm).createSession(false, Session.AUTO_ACKNOWLEDGE);
-			mp = s.createProducer(d);
-			
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
+//		try 
+//		{
+//			contexto= new InitialContext();
+//			cf = (ConnectionFactory) contexto.lookup("RemoteConnectionFactory");
+//			d = (Destination) contexto.lookup("queue/testCola");
+//			conm = (javax.jms.Connection) cf.createConnection("sistrans","test");
+//			((javax.jms.Connection) conm).start();
+//			s = ((javax.jms.Connection) conm).createSession(false, Session.AUTO_ACKNOWLEDGE);
+//			mp = s.createProducer(d);
+//			
+//			Class.forName("oracle.jdbc.driver.OracleDriver");
+//
+//		}
+//		catch (Exception e) 
+//		{
+//			e.printStackTrace();
+//		}
 	}
 	
 	//-------------------------------------------------
@@ -525,6 +525,68 @@ public class ConsultaDAO extends oracle.jdbc.driver.OracleDriver
 				}
 			}
 			closeConnection(conexion2);
+		}
+	}
+    
+    
+    public ArrayList<RecursoValue> consultarRecursosMasUtilizados(String fechaLimInf, String fechaLimSup, int rowNum1, int rowNum2) throws Exception
+    {
+
+		ArrayList<RecursoValue> recursos = new ArrayList<RecursoValue>();
+		PreparedStatement selStmt = null;
+		try
+		{
+			
+			establecerconexion1(cadenaconexion1, usuario, clave);
+			conexion1.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+
+		
+			String queryConsulta = "Select max(cantidad) as c From (SELECT "+RecursoValue.cIdRecurso+", count(*) as cantidad FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" NATURAL INNER JOIN "+ tRequieren+" NATURAL INNER JOIN "+ tRecursos
+					+ " WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD')  group by IDRECURSO)";
+			
+			System.out.println(queryConsulta);
+			selStmt = conexion1.prepareStatement(queryConsulta);
+			ResultSet rs = selStmt.executeQuery();
+			rs.next();
+			int cantidad=rs.getInt("c");
+			rs.close();
+			selStmt.close();
+			String queryConsulta2 = "Select e.IdRecurso From (SELECT "+RecursoValue.cIdRecurso+", count(*) as cantidad FROM "+tEjecutaron+" NATURAL INNER JOIN "+tEtapasProduccion+" NATURAL INNER JOIN "+ tRequieren+" NATURAL INNER JOIN "+ tRecursos
+					+ " WHERE "+EjecucionValue.cFechaEjecucion+" BETWEEN TO_DATE('"+fechaLimInf+"','YYYY-MM-DD') "
+					+ "AND TO_DATE('"+fechaLimSup+"','YYYY-MM-DD') group by IDRECURSO) e WHERE e.cantidad="+cantidad;
+			System.out.println(queryConsulta2);
+			selStmt = conexion1.prepareStatement(queryConsulta2);
+			rs = selStmt.executeQuery();
+			rs.next();
+			String queryConsulta3 = "Select * FROM "+ tRecursos	+" WHERE idRecurso="+rs.getInt(RecursoValue.cIdRecurso);
+			rs.close();
+			selStmt.close();
+			System.out.println(queryConsulta3);
+			selStmt = conexion1.prepareStatement(queryConsulta3);
+			rs = selStmt.executeQuery();
+			while(rs.next())
+			{
+				RecursoValue recurso = new RecursoValue();
+				recurso.setIdRecurso(rs.getInt(RecursoValue.cIdRecurso));
+				recurso.setNombre(rs.getString(RecursoValue.cNombre));
+				recurso.setTipoRecurso(rs.getString(RecursoValue.cTipoRecurso));
+				recursos.add(recurso);
+			}
+			
+			
+			selStmt.close();
+			rs.close();
+			return recursos;
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			throw new Exception("ERROR = ConsultaDAO: loadRowsBy(..) Agregando parametros y executando el statement");
+		}
+		finally
+		{
+			closeConnection(conexion1);
 		}
 	}
     
